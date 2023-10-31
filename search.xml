@@ -3,8 +3,18 @@
   <entry>
     <title>cs2</title>
     <url>/2023/10/20/cs2/</url>
-    <content><![CDATA[<p>cs</p>
-]]></content>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="e423fd347c165e2e5b3606f03d1f529ba978638796f692f87b5655ea8fb675de">79bb228e84f47ae3506e7caa37af42817866cac734f13cf0545b130ab193850244e1ac596745b7bab3b7dc98554b019a</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">输入密码界面提示说明</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
       <categories>
         <category>dad</category>
         <category>son</category>
