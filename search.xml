@@ -24,4 +24,90 @@
         <tag>two</tag>
       </tags>
   </entry>
+  <entry>
+    <title>写在最前面-前言、目录与准备</title>
+    <url>/2023/11/03/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E5%86%99%E5%9C%A8%E6%9C%80%E5%89%8D%E9%9D%A2/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>写在最前面</strong>：书籍为<code>《Windows内核原理与实现》</code>，本章非正式内容，为前言、目录解读，后续工作梳理。</p>
+</blockquote>
+<p><strong>书之前言：</strong></p>
+<p>本书适合于已经有了<strong>操作系统基本概念</strong>的读者进一步理解 Windows 操作系统。通过学习本书的内容， 读者不仅可以掌握 <strong>Windows 的核心机制</strong>，也可以理解像 Windows 这样的现代操作系统是<strong>如何构建</strong>起来的。</p>
+<p><strong>本书定位：</strong></p>
+<p>一本按照操作系统基本概念和理论来阐释 Windows 实现机理的书籍。</p>
+<p><strong>对读者：</strong></p>
+<p>本书中描述的大多数细节是以 <code>WRK（Windows Research Kernel）</code>的代码为基础，但是，对于各种核心机制的介绍却是通用的，并不限于 WRK 内核，甚至适用于 各种版本的 Windows。</p>
+<blockquote>
+<p>WRK的全称是“Windows Research Kernel”，它是微软为高校操作系统课程提供的<strong>可修改和跟踪的操作系统教学平台</strong>。它给出了Windows这个成功的商业操作系统的内核大部分代码，可以对其进行修改、编译，并且可以用这个内核启动Windows操作系统。可让学生将操作系统基本原理和商业<a href="https://baike.baidu.com/item/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/297824?fromModule=lemma_inlink">操作系统内核</a>联系起来，进一步加深对操作系统整体的理解。</p>
+</blockquote>
+<p><strong>如何去读：</strong></p>
+<ul>
+<li>配合 <code>WRK 代码</code>来阅读本书是最理想的阅读方式；</li>
+<li>善用 <code>windbg</code>，并设置 Microsoft 提供的公共符号服务（参考本书附录 A），则可以在内核调试环境中查看到很多实现细节</li>
+</ul>
+<p><strong>前置知识：</strong></p>
+<ul>
+<li>操作系统的基本知识</li>
+<li>较为熟练的编程能力</li>
+<li>硬件系统结构、汇编语言和编译原理等</li>
+</ul>
+<p><strong>内容组织</strong>：</p>
+<ul>
+<li>从现代操作系统的概念模型出发，重点讨论了<strong>进程、线程和内存管理的基本概念</strong>以及在 <strong>Windows 中的实现细节</strong>，也讨论了 Windows 中的<strong>并发性和同步处理机制</strong>。</li>
+<li>还讲述了 Windows 的<strong>存储体系结构</strong>，它把 Windows 系统中众多的内核组件，包括缓存管理器、文件系统、磁盘管理驱动 程序等，纳入到了一个统一的框架中。</li>
+<li><strong>内核中</strong>的对象管理、配置管理（即注 册表服务）、系统内核日志、安全性管理、系统服务分发、LPC（Local Procedure Call， 本地过程调用），以及网络和 Windows 子系统等</li>
+</ul>
+<p><strong>注</strong>：本书讨论的内容 以 <code>Windows Server 2003 SP1</code> 为基准系统，但同样适用于客户端操作系统</p>
+<p><strong>内容概述</strong>：9正文+2附录</p>
+<ul>
+<li><p>第 1 章介绍了操作系统的基础概念、Windows 操作系统的发展历史、Windows 内核 的发展，以及学习操作系统的一些前提知识，最后还介绍了操作系统的研究进展</p>
+<p>歌曰：可以简单过一下，当看故事了</p>
+</li>
+<li><p>第 2 章从总体上介绍了 Windows 操作系统</p>
+<ul>
+<li>现代操作系统的基本模型</li>
+<li>Windows 的总体结构与有关 WRK 和相应源代码 的一些说明</li>
+<li>内核中的 一些基本概念</li>
+<li>Windows 内核中的公共管理设施</li>
+<li>Windows 引导过程，包括内核初始化和用户会话建立过程</li>
+</ul>
+<p>歌曰：通过这一节建立整本书的知识框架</p>
+</li>
+<li><p>第 3 章： Windows 中的进程和线程管理</p>
+</li>
+<li><p>第 4 章： Windows 中的内存管理</p>
+</li>
+<li><p>第 5 章： Windows 中的并发和同步机制</p>
+</li>
+<li><p>第 6 章： Windows 的 I&#x2F;O 模型</p>
+</li>
+<li><p>第 7 章： Windows 的存储管理</p>
+</li>
+<li><p>第 8 章： Windows 的系统服务</p>
+</li>
+<li><p>第9章：Windows 中的网络结构、Windows 子系统， 以及Windows的内核日志</p>
+</li>
+</ul>
+<p><strong>先要做的</strong>：</p>
+<p>学习编译 WRK，以及在虚拟机环境中运行 和调试 WRK</p>
+<p><strong>工具准备</strong>：</p>
+<ul>
+<li><code>ProcMon</code>：<strong>进程和线程监视工具</strong>。它可以实时地显示当前每个处理器正在执行哪些进程和线程。这些信息还可以被转储到一个文本文件中供进一步分析和查看。 </li>
+<li><code>MemMon</code>：<strong>内存监视工具</strong>。它可以显示当前系统内存空间和每一个进程的用户空间的内存布局。在进程内存空间，MemMon 能够显示进程中的模块、堆、栈等信息。</li>
+<li><code>DPerfLite</code>：一个可以<strong>揭示线程间同步关系</strong>的工具。它记录了当前系统中与同步有关的内核操作，允许用户在一个图形界面中直观地观察这些操作，并检查线程之间的各种同步关系。</li>
+<li><code>IRPMon</code>：IRP 完成情况的监视工具。它在内核中记录下<strong>每一个 I&#x2F;O 请求的完成操作</strong>， 然后由 IRPMon 用户模式程序定期地从内核中获取这些记录，并显示在一个列表窗口中，供用户查看。 </li>
+<li><code>SdtViewer</code>，SDT（服务描述符表）显示工具。此工具可以<strong>显示出当前系统中的 SDT</strong>； 如果有符号信息支持，它也能够显示 Windows 子系统的 SDT。</li>
+</ul>
+<blockquote>
+<p><strong>写在最后</strong>：操作系统是基础能力，无论什么专业都很重要，在安全领域也是如此。比如恶意代码通过Rootkit隐藏痕迹、漏洞研究中的系统漏洞、内核漏洞等。希望通过本书完成第一步，后续会在具体的实践中提高。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>【-基础知识-】Windows内核学习</category>
+        <category>Windows内核原理与实现</category>
+      </categories>
+      <tags>
+        <tag>内核</tag>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
 </search>
