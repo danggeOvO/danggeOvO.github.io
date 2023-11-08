@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="分支结构 思维导图如下：   if语句的三种方式 单分支结构  12if 条件：		代码块   此结构可以用于字典的调用，提高健壮性  1234567mydict &#x3D; dict(name&#x3D;&amp;#x27;xyq&amp;#x27;,age&#x3D;&amp;#x27;21&amp;#x27;)if &amp;#x27;name&amp;#x27; in mydict:		mydict.pop(&amp;#x27;name&amp;#x27;)		print(myd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python学习-ch4 流程控制">
+<meta property="og:url" content="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch4%20%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="分支结构 思维导图如下：   if语句的三种方式 单分支结构  12if 条件：		代码块   此结构可以用于字典的调用，提高健壮性  1234567mydict &#x3D; dict(name&#x3D;&amp;#x27;xyq&amp;#x27;,age&#x3D;&amp;#x27;21&amp;#x27;)if &amp;#x27;name&amp;#x27; in mydict:		mydict.pop(&amp;#x27;name&amp;#x27;)		print(myd">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639590.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639724.gif">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639592.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639657.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639593.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639594.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639608.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639609.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639610.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639661.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639658.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639622.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639662.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639667.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639663.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639664.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639665.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639666.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639668.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639669.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639698.png">
+<meta property="article:published_time" content="2023-04-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:16:18.205Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639590.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch4%20%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch4%20%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/","path":"2023/04/10/Python课程学习-ch4 流程控制/","title":"Python学习-ch4 流程控制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python学习-ch4 流程控制 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">分支结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#if%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">if语句的三种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#if%E8%AF%AD%E5%8F%A5%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">if语句需要注意的问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">循环结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#while%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">while循环结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-in-%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">for-in 循环结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-in-%E5%BE%AA%E7%8E%AF%E9%81%8D%E5%8E%86%E5%88%97%E8%A1%A8%E5%92%8C%E5%AD%97%E5%85%B8"><span class="nav-number">2.3.</span> <span class="nav-text">for in 循环遍历列表和字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#break-%E4%B8%8E-continue"><span class="nav-number">2.4.</span> <span class="nav-text">break 与 continue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E8%AE%AD%E2%80%93%E7%BB%9F%E8%AE%A1%E5%AD%97%E7%AC%A6%E4%B8%AA%E6%95%B0"><span class="nav-number">2.5.</span> <span class="nav-text">代码实训–统计字符个数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E7%94%9F%E6%88%90%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">列表生成式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">生成器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.1.</span> <span class="nav-text">可迭代对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%AD%E4%BB%A3%E5%99%A8%EF%BC%88Iterator"><span class="nav-number">5.2.</span> <span class="nav-text">什么是迭代器（Iterator)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A1%A5%E5%85%85"><span class="nav-number">6.</span> <span class="nav-text">问题补充</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B"><span class="nav-number">6.1.</span> <span class="nav-text">应用实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">6.2.</span> <span class="nav-text">单元测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch4%20%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Python学习-ch4 流程控制 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python学习-ch4 流程控制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-10T13:48:32+08:00">2023-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:16:18" itemprop="dateModified" datetime="2023-11-08T18:16:18+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】编程语言学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/python%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">python学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分支结构"><a href="#分支结构" class="headerlink" title="分支结构"></a>分支结构</h1><blockquote>
+<p>思维导图如下：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639590.png"></p>
+<h2 id="if语句的三种方式"><a href="#if语句的三种方式" class="headerlink" title="if语句的三种方式"></a>if语句的三种方式</h2><blockquote>
+<p>单分支结构</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> 条件：</span><br><span class="line">		代码块</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>此结构可以用于字典的调用，提高健壮性</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">mydict = <span class="built_in">dict</span>(name=<span class="string">&#x27;xyq&#x27;</span>,age=<span class="string">&#x27;21&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="string">&#x27;name&#x27;</span> <span class="keyword">in</span> mydict:</span><br><span class="line">		mydict.pop(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line">		</span><br><span class="line"><span class="built_in">print</span>(mydict)</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>列表中也可以使用</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mylist = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="number">2</span> <span class="keyword">in</span> mylist:</span><br><span class="line">		mylist.remove(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(mylist)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p>双分支结构</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> 条件：</span><br><span class="line">		代码块</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">		代码块</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码示例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="built_in">input</span>(<span class="string">&quot;你的名字：&quot;</span>)</span><br><span class="line">age = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;你的年龄：&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> name == <span class="string">&#x27;xyq&#x27;</span> <span class="keyword">and</span> age == <span class="number">21</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;right!&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;wrong!&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p>多分支结构</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> 条件<span class="number">1</span>：</span><br><span class="line">	代码块<span class="number">1</span></span><br><span class="line"><span class="keyword">elif</span> 条件<span class="number">2</span>：</span><br><span class="line">	代码块<span class="number">2</span></span><br><span class="line">    .....</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	代码块n</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码示例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">name = <span class="built_in">input</span>(<span class="string">&quot;你的名字：&quot;</span>)</span><br><span class="line">age = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;你的年龄：&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> name == <span class="string">&#x27;xyq&#x27;</span> <span class="keyword">and</span> age == <span class="number">21</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;right!&quot;</span>)</span><br><span class="line"><span class="keyword">elif</span> name == <span class="string">&#x27;xyq&#x27;</span> <span class="keyword">or</span> age == <span class="number">21</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;little right!&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;wrong!&quot;</span>)</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+<h2 id="if语句需要注意的问题"><a href="#if语句需要注意的问题" class="headerlink" title="if语句需要注意的问题"></a>if语句需要注意的问题</h2><blockquote>
+<p>问题1：代码缩进</p>
+</blockquote>
+<p>对于条件判断后的代码，处于同一个缩进的代码为一个代码块</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> age &gt;=<span class="number">21</span>:</span><br><span class="line">--------------</span><br><span class="line">:	m = <span class="number">2</span>		:</span><br><span class="line">:	<span class="built_in">print</span>(<span class="string">&quot;yes&quot;</span>):</span><br><span class="line">--------------	</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">------------</span><br><span class="line">:	m=<span class="number">3</span>     :</span><br><span class="line">------------</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;no&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>问题2：条件判断</p>
+</blockquote>
+<p>不一定是bool类型，也可以是：None , 0 , [] , {}</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span>  = []</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">list</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;yes&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;no&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>问题3：if多分支情况</p>
+</blockquote>
+<p>对于多分支情况，要注意条件的排布顺序</p>
+<hr>
+<blockquote>
+<p>补充：pass语句</p>
+</blockquote>
+<p>pass语句是空语句，它的作用是占位，使得程序看起来完整。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> 条件：</span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="循环结构"><a href="#循环结构" class="headerlink" title="循环结构"></a>循环结构</h1><blockquote>
+<p>思维导图如下：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639724.gif" title="[[[1645955236823]]]"></p>
+<h2 id="while循环结构"><a href="#while循环结构" class="headerlink" title="while循环结构"></a>while循环结构</h2><blockquote>
+<p>语句格式</p>
+<blockquote>
+<p>本质上还是条件判断语句，只是条件成立时继续执行直到退出。（一般<strong>不知道循环次数</strong>时使用此循环）</p>
+</blockquote>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">while</span> 条件判断 ：</span><br><span class="line">	代码块</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码示例</strong>：（猜数）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">answer = random.randint(<span class="number">1</span>,<span class="number">100</span>)</span><br><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    number = <span class="built_in">eval</span>(<span class="built_in">input</span>(<span class="string">&quot;your answer:&quot;</span>))</span><br><span class="line">    count += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> number &gt; answer:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;小一点&quot;</span>)</span><br><span class="line">    <span class="keyword">elif</span> number &lt; answer:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;大一点&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;对了&quot;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;你猜了%d次&quot;</span>%count)</span><br></pre></td></tr></table></figure>
+<p><strong>结果演示</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639592.png"></p>
+<p><strong>重点解析</strong>：</p>
+<ol>
+<li><code>random</code>模块的使用。产生随机数。</li>
+<li><code>while true </code>可以进行无限循环，直到退出。</li>
+<li><code>break</code>可以跳出一个循环，可以作为结束条件。</li>
+</ol>
+<p><strong>练习</strong>：（计算平均分数）<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639657.png"></p>
+<h2 id="for-in-循环结构"><a href="#for-in-循环结构" class="headerlink" title="for-in 循环结构"></a>for-in 循环结构</h2><blockquote>
+<p>for in 语句格式</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">for</span> 遍历 <span class="keyword">in</span> 字符串、范围、列表等可迭代对象：</span><br><span class="line">	代码块</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码示例</strong>：（求和）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sum</span> = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">101</span>):  </span><br><span class="line">	<span class="built_in">sum</span> += x</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">sum</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意点</strong>：<br>range()生成的数字为<strong>前闭后开</strong>区间，所以range（101）从0到100。<br>在python3中，range()函数生成一个等差序列，不可变。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639593.png"></p>
+<h2 id="for-in-循环遍历列表和字典"><a href="#for-in-循环遍历列表和字典" class="headerlink" title="for in 循环遍历列表和字典"></a>for in 循环遍历列表和字典</h2><blockquote>
+<p>遍历<strong>列表</strong>示例：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639594.png"></p>
+<hr>
+<blockquote>
+<p>enumerate()内置函数介绍：</p>
+</blockquote>
+<p><strong>作用</strong>：将一个<strong>可遍历的</strong>数据对象（列表、元组、字符串等）组合为一个索引序列<br><strong>格式</strong>：<code>enumerate(list1,start=0)</code></p>
+<p><strong>代码示例</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639608.png"></p>
+<hr>
+<blockquote>
+<p>zip()内置函数介绍：</p>
+</blockquote>
+<p><strong>作用</strong>：将多个对象打包成一个个元组，而后返回这些元组组成的列表</p>
+<p><strong>代码示例</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639609.png"></p>
+<hr>
+<blockquote>
+<p>for in 循环遍历字典：</p>
+</blockquote>
+<p>在正式循环之前，先来回顾一下字典中<strong>items</strong>的相关知识：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639610.png"><br>看见，dict.items()将字典元素封装为<strong>元组</strong>，这也是<strong>for in 循环</strong>的基础。</p>
+<p><strong>代码示例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dict3 = &#123;<span class="string">&quot;name&quot;</span>:<span class="string">&#x27;xyq&#x27;</span>,<span class="string">&quot;age&quot;</span>:<span class="number">22</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一种方法：</span></span><br><span class="line"><span class="keyword">for</span> k,n <span class="keyword">in</span> dict3.items():</span><br><span class="line">	<span class="built_in">print</span>(k,n)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二种方法：</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> dict3.items():</span><br><span class="line">	<span class="built_in">print</span>(item)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第三种方法：</span></span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dict3:</span><br><span class="line">	<span class="built_in">print</span>(key,dict3[key])</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639661.png"></p>
+<hr>
+<blockquote>
+<p>sorted()内置函数介绍：</p>
+</blockquote>
+<p>前面我们已经学习过了，这里提到这个函数是因为涉及到字典。对字典进行排序是<strong>依据键的大小</strong>,并且<strong>返回一个列表</strong>。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639658.png"></p>
+<h2 id="break-与-continue"><a href="#break-与-continue" class="headerlink" title="break 与 continue"></a>break 与 continue</h2><blockquote>
+<p>break：结束当前循环语句。<br>continue：立即返回到循环入口处。</p>
+</blockquote>
+<h2 id="代码实训–统计字符个数"><a href="#代码实训–统计字符个数" class="headerlink" title="代码实训–统计字符个数"></a>代码实训–统计字符个数</h2><blockquote>
+<p>重点有以下几个：</p>
+<blockquote>
+<p>1、<code>string内置模块</code>的使用<br>2、<code>random模块</code>的使用<br>3、<code>fromkeys()函数</code>的使用–构建字典<br>4、字典的一些<code>操作</code>，如：遍历、取值等<br>5、<code>for in 循环结构</code></p>
+</blockquote>
+</blockquote>
+<p><strong>下面是数字示例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">number = []</span><br><span class="line">result = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    num = random.randint(<span class="number">0</span>,<span class="number">100</span>)</span><br><span class="line">    number.append(num)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">for</span> num <span class="keyword">in</span> number:</span><br><span class="line">    <span class="keyword">if</span> num <span class="keyword">in</span> result.keys():</span><br><span class="line">        result[num]+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        result[num]=<span class="number">1</span></span><br><span class="line">        </span><br><span class="line">max_num = <span class="built_in">max</span>(result.values())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> result.items():</span><br><span class="line">    <span class="keyword">if</span> item[<span class="number">1</span>] == max_num:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;出现次数最多的是%d,出现次数为：%d&quot;</span>%(item[<span class="number">0</span>],item[<span class="number">1</span>]))</span><br><span class="line">    </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>下面是字符示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="comment">#生成全部大小写字母、数字和符号</span></span><br><span class="line">x = string.ascii_letters + string.digits + string.punctuation</span><br><span class="line">mystring=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">50</span>):</span><br><span class="line">    mystring+=random.choice(x) <span class="comment">#choice方法返回一个列表，元组或字符串的随机项</span></span><br><span class="line"><span class="comment">#利用fromkeys()形成一个字典，所有键的值均为0，重复的键将被自动忽略</span></span><br><span class="line"></span><br><span class="line">mydict = <span class="built_in">dict</span>.fromkeys(mystring,<span class="number">0</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> mystring:</span><br><span class="line">    mydict[i]+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">max_num = <span class="built_in">max</span>(mydict.values())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#输出字符以及次数，即字典的键和值</span></span><br><span class="line"><span class="keyword">for</span> key,value <span class="keyword">in</span> mydict.items():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;字符&#123;&#125;有&#123;&#125;次&#x27;</span>.<span class="built_in">format</span>(key,value))</span><br><span class="line"><span class="comment">#找到最大的次数    </span></span><br><span class="line">max_num = <span class="built_in">max</span>(mydict.values())</span><br><span class="line"><span class="built_in">print</span>(max_num)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> key,value <span class="keyword">in</span> mydict.items():</span><br><span class="line">    <span class="keyword">if</span> value == max_num:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;出现次数最大的字符为：%s，出现的次数为：%d&quot;</span>%(key,value))</span><br></pre></td></tr></table></figure>
+
+<h1 id="列表生成式"><a href="#列表生成式" class="headerlink" title="列表生成式"></a>列表生成式</h1><blockquote>
+<p>这是一个python内置的强大功能，可以进行列表的生成，使得代码更为简洁。</p>
+</blockquote>
+<p><strong>语法格式</strong>：【表达式 for 循环计数器 in 可迭代对象】<br><strong>代码实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">list1 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line">list2 = [x+<span class="number">1</span> <span class="keyword">for</span> x <span class="keyword">in</span> [<span class="built_in">pow</span>(x,<span class="number">2</span>) <span class="keyword">for</span> x <span class="keyword">in</span> list1]]</span><br><span class="line"><span class="built_in">print</span>(list2)</span><br><span class="line"></span><br><span class="line">list3 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">list4 = [<span class="string">&#x27;name1&#x27;</span>,<span class="string">&#x27;name2&#x27;</span>,<span class="string">&#x27;name3&#x27;</span>]</span><br><span class="line">L = [x <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">zip</span>(list3,list4)]</span><br><span class="line"><span class="built_in">print</span>(L)</span><br><span class="line"></span><br><span class="line">list5 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line">list6 = [x <span class="keyword">for</span> x <span class="keyword">in</span> list5 <span class="keyword">if</span> x%<span class="number">2</span>==<span class="number">1</span>] <span class="comment"># 使用if语句进行筛选元素</span></span><br><span class="line">ptint(list6)</span><br></pre></td></tr></table></figure>
+<p><strong>结果演示</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639622.png"></p>
+<p><strong>注意点</strong>：<br>1、注意使用时的格式，要把输入元素放在<strong>第一位</strong>。也可以<strong>使用if语句</strong>进一步选择元素。<br>2、<strong>zip()可以</strong>使多个列表的元素一一对应后成为一个新的列表，其中的每一个元素是一个元组。</p>
+<h1 id="生成器"><a href="#生成器" class="headerlink" title="生成器"></a>生成器</h1><blockquote>
+<p>采用生成器创建列表更加节省空间。</p>
+<blockquote>
+<p>在列表生成式使用时，对于列表元素较多时，不建议使用。因为这种方法会实例化一个对象，占用内存空间。<br>而生成器是一边循环一边计算的，可以适用。 </p>
+</blockquote>
+</blockquote>
+<p><strong>语法格式</strong>：<code>(表达式 for 循环计数器 in 可迭代对象)</code><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639662.png"></p>
+<p><strong>输出方法</strong>：（无法通过print直接输出元素）</p>
+<ol>
+<li><p>通过next方法输出<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639667.png"><br> 会根据元素个数单个取出元素，但是这种方法太低效。</p>
+</li>
+<li><p>使用for in 循环输出<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639663.png"></p>
+</li>
+</ol>
+<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><h2 id="可迭代对象"><a href="#可迭代对象" class="headerlink" title="可迭代对象"></a>可迭代对象</h2><p><strong>定义</strong>：可迭代对象是指可以直接<strong>作用于for循环</strong>的对象。<br><strong>分类</strong>：</p>
+<ul>
+<li>数据类型：tuple、list、dict、set、string</li>
+<li>generator：生成器或者带yield的generator function</li>
+</ul>
+<p><strong>易错点</strong>：有无下标<strong>不是</strong>判断是否为可迭代对象的条件。如字典、集合等<strong>无下标</strong>仍为可迭代对象。</p>
+<blockquote>
+<p>如何判断是否为可迭代对象呢？</p>
+</blockquote>
+<p>使用collections模型的Iterable类型判断是否为可迭代对象。</p>
+<p><strong>代码实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>  collections </span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用isinstance()函数判断一个对象是否为已知类型</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">isinstance</span>(<span class="string">&#x27;abc&#x27;</span>,Iterable))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">isinstance</span>([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],Iterable))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">isinstance</span>(<span class="number">123</span>,Iterable))</span><br></pre></td></tr></table></figure>
+<p><strong>结果演示</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639664.png"></p>
+<h2 id="什么是迭代器（Iterator"><a href="#什么是迭代器（Iterator" class="headerlink" title="什么是迭代器（Iterator)"></a>什么是迭代器（Iterator)</h2><p>迭代器就是<strong>具有next方法</strong>的对象。</p>
+<blockquote>
+<p>list、dict、str、set、tuple虽然是一个Iterable,却不是Iterator</p>
+</blockquote>
+<p>使用dir()查看上述类型，并没有next方法。</p>
+<hr>
+<blockquote>
+<p>Iterator的解释</p>
+</blockquote>
+<p><code>Iterator</code>是一个<strong>数据流</strong>，可以看作是一个有序序列，但是<strong>不知道</strong>序列的长度。<br>在使用<strong>next()函数</strong>时可以实现数据的下一步计算，即只有需要返回时才会进行数据的计算（<strong>惰性计算</strong>）</p>
+<blockquote>
+<p>Iterator的创建方法</p>
+</blockquote>
+<p>1、可以使用<strong>iter函数</strong>获得Iterator对象（如下图）</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639665.png"></p>
+<p>2、使用<strong>for循环</strong>或者<strong>while循环</strong>进行遍历</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">L1 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">g = <span class="built_in">iter</span>(L1)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(g))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用for循环遍历</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> g:</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用while循环遍历（用到except捕获错误信息）</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">next</span>(g))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">except</span> StopIteration:</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="问题补充"><a href="#问题补充" class="headerlink" title="问题补充"></a>问题补充</h1><blockquote>
+<p>主要记录在头歌实训和作业上的收获</p>
+</blockquote>
+<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><ol>
+<li>列表、循环–约瑟夫环问题</li>
+</ol>
+<p><strong>题干</strong>：<br>有15个基督徒和15个非基督徒在海上遇险，为了能让一部分人活下来不得不将其中15个人扔到海里面去，有个人想了个办法就是大家围成一个圈，由某个人开始从1报数，报到9的人就扔到海里面，他后面的人接着从1开始报数，报到9的人继续扔到海里面，直到扔掉15个人。由于上帝的保佑，15个基督徒都幸免于难，问这些人最开始是怎么站的，哪些位置是基督徒哪些位置是非基督徒。（用1代表基督徒，0代表非基督徒）</p>
+<p><strong>代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    index = <span class="number">0</span>  <span class="comment"># 用于下标索引</span></span><br><span class="line">    count = <span class="number">0</span>  <span class="comment"># 记录非基督教徒人数</span></span><br><span class="line">    number = <span class="number">0</span> <span class="comment"># 记录当前数到的数字</span></span><br><span class="line">    list1 = [<span class="number">1</span>]*<span class="number">30</span></span><br><span class="line">    <span class="keyword">while</span> count&lt;<span class="number">15</span>:</span><br><span class="line">        <span class="keyword">if</span> list1[index] == <span class="number">1</span>:</span><br><span class="line">            number += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> number == <span class="number">9</span>:</span><br><span class="line">                list1[index]=<span class="number">0</span> <span class="comment"># 相当于扔到海里</span></span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                number = <span class="number">0</span></span><br><span class="line">        index+=<span class="number">1</span></span><br><span class="line">        index%=<span class="number">30</span>  <span class="comment"># 将列表当做一个圆圈，当读到最后时返回第一位</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> list1:</span><br><span class="line">        <span class="built_in">print</span>(i,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>打印三角形–for in 循环</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,row+<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 靠右三角形</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,row+<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(row-i):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot; &quot;</span>,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 中间三角形</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(row):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(row-i-<span class="number">1</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot; &quot;</span>,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>*(i+<span class="number">1</span>)-<span class="number">1</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>,end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意事项</strong>：<br>使用range()生成的序列是<strong>前闭后开</strong>的。若为单个参数，则其中数字个数就是<strong>参数值</strong>。</p>
+<ol start="3">
+<li>随机数生成–双色球生成</li>
+</ol>
+<p><strong>题干</strong>：<br>双色球选号由7个数字组成y，其中有6个红球，其号码的取值范围为[1,33],一个蓝球的取值范围为[1,16],要求6个红球从小到大排列，蓝球在最后输出。其输出格式为09 12 16 20 30 33 | 03。（注意，如双色球号码为3，则必须输出03）</p>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> randrange, randint, sample</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">display</span>(<span class="params">balls</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;%02d &quot;</span>%balls[i],end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;| %02d &quot;</span>%balls[i+<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">random_select</span>():</span><br><span class="line"></span><br><span class="line">    list1 = [x <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">34</span>)]</span><br><span class="line">    </span><br><span class="line">    select_num1 = sample(list1,<span class="number">6</span>)</span><br><span class="line">    select_num1.sort()</span><br><span class="line">    select_num1.append(randint(<span class="number">1</span>,<span class="number">16</span>))</span><br><span class="line">    <span class="keyword">return</span> select_num1</span><br><span class="line"></span><br><span class="line"><span class="comment">#n为注数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">n</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        display(random_select())</span><br><span class="line">        </span><br><span class="line">random.seed(<span class="number">3</span>)</span><br><span class="line">n = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main(n)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意点</strong>：<br>1、<code>randint(1,15)</code>在【1，15】中选择一个数。<code>sample(list1,6)</code>从list1中等可能选择6个数组成一个列表。<br>2、一定要分清列表的方法和函数的区别，例如：<code>list1 = list1.sort()</code>是错误的，要使用<code>list1.sort()</code>.</p>
+<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><ol>
+<li>生成器</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639666.png"></p>
+<p>其类型都是生成器<code>&lt;class &#39;generator&#39;&gt;</code><br>可以使用for in 读取，但是不可以直接输出。</p>
+<hr>
+<ol start="2">
+<li>enumerate(x) 函数<br><code>enumerate() 函数</code>用于将一个可遍历的数据对象(如列表、元组或字符串)组合为一个索引序列，同时列出数据和数据下标，一般用在 for 循环当中。</li>
+</ol>
+<p><strong>实例</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639668.png"></p>
+<hr>
+<ol start="3">
+<li><code>str.replace()方法</code></li>
+</ol>
+<p>Python replace() 方法把字符串中的 old（旧字符串） 替换成 new(新字符串)，如果指定第三个参数max，则替换不超过 max 次。</p>
+<p><strong>注</strong>：因为字符串是不可变序列，所以会生成一个新的字符串，源字符串不变，</p>
+<hr>
+<ol start="4">
+<li>排序问题</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639669.png"><br>key参数：自定义比较规则。这里是比较字符串第二个字符</p>
+<p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/2239.html">http://c.biancheng.net/view/2239.html</a></p>
+<hr>
+<ol start="5">
+<li>遍历列表</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649752639698.png"></p>
+<p>列表会动态变化的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch4%20%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/" title="Python学习-ch4 流程控制">https://danggeovo.github.io/2023/04/10/Python课程学习-ch4 流程控制/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch3%E7%BB%84%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="prev" title="Python学习-ch3组合数据类型">
+                  <i class="fa fa-angle-left"></i> Python学习-ch3组合数据类型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch8%20%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B/" rel="next" title="Python学习--ch8 进程和线程">
+                  Python学习--ch8 进程和线程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

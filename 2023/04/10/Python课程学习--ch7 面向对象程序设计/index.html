@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：什么是面向对象程序设计？  7.1 类和对象 思维导图如下：   7.1.1 定义类和创建对象 基本概念：   类：抽象的概念， 对象：具体的东西。   类是对象的蓝图和模板，而对象是类的示例。  举个例子： 有一种描述：可以行走，可以吃饭，可以涩涩。对于这种描述，你看会在脑海里想到一些事物，比如猫等。 这里我们的描述就是一个类，而猫就是对象。   类的定义  通过class关键字进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python学习--ch7 面向对象程序设计">
+<meta property="og:url" content="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch7%20%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：什么是面向对象程序设计？  7.1 类和对象 思维导图如下：   7.1.1 定义类和创建对象 基本概念：   类：抽象的概念， 对象：具体的东西。   类是对象的蓝图和模板，而对象是类的示例。  举个例子： 有一种描述：可以行走，可以吃饭，可以涩涩。对于这种描述，你看会在脑海里想到一些事物，比如猫等。 这里我们的描述就是一个类，而猫就是对象。   类的定义  通过class关键字进">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887132.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887141.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887262.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887172.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887256.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887259.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887258.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887260.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887279.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887289.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887271.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887280.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887261.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887272.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887273.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887275.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887276.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887277.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887281.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887278.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887306.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887307.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887336.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887337.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887338.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887340.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887341.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887343.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887342.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887344.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887345.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887346.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887347.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887362.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649562238890.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555550861.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555573227.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555591078.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555605362.png">
+<meta property="article:published_time" content="2023-04-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:16:24.541Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887132.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch7%20%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch7%20%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/","path":"2023/04/10/Python课程学习--ch7 面向对象程序设计/","title":"Python学习--ch7 面向对象程序设计"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python学习--ch7 面向对象程序设计 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-1-%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">7.1 类和对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-1-%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%92%8C%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.</span> <span class="nav-text">7.1.1 定义类和创建对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-2-%E8%AE%BF%E9%97%AE%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">7.1.2 访问可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-3-%E7%B1%BB%E5%B1%9E%E6%80%A7%E5%92%8C%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">7.1.3 类属性和实例属性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-2-%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">7.2 方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-1-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E5%92%8C%E6%9E%90%E6%9E%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">7.2.1 构造方法和析构方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-2-%E7%B1%BB%E6%96%B9%E6%B3%95%E5%92%8C%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">7.2.2 类方法和静态方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-2-property%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">7.2.2 @property装饰器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-3-%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81"><span class="nav-number">3.</span> <span class="nav-text">7.3 继承和多态</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-1-%E7%BB%A7%E6%89%BF"><span class="nav-number">3.1.</span> <span class="nav-text">7.3.1 继承</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-2-MixIn%E2%80%93%E6%B7%B7%E5%85%A5%E5%8A%9F%E8%83%BD"><span class="nav-number">3.2.</span> <span class="nav-text">7.3.2 MixIn–混入功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-3-%E5%A4%9A%E6%80%81"><span class="nav-number">3.3.</span> <span class="nav-text">7.3.3 多态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-4-%E5%8A%A8%E6%80%81%E5%B1%9E%E6%80%A7%E5%92%8Cslots"><span class="nav-number">4.</span> <span class="nav-text">7.4 动态属性和slots</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-5-%E5%AE%9A%E5%88%B6%E7%B1%BB"><span class="nav-number">5.</span> <span class="nav-text">7.5 定制类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-5-1-python%E4%B8%AD%E7%9A%84%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95"><span class="nav-number">5.1.</span> <span class="nav-text">7.5.1 python中的特殊方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-5-2-%E9%87%8D%E8%BD%BD%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">5.2.</span> <span class="nav-text">7.5.2 重载运算符</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-6-%E7%BB%BC%E5%90%88%E5%AE%9E%E4%BE%8B%EF%BC%9A%E6%9C%89%E7%90%86%E6%95%B0%E7%B1%BB%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.</span> <span class="nav-text">7.6 综合实例：有理数类的实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-7-%E7%BB%83%E4%B9%A0%E8%A1%A5%E5%85%85"><span class="nav-number">7.</span> <span class="nav-text">7.7 练习补充</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E9%83%A8%E5%88%86"><span class="nav-number">7.1.</span> <span class="nav-text">测试部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%AE%AD%E9%A1%B9%E7%9B%AE"><span class="nav-number">7.2.</span> <span class="nav-text">实训项目</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch7%20%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Python学习--ch7 面向对象程序设计 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python学习--ch7 面向对象程序设计
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-10T13:48:32+08:00">2023-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:16:24" itemprop="dateModified" datetime="2023-11-08T18:16:24+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】编程语言学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/python%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">python学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>17k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>31 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>写在最前面：什么是面向对象程序设计？</p>
+</blockquote>
+<h1 id="7-1-类和对象"><a href="#7-1-类和对象" class="headerlink" title="7.1 类和对象"></a>7.1 类和对象</h1><blockquote>
+<p>思维导图如下：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887132.png"></p>
+<h2 id="7-1-1-定义类和创建对象"><a href="#7-1-1-定义类和创建对象" class="headerlink" title="7.1.1 定义类和创建对象"></a>7.1.1 定义类和创建对象</h2><blockquote>
+<p>基本概念：</p>
+</blockquote>
+<ul>
+<li><strong>类</strong>：抽象的概念，</li>
+<li><strong>对象</strong>：具体的东西。</li>
+</ul>
+<p> 类是对象的<strong>蓝图和模板</strong>，而对象是<strong>类的示例</strong>。</p>
+<p> <strong>举个例子</strong>：<br> 有一种描述：可以行走，可以吃饭，可以涩涩。对于这种描述，你看会在脑海里想到一些事物，比如猫等。<br> 这里我们的<strong>描述就是一个类</strong>，而<strong>猫就是对象</strong>。</p>
+<hr>
+<blockquote>
+<p>类的定义</p>
+<blockquote>
+<p>通过<strong>class关键字</strong>进行类的定义</p>
+</blockquote>
+</blockquote>
+<p><strong>语法格式</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">类名</span>:</span><br><span class="line">	<span class="comment"># 零个或多个方法（方法需要通过实例调用）</span></span><br><span class="line">	<span class="comment"># 零个或多个属性（属性是类的变量）</span></span><br></pre></td></tr></table></figure>
+<p><strong>代码实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,name,age</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_name</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.name</span><br><span class="line"></span><br><span class="line">s = Person(<span class="string">&#x27;xyq&#x27;</span>,<span class="number">21</span>)</span><br><span class="line"><span class="built_in">print</span>(s.name)</span><br><span class="line"><span class="built_in">print</span>(s.get_name())</span><br></pre></td></tr></table></figure>
+<p><strong>结果演示</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887141.png"></p>
+<p><strong>主要部分介绍</strong>：<br>1、<code>self参数</code>：<br>这里的<strong>self不是关键字</strong>，而是一个约定俗成的定名。其实这个<strong>self就是对象本身</strong>。</p>
+<p>2、<code>__init__方法</code>：<br>是构造函数，实现了对象的<strong>初始化</strong>。也就是对上代码中的name,age<strong>赋初值</strong>。</p>
+<h2 id="7-1-2-访问可见性"><a href="#7-1-2-访问可见性" class="headerlink" title="7.1.2 访问可见性"></a>7.1.2 访问可见性</h2><blockquote>
+<p>引入介绍：</p>
+</blockquote>
+<p>面向对象的<strong>三大特征</strong>：<code>封装</code>、<code>继承</code>、<code>多态</code>。<br>而<strong>访问可见性</strong>就是封装的一种体现。所谓封装，就是将私有部分放在里面，不让别人去看，而公有部分可以直接进行访问。</p>
+<blockquote>
+<p>具体介绍：</p>
+</blockquote>
+<p><strong>先看两个定义</strong>：</p>
+<ul>
+<li>私有属性：<strong>类方法</strong>可以访问，<strong>对象</strong>不可直接访问。以<code>两个下划线开头</code>进行标识。</li>
+<li>公有属性：可以直接进行访问。</li>
+</ul>
+<p><strong>来看一个例子</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887262.png"></p>
+<p>在上例子里，我们将name属性进行了变化，将其变成<strong>私有属性</strong>，则在外部直接使用<strong>对象就无法访问</strong>这个属性。<br>而使用<code>print(s.get_name())</code>可以进行访问，这是因为<code>get_name</code>是<strong>类里定义</strong>的方法，可以访问私有属性。</p>
+<blockquote>
+<p>再进一步：如何访问私有属性呢？</p>
+</blockquote>
+<p>答案上面已经给出了：在类中定义特定的方法，进行私有属性的访问。<br>同时，利用类方法，我们还可以实现对私有属性的有条件赋值。具体见下图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,name,age</span>):</span><br><span class="line">        self.__name = name</span><br><span class="line">        self.age = age</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_name</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.__name</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_name</span>(<span class="params">self,name1</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(name1)&gt;<span class="number">2</span>:</span><br><span class="line">            self.__name = name1</span><br><span class="line">s = Person(<span class="string">&quot;xyq&quot;</span>,<span class="number">21</span>)</span><br><span class="line"></span><br><span class="line">s.set_name(<span class="string">&quot;xyz&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(s.get_name())</span><br></pre></td></tr></table></figure>
+<p><strong>运行结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887172.png"></p>
+<p>我们在类中定义了一个新的方法：<code>set_name(self,name1)</code>,其中self为<strong>对象本身</strong>，用于对私有属性进行访问，name1是<strong>传递的参数</strong>。</p>
+<p><strong>注意点</strong>：<br>在包含类和对象的代码里，<strong>外部调用类方法</strong>需要加上<strong>对象名前缀</strong>，内部方法<strong>访问属性</strong>，需要加上<strong>self前缀</strong>。</p>
+<h2 id="7-1-3-类属性和实例属性"><a href="#7-1-3-类属性和实例属性" class="headerlink" title="7.1.3 类属性和实例属性"></a>7.1.3 类属性和实例属性</h2><blockquote>
+<p>定义引入：</p>
+</blockquote>
+<ul>
+<li>类属性：存储与类空间，所有实例对象共有的。</li>
+<li>实例属性：存储在实例空间，是单个实例对象独有的。</li>
+</ul>
+<p><strong>注</strong>：实例对象和类有各自独立的存储空间。但是优先级：实例空间&gt;类空间&gt;基类空间。</p>
+<blockquote>
+<p>具体示例：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887256.png"><br>实例属性的查找优先级高于类属性。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887259.png"><br>删除了实例属性不会对类属性产生影响。</p>
+<p><strong>注意点</strong>：<br>1、在<code>__init__函数</code>里定义的属性为<strong>实例属性</strong>，因为是根据传递的参数来进行赋值的。<br>2、要分清类和实例。可以将类看成一个很大的模具，<strong>单独占有空间</strong>；而实例是一个个通过模具制成的物品，这些物品也是有<strong>单独的存储空间</strong>。</p>
+<h1 id="7-2-方法"><a href="#7-2-方法" class="headerlink" title="7.2 方法"></a>7.2 方法</h1><blockquote>
+<p>先来思维导图：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887258.png"></p>
+<h2 id="7-2-1-构造方法和析构方法"><a href="#7-2-1-构造方法和析构方法" class="headerlink" title="7.2.1 构造方法和析构方法"></a>7.2.1 构造方法和析构方法</h2><blockquote>
+<p>定义引入：</p>
+</blockquote>
+<ul>
+<li>构造方法：即<code>__init__方法</code>，负责对象的<strong>初始化</strong>，也就是对象状态的更新和属性的设置，<strong>无返回值</strong>。</li>
+<li>析构方法：即<code>__del__方法</code>，负责对象的<strong>回收</strong>和内存空间的<strong>释放</strong>。</li>
+</ul>
+<blockquote>
+<p>先来构造方法：<code>__init__</code></p>
+</blockquote>
+<p>这个方法是python的<strong>内置特殊方法</strong>。这个方法使用时需要<strong>注意以下几点</strong>：</p>
+<ul>
+<li>名字不可变，需为init。</li>
+<li>不可以有返回值。</li>
+<li>只会调用一次，进行对象的初始化</li>
+</ul>
+<p><strong>本质</strong>：就是<strong>一个函数</strong>，通过传递的参数实现对实例属性的赋值。（函数的<strong>参数相关内容</strong>可以适用）<br>下面我们通过几个例子来看一下构造函数的使用：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887260.png" alt="1"><br>使用了默认值参数进行函数的调用。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887279.png" alt="2"><br>这里使用了<strong>关键字参数</strong>，将传递的参数封装为一个<strong>字典</strong>。通过<code>kw.get(key)</code>进行属性的赋值。</p>
+<blockquote>
+<p>再来看一下析构函数：<code>__del__</code></p>
+</blockquote>
+<p>这个函数是程序<strong>自动执行的</strong>，不需要定义。其作用就是当程序结束后将对象的<strong>空间进行销毁</strong>。<br>当使用<code>del 对象名</code>删除一个实例时，也是使用了析构函数。</p>
+<p><strong>注</strong>：当一个对象<strong>被引用时</strong>，使用del不会销毁此对象的存储空间。</p>
+<h2 id="7-2-2-类方法和静态方法"><a href="#7-2-2-类方法和静态方法" class="headerlink" title="7.2.2 类方法和静态方法"></a>7.2.2 类方法和静态方法</h2><blockquote>
+<p>定义引入：</p>
+</blockquote>
+<ul>
+<li>静态方法：即传递的参数<strong>与某个对象实例无关</strong>，通过<code>类名.静态方法(参数...)</code>即可进行调用，<strong>不需要对象前缀</strong>。</li>
+<li>类方法：在对象<strong>初始化之前</strong>进行的方法，是对当前类相关信息的获取。通过<code>对象1 = 类名.类方法()</code>进行对象的获取和初始化。</li>
+</ul>
+<blockquote>
+<p>先来看静态方法：</p>
+</blockquote>
+<p><strong>语法格式</strong>：在函数定义上方使用修饰符	 <code>@staticmethod</code>进行标识，而后进行方法的定义。</p>
+<p><strong>代码实例</strong>：（三角形验证）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Sanjiao</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,a,b,c</span>):</span><br><span class="line">        self.a = a</span><br><span class="line">        self.b = b</span><br><span class="line">        self.c = c</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Pand</span>(<span class="params">a,b,c</span>):</span><br><span class="line">        <span class="keyword">return</span> a+b &gt;c <span class="keyword">and</span> b+c &gt; a <span class="keyword">and</span> a+c &gt; b</span><br><span class="line">    [<span class="number">219</span>:<span class="number">0</span>]行数：<span class="number">220</span> 长度：<span class="number">4096</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Get_c</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.a+self.b+self.c</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> Sanjiao.Pand(<span class="number">1</span>,<span class="number">4</span>,<span class="number">4</span>):</span><br><span class="line">    s = Sanjiao(<span class="number">1</span>,<span class="number">4</span>,<span class="number">4</span>)</span><br><span class="line">    <span class="built_in">print</span>(s.Get_c())</span><br><span class="line">    </span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;wrong !&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>在上面的代码里，使用到了静态方法，其作用就是在<strong>对象建立之前</strong>调用此方法判断数据是否合格。</p>
+<blockquote>
+<p>再来看一下类方法</p>
+</blockquote>
+<p><strong>语法格式</strong>：<br>1、使用修饰符 <code>@classmethod</code>进行标识<br>2、在定义时默认参数为<code>cls</code><br>3、在调用时使用 <code>对象名 = 类名.类方法(参数)</code>的方法进行对象的创建。(对象建立时的参数与正常建立时一样，不受类方法的影响)</p>
+<h2 id="7-2-2-property装饰器"><a href="#7-2-2-property装饰器" class="headerlink" title="7.2.2 @property装饰器"></a>7.2.2 @property装饰器</h2><p><strong>作用</strong>：将一个<strong>属性</strong>变成<strong>方法</strong>进行调用</p>
+<p><strong>语法格式</strong>：以<code>@property </code>进行标识，以<strong>属性名作为方法名</strong>进行定义，以<code>对象.方法名=xx</code>进行调用</p>
+<p>来看一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,name,age</span>):</span><br><span class="line">        self.__name = name</span><br><span class="line">        self.__age = age</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">name</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.__name</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @name.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">name</span>(<span class="params">self,ant</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(ant)&gt;<span class="number">2</span>:</span><br><span class="line">            self.__name = ant</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;wrong ant!&quot;</span>)</span><br><span class="line">        </span><br><span class="line">me = Person(<span class="string">&quot;xyq&quot;</span>,<span class="number">21</span>)</span><br><span class="line"><span class="built_in">print</span>(me.name)</span><br><span class="line">me.name = <span class="string">&#x27;xyz&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(me.name)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>运行结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887289.png"></p>
+<p><strong>注释</strong>：<br>1、上例我们先使用了修饰器<code>@perproty</code>将name方法定义为了<strong>一个属性</strong>，其作用就是返回__name的值，可以<strong>用于获取值</strong>；<br>2、下面使用<code>@name.setter</code>进行修饰，其作用就是可以通过访问属性的形式进行<strong>属性的赋值</strong>。<br>3、通过修饰器，可以使私有属性得以直接访问与赋值，同时还可以<strong>保证程序的健壮性</strong>。</p>
+<h1 id="7-3-继承和多态"><a href="#7-3-继承和多态" class="headerlink" title="7.3 继承和多态"></a>7.3 继承和多态</h1><blockquote>
+<p>先放思维导图：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887271.png"></p>
+<h2 id="7-3-1-继承"><a href="#7-3-1-继承" class="headerlink" title="7.3.1 继承"></a>7.3.1 继承</h2><blockquote>
+<p>定义引入：</p>
+</blockquote>
+<p>继承的目的是为了<strong>实现已有类的扩充</strong>。</p>
+<ul>
+<li>父类（基类）：被继承的类。</li>
+<li>子类（派生类）：创建的新的类。</li>
+<li>重写：类在继承父类已有的方法后，可以对父类已有的方法给出<strong>新的实现版本</strong>，此操作称为重写。<br>子类除了继承父类提供的属性和方法，还定义了自己<strong>特有的属性和方法</strong>，所以子类比父类拥有<strong>更多的功能</strong>。</li>
+</ul>
+<blockquote>
+<p>看一个例子：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887280.png"></p>
+<p>football<strong>继承了</strong>ball类，并对ball类中的<strong>show方法</strong>进行了<strong>重写</strong>。</p>
+<hr>
+<p>再看一个例子：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887261.png"></p>
+<p>这里在子类中调用了<strong>父类的方法</strong>，其格式为：<code>类名.方法名（self）</code>。一般调用方法是不需要传递self，但是这里需要。</p>
+<blockquote>
+<p>super()使用父类的构造方法</p>
+</blockquote>
+<p><strong>直接上图</strong>:<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887272.png"></p>
+<p>在子类的构造方法里使用了<strong>父类的构造方法</strong>，其格式为：<code>super().__init__(name)</code>,可以把super()看成是父类。<br>当然，通过<code>父类.__init__(self,name)</code>方法也可以进行调用，不过需要<strong>显式的</strong>传递self参数。</p>
+<h2 id="7-3-2-MixIn–混入功能"><a href="#7-3-2-MixIn–混入功能" class="headerlink" title="7.3.2 MixIn–混入功能"></a>7.3.2 MixIn–混入功能</h2><blockquote>
+<p>定义介绍：</p>
+</blockquote>
+<p><strong>Mixin</strong> ：通常是<strong>实现某种功能的类</strong>，用于被其他子类继承，扩充子类的功能。</p>
+<blockquote>
+<p>具体例子：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">repMixin</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">&quot;[%s,%s]&quot;</span>%(self.name,self.age))</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">get_set_Mixin</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self,key</span>):</span><br><span class="line">        <span class="keyword">return</span> self.__dict__.get(key)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__setitem__</span>(<span class="params">self,key</span>):</span><br><span class="line">        <span class="keyword">return</span> self.__dict__.<span class="built_in">set</span>(key,value)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">person</span>(repMixin,get_set_Mixin):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,name,age</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line"></span><br><span class="line">me = person(<span class="string">&quot;xyq&quot;</span>,<span class="number">21</span>)</span><br><span class="line"><span class="built_in">print</span>(me)</span><br><span class="line"><span class="built_in">print</span>(me[<span class="string">&#x27;name&#x27;</span>],me[<span class="string">&#x27;age&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887273.png"></p>
+<p>如上例子，<code>person子类</code>继承了两个<strong>混合类</strong>，从而在输出时实现了多种功能。</p>
+<blockquote>
+<p>关于混合类的一个提醒：</p>
+</blockquote>
+<ol>
+<li>Mixin混合类<strong>自身不能实例化</strong>，仅可用于被子类继承。</li>
+<li>Mixin实现的功能是通用的，单一的，<strong>按需继承</strong>。</li>
+<li>Mixin只能用于<strong>扩展子类</strong>，不能影响<strong>子类的主要功能</strong>。如果对主要功能造成影响，就是基类了，不要使用Mixin命名。</li>
+</ol>
+<h2 id="7-3-3-多态"><a href="#7-3-3-多态" class="headerlink" title="7.3.3 多态"></a>7.3.3 多态</h2><blockquote>
+<p>概念引入：</p>
+</blockquote>
+<p><strong>何为多态</strong>？我们前面介绍了方法的重写，即在子类中对父类的方法进行重新编写，使得<strong>不同的子类对象表现出不同的行为</strong>，这就是多态。</p>
+<p><strong>看一个例子</strong>:<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887275.png"></p>
+<p>上例就是<strong>多态</strong>的一个体现。<br>同时，对于不同对象的数据类型，我们可通过上例得到答案：<strong>子类的数据类型与父类相同</strong>，但是<strong>父类对应的对象的数据类型与其子类对应的对象的数据类型不同</strong>。</p>
+<blockquote>
+<p>开闭原则</p>
+</blockquote>
+<ul>
+<li>开：对<strong>扩展开放</strong>，即允许新增ball的子类</li>
+<li>闭：对<strong>修改封闭</strong>，即不需要对ball类做修改就可实现不同的形式。</li>
+</ul>
+<h1 id="7-4-动态属性和slots"><a href="#7-4-动态属性和slots" class="headerlink" title="7.4 动态属性和slots"></a>7.4 动态属性和slots</h1><p><strong>一个例子</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887276.png"></p>
+<p><code>__slots__</code>是一个<strong>特殊的变量</strong>，可以看作<strong>一个卡槽</strong>，只有在这个卡槽里的属性才可以<strong>进行添加</strong>。</p>
+<p><strong>Tips</strong>:slots只是限制了实例属性，对<strong>类属性</strong>不进行限制。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887277.png"></p>
+<h1 id="7-5-定制类"><a href="#7-5-定制类" class="headerlink" title="7.5 定制类"></a>7.5 定制类</h1><blockquote>
+<p>老规矩，先上思维导图</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887281.png"></p>
+<h2 id="7-5-1-python中的特殊方法"><a href="#7-5-1-python中的特殊方法" class="headerlink" title="7.5.1 python中的特殊方法"></a>7.5.1 python中的特殊方法</h2><p>在python里，有些方法<strong>前后都添加了下划线</strong>，这些方法就是<strong>特殊方法</strong>。我们可以对特殊方法进行重写，扩展类的功能。</p>
+<p>下面我们就介绍一些常用的特殊方法：</p>
+<blockquote>
+<p>1、<code>__str__方法和__repr__方法</code></p>
+</blockquote>
+<p>使得输出的格式更加好看。</p>
+<p>先来<strong>介绍一些上面的两个方法</strong>:</p>
+<ul>
+<li><code>__str__方法</code>：当我们使用<code>print(对象1)</code>时调用的就是这个方法。输出用户看到的字符串。</li>
+<li><code>__repr__方法</code>：当我们直接使用<code>对象1</code>时，调用的是这个方法。输出程序开发人员看到的字符串。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887278.png"></p>
+<hr>
+<p>所以我们可以<strong>对上方法进行重写</strong>，输出想要的格式。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887306.png"></p>
+<p>也可以使用<code>__repr__ = __str__</code>简化</p>
+<blockquote>
+<p>2、<code>__getattr__</code>方法</p>
+</blockquote>
+<p>这个方法的作用就是获取某一个属性的值。也就是<code>对象.属性</code></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887307.png"></p>
+<p>与这个<strong>方法类似</strong>的还有：</p>
+<ul>
+<li><code>__hasattr__</code>：<strong>判断</strong>是否有某属性</li>
+<li><code>__setattr__</code>：<strong>修改</strong>一个属性</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887336.png"></p>
+<p>所以我们可以重写这个方法<strong>把报错去掉</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887337.png"></p>
+<p>最后输出的<strong>None</strong>是因为此方法有<strong>默认的返回值</strong>。</p>
+<blockquote>
+<p>3、<code>__call__方法</code></p>
+</blockquote>
+<p>这个方法的作用是将一个对象<strong>变为可调用对象</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887338.png"></p>
+<blockquote>
+<p>4、迭代器对象</p>
+</blockquote>
+<p>所谓的迭代器，就是满足<code>__iter__方法</code>和<code>__next__方法</code>的对象。所以我们要将一个对象变成迭代器，就要重写这两个方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">fib</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,num</span>):</span><br><span class="line">        self.x = <span class="number">0</span></span><br><span class="line">        self.y = <span class="number">1</span></span><br><span class="line">        self.num = num</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__iter__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__next__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> self.num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> StopIteration()</span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            self.x,self.y = self.y,self.x+self.y</span><br><span class="line">            self.num -= <span class="number">1</span></span><br><span class="line">            <span class="keyword">return</span> self.x</span><br><span class="line"></span><br><span class="line">f = fib(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> f:</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887340.png"></p>
+<p>重写这两个方法后就对象就<strong>变成了迭代器</strong>，使用next的输出方法。</p>
+<blockquote>
+<p>5、其他特殊方法</p>
+</blockquote>
+<p>见链接：<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.8/reference/datamodel.html#special-method-names">https://docs.python.org/zh-cn/3.8/reference/datamodel.html#special-method-names</a></p>
+<h2 id="7-5-2-重载运算符"><a href="#7-5-2-重载运算符" class="headerlink" title="7.5.2 重载运算符"></a>7.5.2 重载运算符</h2><p>运算符的本质就是第一个操作数所在的命名空间的特殊方法。例如：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887341.png"></p>
+<p>加法运算符就是上图所示的一个方法。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887343.png"></p>
+<p>上例就是在<code>int()</code>这个<strong>命名空间</strong>里调用了<code>__add__方法</code>。</p>
+<h1 id="7-6-综合实例：有理数类的实现"><a href="#7-6-综合实例：有理数类的实现" class="headerlink" title="7.6 综合实例：有理数类的实现"></a>7.6 综合实例：有理数类的实现</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Fraction</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, high=<span class="number">0</span>, down=<span class="number">1</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        一个初始化函数。我们需要实现有理数的判别与化简。</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> down == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> ZeroDivisionError(<span class="string">&quot;down cannot be 0!&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> high == <span class="number">0</span>:</span><br><span class="line">            self._high = <span class="number">0</span></span><br><span class="line">            self._down = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> (high &gt; <span class="number">0</span> <span class="keyword">and</span> down &lt; <span class="number">0</span>) <span class="keyword">or</span> (high &lt; <span class="number">0</span> <span class="keyword">and</span> down &gt; <span class="number">0</span>):</span><br><span class="line">                flag = -<span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                flag = <span class="number">1</span></span><br><span class="line">            a = <span class="built_in">abs</span>(high)</span><br><span class="line">            b = <span class="built_in">abs</span>(down)</span><br><span class="line">            <span class="keyword">while</span> a % b != <span class="number">0</span>:</span><br><span class="line">                ta = a</span><br><span class="line">                tb = b</span><br><span class="line">                a = tb</span><br><span class="line">                b = ta % tb</span><br><span class="line">            self._high = <span class="built_in">abs</span>(high) // b * flag</span><br><span class="line">            self._down = <span class="built_in">abs</span>(down) // b</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__add__</span>(<span class="params">self, other</span>):</span><br><span class="line">        high1 = (self._high * other._down) + (self._down * other._high)</span><br><span class="line">        down1 = self._down * other._down</span><br><span class="line">        <span class="keyword">return</span> Fraction(high1, down1)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__sub__</span>(<span class="params">self, other</span>):</span><br><span class="line">        high1 = (self._high * other._down) - (self._down * other._high)</span><br><span class="line">        down1 = self._down * other._down</span><br><span class="line">        <span class="keyword">return</span> Fraction(high1, down1)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> (self._high == other._high <span class="keyword">and</span> self._down == other._down)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__lt__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> (self._high * other._down &lt; self._down * other._high)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">str</span>(self._high) + <span class="string">&#x27;/&#x27;</span> + <span class="built_in">str</span>(self._down))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">b = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line"></span><br><span class="line">frac1 = Fraction(a, b)</span><br><span class="line"><span class="built_in">print</span>(frac1)</span><br><span class="line">c = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">d = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">frac2 = Fraction(c, d)</span><br><span class="line"><span class="built_in">print</span>(frac1 &lt; frac2)</span><br><span class="line"><span class="built_in">print</span>(frac1 == frac2)</span><br><span class="line"></span><br><span class="line">res_add = frac1 + frac2</span><br><span class="line">res_sub = frac1 - frac2</span><br><span class="line"><span class="built_in">print</span>(res_add)</span><br><span class="line"><span class="built_in">print</span>(res_sub)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>注意点</strong>：<br>1、对于分子分母的<strong>化简</strong>要理清原理。<br>2、对于加减比较等<strong>运算需要在类里进行定义</strong>。（具体的原理在上小节）</p>
+<h1 id="7-7-练习补充"><a href="#7-7-练习补充" class="headerlink" title="7.7 练习补充"></a>7.7 练习补充</h1><blockquote>
+<p>内容来自实训和测试</p>
+</blockquote>
+<h2 id="测试部分"><a href="#测试部分" class="headerlink" title="测试部分"></a>测试部分</h2><p>1、<code>__init__方法</code></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887342.png"></p>
+<p>2、多态辨析</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887344.png"></p>
+<p>3、静态方法<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887345.png"></p>
+<p>4、类方法</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887346.png"></p>
+<hr>
+<p>5、析构函数的调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Register</span>:  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, **kwargs</span>):  </span><br><span class="line">        self._age = kwargs.get(<span class="string">&#x27;age&#x27;</span>)  </span><br><span class="line">        self._name = kwargs.get(<span class="string">&#x27;name&#x27;</span>)  </span><br><span class="line">        self._sex = kwargs.get(<span class="string">&#x27;sex&#x27;</span>)  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_age_value</span>(<span class="params">self</span>):  </span><br><span class="line">        <span class="keyword">return</span> self._age  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_name_value</span>(<span class="params">self</span>):  </span><br><span class="line">        <span class="keyword">return</span> self._name  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_sex_value</span>(<span class="params">se1f</span>) :  </span><br><span class="line">        <span class="keyword">return</span> self._sex  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__del__</span>(<span class="params">self</span>):  </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;调用了一次析构函数&#x27;</span>)  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():  </span><br><span class="line">    wang = Register(age = <span class="number">8</span>, name=<span class="string">&#x27;wang&#x27;</span>, sex=<span class="string">&#x27;male&#x27;</span>)  </span><br><span class="line">    WANG = wang  </span><br><span class="line">    <span class="keyword">del</span> wang  </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:  </span><br><span class="line">    main()  </span><br></pre></td></tr></table></figure>
+<p>只是调用一个析构函数。</p>
+<hr>
+<p>6、Mixin混合类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReprMixin</span>:   </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):  </span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;[%s, %s, %s]&#x27;</span> %(self.name, self.gender, self.age)</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MappingMixin</span>:  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, key</span>):  </span><br><span class="line">        <span class="keyword">return</span> self.__dict__.get(key)  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__setitem__</span>(<span class="params">self, key, value</span>):  </span><br><span class="line">        <span class="keyword">return</span> self.__dict__.<span class="built_in">set</span>(key, value)</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span>(<span class="title class_ inherited__">ReprMixin</span>):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, gender, age, **kwargs</span>):  </span><br><span class="line">        self.name = name  </span><br><span class="line">        self.gender = gender  </span><br><span class="line">        self.age = age  </span><br><span class="line">        self.zhicheng = kwargs.get(<span class="string">&#x27;zhicheng&#x27;</span>)</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">MappingMixin</span>):  </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, gender, age, **kwargs</span>):  </span><br><span class="line">        self.name = name  </span><br><span class="line">        self.gender = gender  </span><br><span class="line">        self.age = age  </span><br><span class="line">        self.num = kwargs.get(<span class="string">&#x27;num&#x27;</span>)</span><br><span class="line">t = Teacher(<span class="string">&#x27;教师甲&#x27;</span>, <span class="string">&#x27;female&#x27;</span>, <span class="string">&#x27;48&#x27;</span>, zhicheng = <span class="string">&#x27;副教授&#x27;</span>)  </span><br><span class="line">s = Student(<span class="string">&#x27;学生甲&#x27;</span>, <span class="string">&#x27;male&#x27;</span>, <span class="string">&#x27;18&#x27;</span>, num =<span class="number">20180019</span>)  </span><br><span class="line"><span class="built_in">print</span>(t, s)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887347.png" alt="enter description here"></p>
+<p><strong>原因</strong>：<br>t对象的类与s对象的类继承的类不同。t可以按照上重写的方式输出，而s可以使用字典的输出方法。</p>
+<h2 id="实训项目"><a href="#实训项目" class="headerlink" title="实训项目"></a>实训项目</h2><blockquote>
+<p>1、工资问题</p>
+</blockquote>
+<p><code>from abc import ABCMeta, abstractmethod</code></p>
+<p><a target="_blank" rel="noopener" href="https://python3-cookbook.readthedocs.io/zh_CN/latest/c08/p12_define_interface_or_abstract_base_class.html">上模块介绍见此</a></p>
+<p><strong>代码1</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">某公司有三种类型的员工 分别是部门经理、程序员和销售员</span></span><br><span class="line"><span class="string">需要设计一个工资结算系统 根据提供的员工信息来计算月薪</span></span><br><span class="line"><span class="string">部门经理的月薪是每月固定15000元</span></span><br><span class="line"><span class="string">程序员的月薪按本月工作时间计算 每小时150元</span></span><br><span class="line"><span class="string">销售员的月薪是1200元的底薪加上销售额5%的提成</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABCMeta, abstractmethod</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Employee</span>(<span class="built_in">object</span>, metaclass=ABCMeta):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;员工&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        初始化方法</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param name: 姓名</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        self._name = name</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">name</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;返回姓名&#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="keyword">return</span> self._name</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_salary</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        获得月薪</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :return: 月薪</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Manager</span>(<span class="title class_ inherited__">Employee</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;部门经理&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_salary</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">15000.0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Programmer</span>(<span class="title class_ inherited__">Employee</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;程序员&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, working_hour=<span class="number">0</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">              初始化方法</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">              :param name: 姓名</span></span><br><span class="line"><span class="string">              :param working_hour：工作时长</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">              &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="built_in">super</span>().__init__(name)</span><br><span class="line">        self._working_hour = working_hour</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">working_hour</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;返回工作时长&#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="keyword">return</span> self._working_hour</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @working_hour.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">working_hour</span>(<span class="params">self, working_hour</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        设置工作时长</span></span><br><span class="line"><span class="string">        :param working_hour:工作时长</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        self._working_hour = working_hour <span class="keyword">if</span> working_hour &gt; <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_salary</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;返回程序员所得工资&#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">150.0</span>*self._working_hour</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Salesman</span>(<span class="title class_ inherited__">Employee</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;销售员&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, sales=<span class="number">0</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                   初始化方法</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                   :param name: 姓名</span></span><br><span class="line"><span class="string">                   :param sales：销售额</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                   &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="built_in">super</span>().__init__(name)</span><br><span class="line">        self._sales = sales</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sales</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;返回销售额&#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="keyword">return</span> self._sales</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @sales.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sales</span>(<span class="params">self, sales</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        设置销售额</span></span><br><span class="line"><span class="string">        :param sales:销售额</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        self._sales = sales <span class="keyword">if</span> sales&gt;<span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_salary</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;返回销售员所得工资&#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment">#        请在此处添加代码       #</span></span><br><span class="line">        <span class="comment"># *************begin************#</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1200</span>+<span class="number">0.05</span>*self._sales</span><br><span class="line">        <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>代码2</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> main <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABCMeta, abstractmethod</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    emps = [</span><br><span class="line">        Manager(<span class="string">&#x27;刘备&#x27;</span>), Programmer(<span class="string">&#x27;诸葛亮&#x27;</span>),</span><br><span class="line">        Manager(<span class="string">&#x27;曹操&#x27;</span>), Salesman(<span class="string">&#x27;荀彧&#x27;</span>),</span><br><span class="line">        Salesman(<span class="string">&#x27;吕布&#x27;</span>), Programmer(<span class="string">&#x27;张辽&#x27;</span>),</span><br><span class="line">        Programmer(<span class="string">&#x27;赵云&#x27;</span>)</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">for</span> emp <span class="keyword">in</span> emps:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(emp, Programmer):</span><br><span class="line">            emp.working_hour = <span class="number">7</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">isinstance</span>(emp, Salesman):</span><br><span class="line">            emp.sales = <span class="number">100</span></span><br><span class="line">        <span class="comment"># 同样是接收get_salary这个消息但是不同的员工表现出了不同的行为(多态)</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;%s本月工资为: ￥%s元&#x27;</span> %</span><br><span class="line">              (emp.name, emp.get_salary()))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648348887362.png"></p>
+<p><strong>注意点：</strong><br>1、<strong>抽象基类</strong>的使用<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649562238890.png"><br>将员工类定义为抽象基类，此基类无法被实例化，但是可以被继承。同时使用装饰器规定了抽象方法， 其作用是继承此基类的子类必须去实现这个方法，否则会报错。<br>通过<code>from abc import ABCMeta, abstractmethod</code>导入模块。</p>
+<blockquote>
+<p>2、设计LFU缓存类</p>
+</blockquote>
+<p>题目介绍：<br>缓存算法广泛存在于各种软件中，其中有一些著名的缓存方法，如LFU替换算法，LFU（Least Frequently Used）算法根据数据的历史访问频率来淘汰数据，其核心思想是“如果数据过去被访问多次，那么将来被访问的频率也更高”。LFU实现方式是这个缓存算法使用一个计数器来记录条目被访问的频率。通过使用LFU缓存算法，最低访问数的条目首先被移除。LFU的每个数据块都有一个引用计数，所有数据块按照引用计数排序，具有相同引用计数的数据块则按照时间排序。</p>
+<p>LFU缓存的实现：LFU(Least Frequently Used)是根据频率维度来选择将要淘汰的元素，即删除访问频率最低的元素。如果两个元素的访问频率相同，则淘汰最久没被访问的元素。那么LFU淘汰的时候会选择两个维度，先比较频率，选择访问频率最小的元素；如果频率相同，则按时间维度淘汰掉最久远的那个元素。</p>
+<p>因此，LFU可以通过两个哈希表再加上多个双链表来实现：<br>第一张哈希表是key-value的哈希表，如下图所示。其中key就是输入的key。value是一个节点对象。这个节点对象Node包含了key，value，以及频率，这个Node又会出现在第二个哈希表的value中。Node中重复包含了key，这是因为某些情况下我们不是通过key-value哈希表拿到Node的，而是通过其他方式获得了Node，之后需要用Node中的key去key-value哈希表中做一些操作，所以Node中包含了一些冗余信息。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555550861.png"></p>
+<p>第二张哈希表是频率哈希表，如下图所示。这张哈希表中的key是频率，也就是元素被访问的频率(被访问了1次，被访问了两次等)，它的value是一个双向链表，图一中的Node对象，在图二中同样存在，图二中的Node其实是双向链表中的一个节点。图一中的Node对象中包含了一个冗余的key，其实它还包含了一个冗余的频率值，因为某些情况下，我们需要通过Node对象中的频率值，去频率哈希表中做查找，所以也需要一个冗余的频率值。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555573227.png"></p>
+<p>因此，我们将两个哈希表整合可以发现，整个完整的LFU cache结构如下图所示。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555591078.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648555605362.png"></p>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> operator <span class="keyword">import</span> methodcaller</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Node</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    双链表中的链表节点对象</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, key=<span class="literal">None</span>, value=<span class="literal">None</span>, freq=<span class="number">0</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            key:对应输入的key</span></span><br><span class="line"><span class="string">            value:对应输入的value</span></span><br><span class="line"><span class="string">            freq:被访问的频率</span></span><br><span class="line"><span class="string">            pre:指向前一个节点的指针</span></span><br><span class="line"><span class="string">            next:指向后一个节点的指针</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.key = key</span><br><span class="line">        self.value = value</span><br><span class="line">        self.freq = freq</span><br><span class="line">        self.pre = <span class="literal">None</span></span><br><span class="line">        self.<span class="built_in">next</span> = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinkedList</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    自定义的双向链表</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            __head:双向链表的头结点</span></span><br><span class="line"><span class="string">            __tail:双向链表的尾节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.__head = Node()</span><br><span class="line">        self.__tail = Node()</span><br><span class="line">        self.__head.<span class="built_in">next</span> = self.__tail</span><br><span class="line">        self.__tail.pre = self.__head</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">insertFirst</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        将指定的节点插入到链表的第一个位置</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            node:将要插入的节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        node.<span class="built_in">next</span> = self.__head.<span class="built_in">next</span></span><br><span class="line">        self.__head.<span class="built_in">next</span>.pre = node</span><br><span class="line">        self.__head.<span class="built_in">next</span> = node</span><br><span class="line">        node.pre = self.__head</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">delete</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        从链表中删除指定的节点</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            node:将要删除的节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> self.__head.<span class="built_in">next</span> == self.__tail:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        node.pre.<span class="built_in">next</span> = node.<span class="built_in">next</span></span><br><span class="line">        node.<span class="built_in">next</span>.pre = node.pre</span><br><span class="line">        node.<span class="built_in">next</span> = <span class="literal">None</span></span><br><span class="line">        node.pre = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getLast</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        从链表中获取最后一个节点</span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            双向链表中的最后一个节点，如果是空链表则返回None</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> self.__head.<span class="built_in">next</span> == self.__tail:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        <span class="keyword">return</span> self.__tail.pre</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">isEmpty</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        判断链表是否为空，除了head和tail没有其他节点即为空链表</span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            链表不空返回True，否则返回False</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> self.__head.<span class="built_in">next</span> == self.__tail</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LFUCache</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    自定义的LFU缓存</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, capacity</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            __capacity:缓存的最大容量</span></span><br><span class="line"><span class="string">            __keyMap: key-&gt;Node 这种结构的字典</span></span><br><span class="line"><span class="string">            __freqMap:freq-&gt;LinkedList 这种结构的字典</span></span><br><span class="line"><span class="string">            __minFreq:记录缓存中最低频率</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.__capacity = capacity</span><br><span class="line">        self.__keyMap = <span class="built_in">dict</span>()</span><br><span class="line">        self.__freqMap = <span class="built_in">dict</span>()</span><br><span class="line">        self.__minFreq = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, key</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        获取一个元素，如果key不存在则返回-1，否则返回对应的value</span></span><br><span class="line"><span class="string">        同时更新被访问元素的频率</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            key:要查找的关键字</span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            如果没找到则返回-1，否则返回对应的value</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">#你的代码在这里#</span></span><br><span class="line">        <span class="keyword">if</span> key <span class="keyword">not</span> <span class="keyword">in</span> self.__keyMap:</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            o_node = self.__keyMap.get(key)</span><br><span class="line">            self.__increment(o_node)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> o_node.value</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">put</span>(<span class="params">self, key, value</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        插入指定的key和value，如果key存在则更新value，同时更新频率</span></span><br><span class="line"><span class="string">        如果key不存并且缓存满了，则删除频率最低的元素，并插入新元素</span></span><br><span class="line"><span class="string">        否则，直接插入新元素</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            key:要插入的关键字</span></span><br><span class="line"><span class="string">            value:要插入的值</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">#你的代码在这里#</span></span><br><span class="line">        <span class="keyword">if</span> key <span class="keyword">in</span> self.__keyMap:</span><br><span class="line">            o_node = self.__keyMap.get(key)</span><br><span class="line">            o_node.value = value</span><br><span class="line">            self.__increment(o_node)</span><br><span class="line"></span><br><span class="line">            self.__deleteNode(o_node)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.__keyMap.keys())==self.__capacity:</span><br><span class="line">                self.__removeMinFreqElement()</span><br><span class="line">                n_node=Node(key, value,freq=<span class="number">1</span>)</span><br><span class="line">                self.__keyMap[key] = n_node</span><br><span class="line">                self.__increment(n_node,is_new_node=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                n_node = Node(key, value, freq=<span class="number">1</span>)</span><br><span class="line">                self.__keyMap[key] = n_node</span><br><span class="line">                self.__increment(n_node, is_new_node=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__increment</span>(<span class="params">self, node, is_new_node=<span class="literal">False</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        更新节点的访问频率</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            node:要更新的节点</span></span><br><span class="line"><span class="string">            is_new_node:是否是新节点，新插入的节点和非新插入节点更新逻辑不同</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> is_new_node:</span><br><span class="line">            self.__minFreq = <span class="number">1</span></span><br><span class="line">            self.__setDefaultLinkedList(node)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.__deleteNode(node)</span><br><span class="line">            node.freq += <span class="number">1</span></span><br><span class="line">            self.__setDefaultLinkedList(node)</span><br><span class="line">            <span class="keyword">if</span> self.__minFreq <span class="keyword">not</span> <span class="keyword">in</span> self.__freqMap:</span><br><span class="line">                self.__minFreq += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__setDefaultLinkedList</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        根据节点的频率，插入到对应的LinkedList中，如果LinkedList不存在则创建</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            node:将要插入到LinkedList的节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> node.freq <span class="keyword">not</span> <span class="keyword">in</span> self.__freqMap:</span><br><span class="line">            self.__freqMap[node.freq] = LinkedList()</span><br><span class="line">        linkedList = self.__freqMap[node.freq]</span><br><span class="line">        linkedList.insertFirst(node)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__deleteNode</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        删除指定的节点，如果节点删除后，对应的双链表为空，则从__freqMap中删除这个链表</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            node:将要删除的节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> node.freq <span class="keyword">not</span> <span class="keyword">in</span> self.__freqMap:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        linkedList = self.__freqMap[node.freq]</span><br><span class="line">        freq = node.freq</span><br><span class="line">        linkedList.delete(node)</span><br><span class="line">        <span class="keyword">if</span> linkedList.isEmpty():</span><br><span class="line">            <span class="keyword">del</span> self.__freqMap[freq]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__removeMinFreqElement</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        删除频率最低的元素，从__freqMap和__keyMap中都要删除这个节点，</span></span><br><span class="line"><span class="string">        如果节点删除后对应的链表为空，则要从__freqMap中删除这个链表</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        linkedList = self.__freqMap[self.__minFreq]</span><br><span class="line">        node = linkedList.getLast()</span><br><span class="line">        linkedList.delete(node)</span><br><span class="line">        <span class="keyword">del</span> self.__keyMap[node.key]</span><br><span class="line">        <span class="keyword">if</span> linkedList.isEmpty():</span><br><span class="line">            <span class="keyword">del</span> self.__freqMap[node.freq]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    operation = <span class="built_in">eval</span>(<span class="built_in">input</span>())</span><br><span class="line">    data = <span class="built_in">eval</span>(<span class="built_in">input</span>())</span><br><span class="line">    cache = <span class="built_in">eval</span>(<span class="string">&quot;&#123;&#125;(&#123;&#125;)&quot;</span>.<span class="built_in">format</span>(operation.pop(<span class="number">0</span>), data.pop(<span class="number">0</span>)[<span class="number">0</span>]))</span><br><span class="line">    output = []</span><br><span class="line">    <span class="keyword">for</span> i, j <span class="keyword">in</span> <span class="built_in">zip</span>(operation, data):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="string">&#x27;put&#x27;</span>:</span><br><span class="line">            methodcaller(<span class="string">&#x27;put&#x27;</span>, j[<span class="number">0</span>], j[<span class="number">1</span>])(cache)</span><br><span class="line">            output.append(<span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">elif</span> i == <span class="string">&#x27;get&#x27;</span>:</span><br><span class="line">            output.append(methodcaller(<span class="string">&#x27;get&#x27;</span>, j[<span class="number">0</span>])(cache))</span><br><span class="line">    <span class="built_in">print</span>(output)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意点分析</strong>：<br>1、<code>from operator import methodcaller</code>的使用</p>
+<p>2、 <code>cache = eval(&quot;&#123;&#125;(&#123;&#125;)&quot;.format(operation.pop(0), data.pop(0)[0]))</code>的初始化</p>
+<p>3、get时需要在keyMap提取到对应的节点，而后查看其值。同时注意<code>__increment</code>方法包含了节点的删除与插入，不需要再删除一次。</p>
+<p>4、put时，需要新建一个节点（<strong>频率赋值为1</strong>），并把节点放到表里。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch7%20%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" title="Python学习--ch7 面向对象程序设计">https://danggeovo.github.io/2023/04/10/Python课程学习--ch7 面向对象程序设计/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--ch8%20%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B/" rel="prev" title="Python学习--ch8 进程和线程">
+                  <i class="fa fa-angle-left"></i> Python学习--ch8 进程和线程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0--Python%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E5%92%8C%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" rel="next" title="Python学习--Python语言概述和开发环境">
+                  Python学习--Python语言概述和开发环境 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="ATT&amp;CK和TCTF框架从网空杀伤链模型演进到TCTF、ATT&amp;CK等更细粒度的威胁框架体系，网空威胁框架已成为深入认知威胁，交换行动情报、改善防御能力、提升产品和体系能力的重要参考。 实现告警和知识标签输出靠拢到威胁框架体系，并在此基础上参照威胁框架不断完善安全引擎、产品能力和分析支撑工作。 网空威胁框架的发展历程早期的网空威胁，往往表现为离散的威胁事件–因此，对应采取的威胁认">
+<meta property="og:type" content="article">
+<meta property="og:title" content="威胁分析框架概述">
+<meta property="og:url" content="https://danggeovo.github.io/2023/10/20/[%E2%88%9A]ATT&CK%E5%92%8CNAS%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="ATT&amp;CK和TCTF框架从网空杀伤链模型演进到TCTF、ATT&amp;CK等更细粒度的威胁框架体系，网空威胁框架已成为深入认知威胁，交换行动情报、改善防御能力、提升产品和体系能力的重要参考。 实现告警和知识标签输出靠拢到威胁框架体系，并在此基础上参照威胁框架不断完善安全引擎、产品能力和分析支撑工作。 网空威胁框架的发展历程早期的网空威胁，往往表现为离散的威胁事件–因此，对应采取的威胁认">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013150655109.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013155844920.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//image20200617-4.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//image20200617-5.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013153750388.png">
+<meta property="article:published_time" content="2023-10-20T05:40:32.000Z">
+<meta property="article:modified_time" content="2023-11-06T07:03:43.274Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="ATT&amp;CK">
+<meta property="article:tag" content="威胁框架">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013150655109.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/10/20/[%E2%88%9A]ATT&CK%E5%92%8CNAS%E6%A1%86%E6%9E%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/10/20/[%E2%88%9A]ATT&CK%E5%92%8CNAS%E6%A1%86%E6%9E%B6/","path":"2023/10/20/[√]ATT&CK和NAS框架/","title":"威胁分析框架概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>威胁分析框架概述 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ATT-CK%E5%92%8CTCTF%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">ATT&amp;CK和TCTF框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%A9%BA%E5%A8%81%E8%83%81%E6%A1%86%E6%9E%B6%E7%9A%84%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">网空威胁框架的发展历程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%A9%BA%E5%A8%81%E8%83%81%E6%A1%86%E6%9E%B6%E7%9A%84%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">网空威胁框架的构建过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%9B%E5%85%8B%E5%B8%8C%E5%BE%B7-%E9%A9%AC%E4%B8%81%E4%B8%8E%E7%BD%91%E7%A9%BA%E6%9D%80%E4%BC%A4%E9%93%BE%E6%A1%86%E6%9E%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">洛克希德-马丁与网空杀伤链框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MITRE%E4%B8%8EATTCK%E6%A1%86%E6%9E%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">MITRE与ATTCK框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BE%8E%E5%9B%BD%E5%9B%BD%E5%AE%B6%E6%83%85%E6%8A%A5%E6%80%BB%E7%9B%91%E5%8A%9E%E5%85%AC%E5%AE%A4%E4%B8%8E-CCTF%E6%A1%86%E6%9E%B6"><span class="nav-number">1.2.3.</span> <span class="nav-text">美国国家情报总监办公室与 CCTF框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSA%E4%B8%8ETCTF%E6%A1%86%E6%9E%B6"><span class="nav-number">1.2.4.</span> <span class="nav-text">NSA与TCTF框架</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E5%86%85%E5%AE%B9%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">框架内容介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ATT-CK%E6%A1%86%E6%9E%B6"><span class="nav-number">2.1.</span> <span class="nav-text">ATT&amp;CK框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCTF%E6%A1%86%E6%9E%B6"><span class="nav-number">2.2.</span> <span class="nav-text">TCTF框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%80%85%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.3.</span> <span class="nav-text">二者的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E5%A8%81%E8%83%81%E6%A1%86%E6%9E%B6"><span class="nav-number">3.</span> <span class="nav-text">如何利用威胁框架</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/10/20/[%E2%88%9A]ATT&CK%E5%92%8CNAS%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="威胁分析框架概述 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          威胁分析框架概述
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-10-20 13:40:32" itemprop="dateCreated datePublished" datetime="2023-10-20T13:40:32+08:00">2023-10-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-06 15:03:43" itemprop="dateModified" datetime="2023-11-06T15:03:43+08:00">2023-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】恶意代码分析与处置</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/%E5%A4%84%E7%BD%AE%E6%96%B9%E6%B3%95%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">处置方法论</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="ATT-CK和TCTF框架"><a href="#ATT-CK和TCTF框架" class="headerlink" title="ATT&amp;CK和TCTF框架"></a>ATT&amp;CK和TCTF框架</h1><p>从网空杀伤链模型演进到<code>TCTF、ATT&amp;CK</code>等更细粒度的<strong>威胁框架体系</strong>，网空威胁框架已成为深入认知威胁，交换行动情报、改善防御能力、提升产品和体系能力的重要参考。</p>
+<p>实现告警和知识标签输出靠拢到威胁框架体系，并在此基础上参照威胁框架不断完善安全引擎、产品能力和分析支撑工作。</p>
+<h2 id="网空威胁框架的发展历程"><a href="#网空威胁框架的发展历程" class="headerlink" title="网空威胁框架的发展历程"></a>网空威胁框架的发展历程</h2><p>早期的网空威胁，往往表现为<strong>离散的威胁事件</strong>–因此，对应采取的威胁认知方式，也往往是<strong>离散化</strong>的，即单独地看待、分析和处置各个威胁事件。</p>
+<p>然而，随着<strong>网络安全上升到国家安全</strong>的层面，网空已成为大国博弈与地缘斗争的激烈对抗领域，对网空安全构成严重危害的主体威胁，已转化为<strong>APT（Advanced Persistent Threat，高级持续威胁）形式</strong>的体系化攻击。鉴于APT攻击作业的持久性，跨时间域、跨网域而离散发生的多起威胁事件，本质上属于同一攻击作业过程。这些威胁事件，貌似是各个孤立存在的，然而，它们服务于同一攻击作业中不同阶段不同目的，<strong>具有前后关联、配合协作的内在联系</strong>。</p>
+<p>当前网空对抗的严峻形势，就促成了<strong>网空威胁框架</strong>的提出与发展。网空威胁框架是一套科学的方法和工具体系，能够更深入地认知APT形式的网空威胁，系统全面地分析其<strong>攻击意图、手法、过程与技术</strong>，达成增强防御有效性的目标。</p>
+<hr>
+<p><strong>什么是威胁框架？</strong></p>
+<p><strong>威胁框架</strong>是<strong>系统认知网空威胁、构建有效防御的方法与工具体系</strong>。简言之，威胁框架具有<code>“约束性”</code>和<code>“支撑性”</code>两个基本属性。</p>
+<ul>
+<li>所谓“<strong>约束性</strong>”，即为<strong>界定所认知的问题</strong>；例如，“横向移动”是指一种什么样的攻击作业。</li>
+<li>所谓“<strong>支撑性</strong>”，即为<strong>能够提供对问题的解析与处理</strong>；例如，“横向移动”的作业目标、作业过程、检测要素、缓解措施等。</li>
+</ul>
+<p>具体来看，为了能够满足不同程度的分析需求，可简可繁，既能<strong>向高层概念抽象</strong>，又能<strong>向底层细节解析</strong>，威胁框架通常采取层次化的组成结构。这种层次化的组成结构，首先通过构造和定义核心概念与术语，达成分析的基础性共识；然后，进一步引入更多的或更为具象化的属性描述、特征提取、关系刻画、功能作用、甚至算法推演等，形成逐步深入的分析层次，最终构成多层结构的分析体系。借助这一分析体系，网空防御者即可实施对网空威胁的分析预测、交流共享情报、优化防御措施、改善防御态势等。</p>
+<h2 id="网空威胁框架的构建过程"><a href="#网空威胁框架的构建过程" class="headerlink" title="网空威胁框架的构建过程"></a><strong>网空威胁框架的构建过程</strong></h2><p>具体的有影响力的威胁框架，主要是洛克希德-马丁的<code>网空杀伤链框架</code>（Cyber Kill Chain Framework）、MITRE的<code>ATT&amp;CK框架</code>（Common Knowledge base of Adversary Tactics and Techniques，对手战术技术公共知识库）、ODNI的<code>CCTF框架</code>（Common Cyber Threat Framework，公共网空威胁框架），以及NSA的<code>TCTF框架</code>（Technical Cyber Threat Framework，技术性网空威胁框架）。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013150655109.png" alt="image-20231013150655109"></p>
+<p>下面<strong>简单介绍下这几家</strong>：</p>
+<h3 id="洛克希德-马丁与网空杀伤链框架"><a href="#洛克希德-马丁与网空杀伤链框架" class="headerlink" title="洛克希德-马丁与网空杀伤链框架"></a><strong>洛克希德-马丁</strong>与<strong>网空杀伤链框架</strong></h3><p>洛克希德-马丁作为<strong>全球最大的防务承包商</strong>，对信息网络安全具有高度严格的需求以及全谱领先的能力。</p>
+<p>其于2011年提出的<code>网空杀伤链框架</code>，将网空威胁划分为7个阶段，分别是“<code>侦察-武器构建-载荷投送-突防利用-安装植入-通信控制-达成目标</code>”。</p>
+<p>网空杀伤链框架创立了网空威胁框架的基本设计理念，即<strong>基于攻击者视角、以整个攻击行动统一离散的威胁事件而形成整体性分析</strong>。不同于以往基于防御者视角的安全模型与分析方法，网空杀伤链从攻击者视角更为清晰地理解攻击行动，通过上下文建立起事件之间的关联分析，从而更有效地理解攻击目标与攻击过程，也更有助于找到潜在对策与应对手段。</p>
+<h3 id="MITRE与ATTCK框架"><a href="#MITRE与ATTCK框架" class="headerlink" title="MITRE与ATTCK框架"></a>MITRE与ATTCK框架</h3><p><strong>历史</strong>：MITRE是一家历史悠久的，专注于科学与技术研究，具有政府安全服务背景的非盈利机构，尤其以安全建模能力而见长。</p>
+<p><strong>前缺</strong>：由于洛克希德-马丁<strong>网空杀伤链框架的抽象层次较高</strong>，虽然有助于描述攻击整体过程与理解攻击目的，但难以实际运用于表述和分析敌方的各个行动、行动之间的<strong>因果作用、行动序列与战术目标</strong>的关系，也缺乏分析攻击行动所涉及的与平台相关的数据源、防御措施、安全配置和解决对策等要素。</p>
+<p><strong>创新</strong>：为针对性解决威胁框架<strong>在战术技术层面上实践实用的问题</strong>，MITRE提出了<code>ATT&amp;CK</code>框架。ATT&amp;CK框架在网空杀伤链框架基础上，从大量的现实网空威胁中提炼出攻击行动的具体信息，对这些信息进行了细致的技术分解与特征描述，进而构造了丰富的攻击者战术技术知识库；通过知识库以及相关的工具系统，可以深入分析攻击行动的过程与细节，从而得以有效地改善防御态势、提高防御水平、优化安全产品与安全服务的技术能力。</p>
+<p><strong>更新</strong>：此外，ATT&amp;CK框架的迭代更新非常积极，从2015年正式推出，几乎每隔三至六个月，都会有一次显著的更新，这使得ATT&amp;CK框架能够及时地跟踪、涵盖最新的APT攻击特征，从而保持ATT&amp;CK框架的生命力与有效性。</p>
+<hr>
+<p><strong>过渡</strong>：从网空杀伤链框架到ATT&amp;CK框架，反映了对网空威胁的认知，在技术层面上<strong>由浅入深的演进</strong>。然而，网空对抗的本质是国家行为体的对抗，网空威胁不仅仅只是技术层面的问题，也不仅仅是只依赖安全厂商就能解决的问题。政府与国家情报体系必须密切关注网空威胁，并依据国家安全利益，对网空威胁的防御和反制进行分析研判、规划决策、资源协调、组织联动等方方面面的工作。为此，相关机构就提出了另外两个<strong>具有情报体系背景</strong>的网空威胁框架，分别是<code>CCTF框架和TCTF框架</code>。</p>
+<h3 id="美国国家情报总监办公室与-CCTF框架"><a href="#美国国家情报总监办公室与-CCTF框架" class="headerlink" title="美国国家情报总监办公室与 CCTF框架"></a>美国国家情报总监办公室与 CCTF框架</h3><p><strong>背景</strong>：<code>CCTF框架</code>是ODNI（Office of the Director of National Intelligence，美国国家情报总监办公室）于2017年发布的面向政府机构、情报部门、政策与决策部门的网空威胁交流分析框架。</p>
+<p><strong>创新</strong>：该框架将威胁过程划分为“<strong>准备- 突破- 存在- 作用与后果</strong>”四个阶段，并通过分层描述，实现对网空威胁的分类与特征化，进而支撑分析、高层决策、趋势与差距研判等工作。</p>
+<p><strong>优点</strong>：总体而言，CCTF框架的攻击阶段划分是<strong>极为广义化</strong>的，其层次化的分析模型也是极度简化与高度概括的，所采用的术语与描述也不受网空专业技术语境的约束。这样的设计特性，使得<strong>网空专家和非网空专家都能够借助该框架进行清楚沟通与相互理解</strong>，有助于政府高层对网空威胁的分析决策。</p>
+<p><strong>缺点</strong>：然而，对网空威胁的认知与对抗，终究是一个<strong>高度技术化</strong>的问题；与此同时，任何涉及网空威胁的高层分析与决策，也终究需要技术部门与安全厂商去落实执行。有机地将政府高层决策与厂商安全实践能力紧密结合在一起，是网空体系化对抗所必然要求的。</p>
+<h3 id="NSA与TCTF框架"><a href="#NSA与TCTF框架" class="headerlink" title="NSA与TCTF框架"></a>NSA与TCTF框架</h3><p>NSA（National Security Agency，美国国家安全局）于2018年提出了<code>TCTF框架</code>，以作为<strong>CCTF框架的技术性扩展</strong>。在大国博弈与地缘竞争背景下，NSA在全球网空对抗态势中，具有极为特殊与重要的角色和地位。一方面，NSA是美方情报体系中体量最大的成员机构，另一方面，NSA长期专注于技术情报，是全球网空攻防实力最强的一方。基于NSA的情报角色和技术优势，TCTF框架深入到网空威胁专业技术语境中，完成了对攻击意图、作业阶段、行动特征的拆解与刻画，形成了“政府情报机构”与“安全执行厂商”之间密切交流的粘合剂。</p>
+<hr>
+<p><strong>综上</strong>，ATTCK&amp;CK框架是对网空杀伤链框架的改进，TCTF框架是对CCTF框架的改进与扩展，所以选择最新的框架即可。</p>
+<p>概括性地来看，二者都<strong>涵盖了网空威胁从高层目标意图到底层行为细节</strong>，但二者并非简单的冗余或重复，不同点如下：</p>
+<ul>
+<li><code>ATT&amp;CK框架</code>侧重<strong>现实攻击的技术分析</strong>层面，以<strong>面向技术研究和产业界</strong>为主；</li>
+<li><code>TCTF框架</code>侧重<strong>攻防对抗的情报研判</strong>层面，以<strong>面向政府和情报机构的技术部门</strong>为主。</li>
+</ul>
+<p>这种差异，并不会形成对二者综合运用的障碍，反而恰恰是由于二者差异的存在，能够产生<strong>互补与价值叠加</strong>的效果。</p>
+<h1 id="框架内容介绍"><a href="#框架内容介绍" class="headerlink" title="框架内容介绍"></a>框架内容介绍</h1><h2 id="ATT-CK框架"><a href="#ATT-CK框架" class="headerlink" title="ATT&amp;CK框架"></a>ATT&amp;CK框架</h2><p><code>ATT&amp;CK框架</code>是一套技术细节丰富、易于共享应用的<strong>攻击行为分析模型和知识库</strong>。</p>
+<blockquote>
+<p> <strong>核心要素</strong>是TTP：<code>TTP（Tactics, Techniques and Procedures；战术, 技术与过程）</code></p>
+</blockquote>
+<ul>
+<li>所谓<strong>战术</strong>，是指对<strong>攻击行动的概括性要求</strong>，表达的是<strong>目的或行动原因</strong>，常用于攻击作业规划与过程追踪；</li>
+<li>所谓技术，是指<strong>通过什么动作执行来达成战术的目标</strong>，包含预期完成的行动，但<strong>不包括完成行动的规定性指导</strong>；</li>
+<li>所谓过程，是<strong>特定的案例化或参照化技术执行说明</strong>，是完成任务的<strong>详细、具体的操作说明和指导</strong>，重点在于提供完整、详细、正确的任务步骤说明。</li>
+</ul>
+<p>TTP使得防御系统摆脱或降低了<strong>对IOC（Indicators of Compromise）的依赖</strong>，将防御从检测<strong>机器层执行动作信息</strong>，提升到检测<strong>作业层行为信息</strong>。相比于恶意代码Hash值、IP地址等IOC指标，基于TTP的行为特征，是很难改变的，攻击者需要付出大量努力才能发现新的作业手法并实现防御规避的目的，其技术难度、时间周期和成本代价都是巨大的。</p>
+<p>因此，<strong>TTP刻画了攻击者相对稳定的行为特征</strong>；也因此，<strong>基于TTP的攻击行动检测分析，对于识别攻击和提升防御，都具有更高效和更鲁棒的安全价值</strong>。</p>
+<blockquote>
+<p> 下面具体介绍<strong>ATTCK的知识库</strong>：</p>
+</blockquote>
+<p>对照<strong>网空杀伤链（前一）</strong>的阶段划分，如下图，<code>ATT&amp;CK框架</code>的内容包括“<code>Pre-ATT&amp;CK</code>”与“<code>Enterprise（企业）ATT&amp;CK</code>”。</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013155844920.png" alt="image-20231013155844920" style="zoom:50%;" />
+
+<p><code>Pre-ATT&amp;CK</code>对应杀伤链的<strong>前两阶段</strong>；<code>企业ATT&amp;CK</code>对应杀伤链的<strong>后五阶段</strong>。鉴于<code>ATT&amp;CK框架</code>侧重于<strong>“突破后”防御</strong>，因此，相比于Pre-ATT&amp;CK，<strong>企业ATT&amp;CK是ATT&amp;CK框架的主体内容</strong>。这一点，也正符合APT攻防对抗的现实状况。对于以APT作业为主要形式的网空威胁，边界和预设的防御措施，总会被突破；因此，认知与防御APT威胁的要点，<strong>应以“敌已在内”为敌情想定的基础</strong>，强化网络内部的威胁防御。具体地，企业ATT&amp;CK还可再进一步依据执行环境而细分为<code>Windows版、Linux版、MacOS版</code>以及<code>云计算（Cloud）</code>版（其下又具体对应若干种不同云平台环境），其中，又以Windows版为重点。除此之外，还有适用于<code>移动（Mobile）环境</code>的版本。</p>
+<p>对于<code>企业ATT&amp;CK</code>，网空威胁所涉及的对手战术与技术，汇总形成<code>一个矩阵（Matrix）</code>，即ATT&amp;CK框架的知识库。该矩阵形式的知识库是<strong>ATT&amp;CK框架的知识主体</strong>，也是进一步扩展形成其它分析工具、分析方法与分析资源的知识基础。知识库矩阵的总貌如下图所示。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//image20200617-4.png" alt="img"></p>
+<p>该矩阵中列举了<strong>12项攻击战术</strong>，如“初始访问”、“执行”和“持久化”；需要注意的是，这12项攻击战术<strong>并不限定执行的时间或先后顺序</strong>，攻击者可以按任意顺序来组合运用这12项攻击战术。</p>
+<p>在每一战术下，包含<strong>可支持此战术的攻击技术</strong>；例如，为达成战术“初始访问”，可运用技术“水坑攻击”、“通过可移动介质复制”或“使用鱼叉式钓鱼附件”。如果需要了解某一具体攻击战术或攻击技术的细节，可访问<a target="_blank" rel="noopener" href="https://attack.mitre.org/">MITRE网站</a>。在攻击技术的细节说明中，包含此项攻击技术的定义与描述，也包含与检测此项攻击技术密切关联的信息如数据来源，还包含此项攻击技术被哪些APT组织所采用，以及其它技术性细节信息。</p>
+<blockquote>
+<p> <strong>如何使用ATTCK框架</strong>？见下。</p>
+</blockquote>
+<ul>
+<li><p><strong>检测分析方面</strong>，ATT&amp;CK框架可指导<strong>如何防御某一具体攻击技术</strong>。对于特定的攻击技术，知识库给出了诸如检测方法、缓解措施以及<strong>检测所需数据源</strong>等信息；防御者可依据相关信息，部署对应的<strong>数据传感器</strong>，分析捕获的数据以实施有效的检测。</p>
+</li>
+<li><p><strong>威胁情报的利用</strong>方式是灵活多样的；通过威胁框架，能够将<strong>威胁情报结构化，便于对APT报告的理解</strong>，以及通过威胁情报提升防御。例如，可通过攻击战术技术在矩阵中的映射状态，来分析APT组织。由于不同APT组织的作业方式各不相同，其所采用的战术技术集合也各不相同、且具有相对稳定的特点，因此，基于矩阵映射状态的分析，可区别不同的APT组织，跟踪特定APT组织的战术技术变化，从而针对性地调整防御措施。</p>
+</li>
+<li><p><strong>对手仿真</strong>的主要目的，在于可靠检验防御措施对真实APT攻击的有效性。</p>
+</li>
+<li><p><strong>评估与工程</strong>，则依托威胁框架改变了防御差距评估缺乏明确指标的模糊性问题。通过验证防御措施对攻击技术的覆盖范围与覆盖深度，防御差距评估具有了<strong>清晰的“可见性”</strong>，使得防御方能够避免盲目性，有的放矢地优化防御部署、聚焦防御重点，从而更为有效地提升防御水平。</p>
+</li>
+</ul>
+<blockquote>
+<p>ATTCK框架的<strong>扩展资源</strong>：</p>
+</blockquote>
+<p><code>CAR (Cyber Analytics Repository，网空分析库)</code>从防御者角度形成对ATT&amp;CK知识库的有效利用。对应ATT&amp;CK知识库中所列举的<strong>每一攻击技术，CAR都说明了对应的分析方法</strong>（包括如何实现的伪代码描述）、数据模型以及如何收集数据。</p>
+<p><code>Navigator（导航器）</code>是一个便捷的在线工具，可将威胁情报中获取的攻击者战术技术在知识库矩阵中进行标注，以辅助分析攻击者组织。</p>
+<p><code>ART（Atomic Red Team）</code>是第三方开发的映射到ATT＆CK框架的小型、高度可移植的<strong>检测测试库</strong>；防御者可选择要测试的攻击技术，利用测试库生成测试程序并执行测试，通过分析对该测试程序的检测结果，来达到改善防御的目的。</p>
+<p><code>Mitigations（缓解库）</code>则专门提供对攻击技术予以缓解的指导措施；例如，如何设置账号管理策略，以阻断对账号密码的暴力破解攻击。除此之外，大量丰富的专家资源与解决案例，都提供了对安全实践的有效帮助，是ATT&amp;CK框架得以广泛运用的强大助力。</p>
+<h2 id="TCTF框架"><a href="#TCTF框架" class="headerlink" title="TCTF框架"></a>TCTF框架</h2><blockquote>
+<p> 当前的TCTF框架是NSA于2018年11月发布的第二版。通过参考网空杀伤链、ATT&amp;CK等多种现有威胁框架，TCTF框架<strong>以阶段（Stage）、目标（Objective）、行为（Action）和关键短语（Key Phrases）</strong>所组成的四层描述结构，构造了一个与网空行为活动紧密结合的通用技术词典。</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//image20200617-5.png" alt="img"></p>
+<p><strong>阶段</strong>：TCTF将<strong>攻击行动划分为6个阶段</strong>，分别是“行动管理与资源保障、目标勘察与环境整备、接触目标与进攻突防、持久化驻留潜伏、致效能力运用、全程持续支撑作业”。</p>
+<p><strong>创新</strong>：这一阶段划分，既有与网空杀伤链相同之处，也有不同之处。例如，阶段“行动管理与资源保障”实际已超出单纯的网空专业技术范畴和窄带的攻防行动范畴，涉及到组织、资金、规划计划等战略性作业筹划。再例如，特别强调在对方网络内部的持久潜伏与持续存在，而不仅仅只是为了达成某种破坏性目标，这突出显示了情报作业的典型特质。通过隐蔽渗透与持续监控搜集，形成对对方网络的深远控制和无形威慑，并能够在任何需要的时刻，立即由网空情报刺探行动（即CNE，Computer Network Exploitation）转换为网空军事进攻行动（即CAN，Computer Network Attack）。</p>
+<p><strong>目标与行为</strong>：分属于上述6个阶段的，是<strong>各个阶段所要达成的目标</strong>，这些目标<strong>共计有21个</strong>，与此21个目标相关联，则包含<strong>188种可达成目标的行为</strong>。</p>
+<p>TCTF对阶段、目标和行为都给出了细致的定义描述。举例来说，在意图获得受害者的物理或虚拟计算机、信息系统、网络和数据存储的访问权限而进行的“接触目标与进攻突防”阶段，为了达成通过技术、认知、物理手段向被攻击对象投递恶意载荷的“投递”目标，可采取“发送恶意邮件”行为以在电子邮件中嵌入恶意附件或链接。</p>
+<p><strong>关键短语</strong>：针对行为，进一步<strong>通过关键短语来施加更多的特征细化描述</strong>，从而形成第4层分析结构。例如，“发送恶意邮件”行为所包含的关键短语有“鱼叉式网络钓鱼、网络捕鲸、恶意附件、iFrame、嵌入式代码等等”。</p>
+<p>s所有的分析层次，包括阶段、目标、行为和关键短语，均不涉及环境约束，也不具体限定检测规则和数据传感。可见，TCTF框架是定义在网空威胁技术语境中，虽与网空安全行业的定义紧密结合，但又脱离了具体执行约束，从而<strong>适合于上下沟通</strong>（比如政府管理部门与安全厂商之间的沟通）。</p>
+<h2 id="二者的区别"><a href="#二者的区别" class="headerlink" title="二者的区别"></a>二者的区别</h2><p>总体来看，<code>ATT&amp;CK框架</code>与<code>TCTF框架</code>，都提供<strong>对网空威胁的标准化定义、分类描述和特征刻画</strong>，都可用于威胁信息的共享，以及支持对威胁的预测、分析，进而可指导防御有效性的提升。但二者又具有显著的不同，主要体现在三个方面的差异性。</p>
+<ul>
+<li><strong>背景意图方面</strong>。设计者不同的身份背景，决定了其所看待网空对抗的视野、所关注的利益焦点、所侧重的威胁分析要素。因此，<strong>MITRE作为民间研究机构</strong>，必然与作为<strong>情报机构的NSA</strong>，具有不同的威胁框架设计意图，所想定的框架的作用领域也各不相同。<strong>ATT&amp;CK框架专注于攻击技术的解析</strong>，面向安全实践领域或操作实施层面。<strong>TCTF框架旨在提供更广范围的沟通</strong>，在操作实施、任务流程、组织策略等多个层面上，加强不同工作角色和知识背景人员之间的协作，方便安全客户对网络威胁活动的理解，以及推动高层决策的制定。</li>
+<li><strong>结构内容方面</strong>。二者所覆盖的<strong>攻击作业范畴不同</strong>：ATT&amp;CK框架只涵盖攻击作业全生命周期的<strong>突破后部分</strong>，而TCTF框架<strong>不但包含全部的攻击作业周期，还涉及到供应链、甚至非网空攻击行动</strong>。二者的核心概念不同：ATT&amp;CK框架<strong>完全围绕TTP</strong>，而TCTF框架则通过<strong>阶段、目标、行为、关键短语</strong>来有效支撑层次化的分析结构。细节粒度与提炼程度不同：ATT&amp;CK框架具有<strong>丰富的技术操作性细节</strong>，强化了对具体攻击行为的分析准确性和辨识力；TCTF框架的细化则侧重于<strong>拆解攻击动作以实现对各种可能的攻击行为的全面覆盖</strong>，但其技术特征刻画并不包含与具体攻击直接关联的操作性细节。</li>
+<li><strong>应用发展方面</strong>。ATT&amp;CK日益被越来越多的安全厂商所支持，而TCTF则普遍应用于美方情报系统中，二者都具有广泛的现实应用。由于ATT&amp;CK突出对APT攻击的实时跟踪与技术提炼，因此，<strong>ATT&amp;CK会保持较快的知识库更新速度</strong>，并可能会响应某些困难问题而作出结构和内容上的较大调整。对于TCTF而言，攻击作业手法的分类、以及脱离具体执行约束的特征刻画，会保持<strong>相对长期的稳定</strong>，预计不会进行频繁的更新。</li>
+</ul>
+<p>应该意识到，二者差异的存在，并不会形成对威胁协同分析的障碍。恰恰相反，差异性提供了分析能力互补与安全价值叠加的途径。</p>
+<h1 id="如何利用威胁框架"><a href="#如何利用威胁框架" class="headerlink" title="如何利用威胁框架"></a>如何利用威胁框架</h1><p>利用威胁框架可以进行以下方面的应用：</p>
+<ul>
+<li>分析攻击行为与威胁发展态势、指导攻击者模拟、跟踪特定对手的技术集合、检测&#x2F;缓解攻击者着重使用的技术</li>
+<li>分析防御差距、评价安全技术，优化安全部署</li>
+</ul>
+<p>无论是<code>ATT&amp;CK框架</code>，还是<code>TCTF框架</code>，二者均是梳理高&#x2F;超高能力网空威胁行为体攻击活动的有效框架方法和工程体系。</p>
+<p>从威胁框架出发，<strong>分析威胁所采用的战术、技术，推演威胁所关联的阶段、目标与行为</strong>，无论是对威胁事件和威胁行为体进行<strong>深度分析</strong>，还是评估当前防御体系能力及相关<strong>防御机制</strong>的有效性，指导形成体系化的防御规划与建设目标，都是不无裨益的。</p>
+<p>二者可以<strong>协同作用、互补互益</strong>：</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231013153750388.png" alt="image-20231013153750388"></p>
+<p>利用<code>ATT&amp;CK框架</code>，完成网空威胁在<strong>技术层面的分析</strong>，实现防御技术的优化改善。与网空威胁相关的事件捕获、情报线索以及研究发现等技术性信息，通过ATT&amp;CK框架而<strong>完成对攻击者战术、技术等要素的解析提炼</strong>，依据解析结果而<strong>指导防御能力的优化提高</strong>；例如，对特定攻击技术防御的优先级，可采取的有效的检测分析方法，等等。</p>
+<p>与此同时，在网空对抗大背景下，考虑大国博弈、地缘政治、产业竞合等更为广泛的因素以及更为根本的动机，运用<code>TCTF框架</code>，对高&#x2F;超高能力网空威胁行为体发起的APT攻击作业，在<strong>作业意图、行为、能力水平、危害程度</strong>等方面，作出更为全面深入的分析研判，有效<strong>支撑情报与决策体系</strong>应对网空威胁，以满足更高层次的安全需求、维护更为广泛的安全利益。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/10/20/[%E2%88%9A]ATT&CK%E5%92%8CNAS%E6%A1%86%E6%9E%B6/" title="威胁分析框架概述">https://danggeovo.github.io/2023/10/20/[√]ATT&CK和NAS框架/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/ATT-CK/" rel="tag"># ATT&CK</a>
+              <a href="/tags/%E5%A8%81%E8%83%81%E6%A1%86%E6%9E%B6/" rel="tag"># 威胁框架</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/10/20/%5B%E2%88%9A%5D%E5%A6%82%E4%BD%95%E6%A3%80%E7%B4%A2%EF%BC%9F/" rel="prev" title="">
+                  <i class="fa fa-angle-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/11/03/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6API%E6%B1%87%E6%80%BB(%E6%9B%B4%E6%96%B0ing)/" rel="next" title="恶意软件API汇总(更新ing)">
+                  恶意软件API汇总(更新ing) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：本篇文章是计算机网络中数据链路层的习题汇总，会给出问题和答案，但是在看答案之前建议先自己思考一下你的回答，再与答案对比。习题参考：https:&#x2F;&#x2F;www.zhihu.com&#x2F;column&#x2F;c_1413289786211373056?utm_source&#x3D;qq&amp;utm_medium&#x3D;social&amp;utm_oi&#x3D;1268627816133816320说明：会在原习题的基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始的计网学习-链路层习题整理">
+<meta property="og:url" content="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：本篇文章是计算机网络中数据链路层的习题汇总，会给出问题和答案，但是在看答案之前建议先自己思考一下你的回答，再与答案对比。习题参考：https:&#x2F;&#x2F;www.zhihu.com&#x2F;column&#x2F;c_1413289786211373056?utm_source&#x3D;qq&amp;utm_medium&#x3D;social&amp;utm_oi&#x3D;1268627816133816320说明：会在原习题的基础">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673233903417.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234122096.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234290730.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234430056.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234490219.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234633178.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234732661.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235024434.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235136843.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235251420.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235387231.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235491017.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235683338.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235956949.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236323837.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236408703.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237657349.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237444155.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237567724.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251861163.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237018089.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237070875.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237367332.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251986562.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251943408.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251956969.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251970406.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250206034.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250457127.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250318917.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250427747.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251056773.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251260098.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673241624781.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249303302.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249373111.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250089281.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250842288.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250900007.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250915692.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236179572.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251394312.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251746973.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251501185.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251640376.png">
+<meta property="article:published_time" content="2023-01-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:56:10.088Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673233903417.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/","path":"2023/01/10/从零开始的计网学习-链路层习题整理/","title":"从零开始的计网学习-链路层习题整理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从零开始的计网学习-链路层习题整理 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E7%AD%94%E6%95%B4%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">一些必须要懂的常见问题与解答整理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E9%87%8D%E9%9A%BE%E7%82%B9%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">一些必须要懂的重难点课后习题整理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">概念理解题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86%E9%A2%98"><span class="nav-number">2.2.</span> <span class="nav-text">协议原理题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E5%B8%A7%E7%B1%BB%E5%9E%8B%E9%A2%98"><span class="nav-number">2.3.</span> <span class="nav-text">组帧类型题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E9%A2%98"><span class="nav-number">2.4.</span> <span class="nav-text">差错检测题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E9%A2%98"><span class="nav-number">2.5.</span> <span class="nav-text">流量控制题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AA%92%E4%BB%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">2.6.</span> <span class="nav-text">媒介访问控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E9%A2%98%E7%9B%AE"><span class="nav-number">2.7.</span> <span class="nav-text">局域网题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E8%AE%BE%E5%A4%87%E9%A2%98"><span class="nav-number">2.8.</span> <span class="nav-text">物理设备题</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从零开始的计网学习-链路层习题整理 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从零开始的计网学习-链路层习题整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-10T13:48:32+08:00">2023-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:56:10" itemprop="dateModified" datetime="2023-11-08T17:56:10+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong>：本篇文章是计算机网络中数据链路层的习题汇总，会给出问题和答案，但是在看答案之前建议先自己思考一下你的回答，再与答案对比。<br><strong>习题参考</strong>：<a target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1413289786211373056?utm_source=qq&utm_medium=social&utm_oi=1268627816133816320">https://www.zhihu.com/column/c_1413289786211373056?utm_source=qq&amp;utm_medium=social&amp;utm_oi=1268627816133816320</a><br><strong>说明</strong>：会在原习题的基础上加上自己的理解，同时会将原本的题目进行分类，便于学习理解。</p>
+</blockquote>
+<ul>
+<li><a href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E7%AD%94%E6%95%B4%E7%90%86">一些必须要懂的常见问题与解答整理</a></li>
+<li><a href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E9%87%8D%E9%9A%BE%E7%82%B9%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86">一些必须要懂的重难点课后习题整理</a><ul>
+<li><a href="#%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3%E9%A2%98">概念理解题</a></li>
+<li><a href="#%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86%E9%A2%98">协议原理题</a></li>
+<li><a href="#%E7%BB%84%E5%B8%A7%E7%B1%BB%E5%9E%8B%E9%A2%98">组帧类型题</a></li>
+<li><a href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E9%A2%98">差错检测题</a></li>
+<li><a href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E9%A2%98">流量控制题</a></li>
+<li><a href="#%E5%AA%92%E4%BB%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6">媒介访问控制</a></li>
+<li><a href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E9%A2%98%E7%9B%AE">局域网题目</a></li>
+<li><a href="#%E7%89%A9%E7%90%86%E8%AE%BE%E5%A4%87%E9%A2%98">物理设备题</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="一些必须要懂的常见问题与解答整理"><a href="#一些必须要懂的常见问题与解答整理" class="headerlink" title="一些必须要懂的常见问题与解答整理"></a>一些必须要懂的常见问题与解答整理</h1><blockquote>
+<p><strong>问题一</strong>：旧版的《计算机网络》认为数据链路层的任务是<strong>在两个相邻结点间的线路上无差错地传送以帧(frame)为单位的数据</strong>。数据链路层可以把一条有可能出差错的实际链路转变成为<strong>让网络层向下看起来好像是一条不出差错的链路</strong>。但最近新版的《计算机网络》中对数据链路层的提法就改变了。数据链路层的传输不能让网络层向下看起来好像是一条不出差错的链路。到底哪一种说法是正确的？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673233903417.png"></p>
+<p><strong>我的理解</strong>：二者并没有谁对谁错，只是针对的对象不同。不过我们当然要与时俱进，最好是两者都知道，并可以解释其中差别。</p>
+<blockquote>
+<p><strong>问题二</strong>：当数据链路层是用<strong>PPP协议或CSMA&#x2F;CD协议</strong>时，既然不保证可靠传输，那么<strong>为什么对所传输的帧进行差错检测呢</strong>？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234122096.png"></p>
+<p><strong>我的理解</strong>：PPP协议或者CSMA&#x2F;CD只是<strong>不实现重发机制</strong>，基础的差错检测功能还是有的。</p>
+<blockquote>
+<p><strong>问题三</strong>：为什么旧版本的教材在数据链路层一章中讲授可靠传输，但现在<strong>新版本教材则取消了可靠传输？</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234290730.png"></p>
+<p><strong>我的理解</strong>：只是为了适应现实，将其放到真实使用的层次。</p>
+<blockquote>
+<p><strong>问题四</strong>：除了差错检测外，面向字符的数据链路层协议还必须解决哪些特殊的问题？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234430056.png"><br><strong>我的理解</strong>：差错检测是判断数据帧是否出错。而数据链路层协议还具备解决<strong>帧界定和透明传输</strong>的功能，其中帧界定有很多方法要记住，而透明传输是在帧界定的基础上提出的要求。</p>
+<blockquote>
+<p><strong>问题五</strong>：为什么计算机进行通信时<strong>发送缓存和接收缓存</strong>总是需要的？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234490219.png"></p>
+<p><strong>我的理解</strong>：缓冲区的目的就是为了实现发送和接收的同步，协调二者的时间，提高信道利用率。</p>
+<blockquote>
+<p><strong>问题六</strong>：在以太网中发生了碰撞是否说明这时出现了某种故障？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234633178.png"></p>
+<p><strong>我的理解</strong>：碰撞是一个很常见的现象，不可以作为故障的决定标准。</p>
+<blockquote>
+<p><strong>问题七</strong>：是什么原因使以太网有一个<strong>最小帧长和最大帧长</strong>？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234732661.png"></p>
+<p><strong>我的理解</strong>：在前面学习数据链路层的相关知识时有过MTU的扩展，那里从<strong>差错检测的角度</strong>给出了最小帧长和最大帧长的原因；这里则是从<strong>介质访问控制的角度</strong>给出，即<strong>过短会导致无法进行冲突检测，同时可以借此去除无效帧，过长则是为了保证接入的公平性，防止长时间等待</strong>。</p>
+<blockquote>
+<p><strong>问题八</strong>：以太网的覆盖范围受限的一个原因是：如果站点之间的距离太大，那么由于<strong>信号传输时会衰减得很多</strong>因而无法对信号进行可靠的接收。试问：如果我们设法提高发送信号的功率，那么是否就可以增大以太网的通信距离？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235024434.png"></p>
+<p><strong>我的理解</strong>：<strong>决定因素是信噪比</strong>，功率提升噪声也会提升，信噪比不会显著增大。</p>
+<blockquote>
+<p><strong>问题九</strong>：一个大学能否就使用一个很大的局域网，而不使用许多相互连接的较小的局域网？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235136843.png"></p>
+<blockquote>
+<p><strong>问题十</strong>：一个10Mbit&#x2F;s以太网若工作在<strong>全双工状态</strong>，那么其数据率是发送和接收各为5Mbit&#x2F;s还是发送和接收各为10Mbit&#x2F;s。</p>
+</blockquote>
+<p><strong>答案</strong>：二者都是10Mbps</p>
+<blockquote>
+<p><strong>问题十一</strong>：在以太网中，有没有可能在发送了512bit(64B)以后才发生碰撞？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235251420.png"></p>
+<blockquote>
+<p><strong>问题十二</strong>：当局域网刚刚问世时，<strong>总线型的以太网被认为可靠性比星型结构的网络好</strong>。但现在以太网又回到了星型结构，使用集线器作为交换结点。那么以前的看法是否有些不正确？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235387231.png"></p>
+<p><strong>扩展：星形结构</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235491017.png"></p>
+<p><a target="_blank" rel="noopener" href="https://product.pconline.com.cn/itbk/life/electronic/1802/10848376.html">星型网络结构有哪些特点 星型网络结构优缺点介绍</a></p>
+<h1 id="一些必须要懂的重难点课后习题整理"><a href="#一些必须要懂的重难点课后习题整理" class="headerlink" title="一些必须要懂的重难点课后习题整理"></a>一些必须要懂的重难点课后习题整理</h1><h2 id="概念理解题"><a href="#概念理解题" class="headerlink" title="概念理解题"></a>概念理解题</h2><blockquote>
+<p><strong>数据链路</strong>（即逻辑链路）与<strong>链路</strong>（即物理链路）有何区别？“<strong>电路接通了</strong>”与“<strong>数据链路接通了</strong>”的区别何在？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235683338.png"><br><strong>我的理解</strong>：物理链路是实际的，是一段传输介质；数据链路是虚拟的，是协议的集合。</p>
+<blockquote>
+<p>数据链路层中的<strong>链路控制包括哪些功能</strong>？试讨论<strong>把数据链路层做成可靠的链路层有哪些优点和缺点？</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235956949.png"></p>
+<p><strong>我的理解</strong>：上题的答案更加趋向于<strong>MAC子层的功能</strong>。而数据链路层还包含<strong>介质访问控制、流量控制</strong>的功能。同时上文已经说过，现在的数据链路层是不提供可靠性服务的（PPP协议和CSMA&#x2F;CD协议）</p>
+<blockquote>
+<p>数据链路层的<strong>三个基本问题</strong>（封装成帧、透明传输和差错检测）为什么都必须加以解决？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236323837.png"></p>
+<h2 id="协议原理题"><a href="#协议原理题" class="headerlink" title="协议原理题"></a>协议原理题</h2><blockquote>
+<p>PPP协议的主要特点是什么？为什么PPP不使用帧的编号？PPP适用于什么情况？为什么PPP协议不能使数据链路层实现可靠传输？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236408703.png"></p>
+<blockquote>
+<p><strong>PPP协议</strong>的工作状态有哪几种？当用户要使用PPP协议和ISP建立连接进行通信时，需要建立哪几种连接？每一种连接解决什么问题？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237657349.png"></p>
+<h2 id="组帧类型题"><a href="#组帧类型题" class="headerlink" title="组帧类型题"></a>组帧类型题</h2><blockquote>
+<p>一个PPP帧的数据部分（用十六进制写出）是 7D 5E FE 27 7D 5D 7D 5D 65 7D 5E。试问真正的数据是什么（用十六进制写出）？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237444155.png"><br><strong>注意</strong>：这个应该是的字节填充法，要换掉转义字符。</p>
+<blockquote>
+<p>PPP协议使用同步传输技术传送比特串0110111111111100。试问经过零比特填充后变成怎样的比特串？若接收端收到的PPP帧的数据部分是0001110111110111110110，问删除发送端加入的零比特后变成怎样的比特串？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237567724.png"><br><strong>注意</strong>：这个是<strong>零比特填充法</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251861163.png"></p>
+<h2 id="差错检测题"><a href="#差错检测题" class="headerlink" title="差错检测题"></a>差错检测题</h2><p>这一类题多为对差错检测方法的考察，其中CRC校验比较重点。</p>
+<blockquote>
+<p>要发送的数据为1101011011.采用CRC的生成多项式P(X) &#x3D; X^4 + X + 1。试求应添加在数据后面的余数。</p>
+<blockquote>
+<p>数据在传输过程中最后一个1变成了0，问接收端能否发现？<br>若数据在传输过程中最后两个1都变成了0，问接收端能否发现？<br>采用CRC检验后，数据链路层的传输是否就变成了可靠的传输</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237018089.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237070875.png" alt="enter description here"></p>
+<p><strong>注意</strong>：二项式除法要会，同时记得先添0在用余数代替。</p>
+<blockquote>
+<p>要发送的数据为101110。采用CRC的生成多项式是P(X) &#x3D; X^3 + 1。试求应添加在数据后面的余数。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237367332.png"></p>
+<h2 id="流量控制题"><a href="#流量控制题" class="headerlink" title="流量控制题"></a>流量控制题</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251986562.png"></p>
+<p><strong>注</strong>：如果没有说明确认帧大小则不要去计算时间。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251943408.png"></p>
+<p><strong>提醒</strong>：一定要注意单位的换算。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251956969.png"><br><strong>注</strong>：对于回退N帧协议其窗口大小为2^n-1，选择重传协议窗口大小为2^(n-1)。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251970406.png"></p>
+<h2 id="媒介访问控制"><a href="#媒介访问控制" class="headerlink" title="媒介访问控制"></a>媒介访问控制</h2><blockquote>
+<p>以太网使用的<strong>CSMA&#x2F;CD协议</strong>是以争用方式接入到共享信道的。这与传统的时分复用TDM相比优缺点如何？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250206034.png"><br><strong>我的理解</strong>：网络协议没有好坏之分，只有适用范围之分。</p>
+<blockquote>
+<p>什么叫比特时间？使用这种时间单位有什么好处？100比特时间是多少微秒？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250457127.png"></p>
+<p><strong>注意</strong>：引入了<code>比特时间</code>的概念，后面题目会用到。</p>
+<blockquote>
+<p>假定1km长的CSMA&#x2F;CD网络的数据率为1Gbit&#x2F;s。设信号在网络上的传播速率为200000km&#x2F;s。求能够使用此协议的最短帧长。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250318917.png"></p>
+<p><strong>注意</strong>：计算时需要使用2倍的传播时延。</p>
+<blockquote>
+<p>假定在使用<strong>CSDA&#x2F;CD协议</strong>的10Mbit&#x2F;s以太网中，某个站在发送数据时检测到碰撞，执行退避算法时选择了<strong>随机数r&#x3D;100</strong>。试问这个站需要等待多长时间后才能再次发送数据？如果是100Mbit&#x2F;s的以太网呢？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250427747.png"><br><strong>注意</strong>：退避时间 &#x3D; 争用时间*r；同时比特时间与实际时间的换算要会，就是加一个单位。</p>
+<blockquote>
+<p>假定<strong>站点A和B</strong>在同一个<strong>10Mbit&#x2F;s</strong>以太网网段上。这两个站点之间的<strong>传播时延为225比特时间</strong>。现假定A开始发送一帧，并且在A发送结束之前B也发送一帧。如果A发送的是以太网所容许的最短的帧，那么A在检测到和B发生碰撞之前能否把自己的数据发送完毕？换言之，如果A在发送完毕之前并没有检测到碰撞，那么能否肯定A所发送的帧不会和B发送的帧发生碰撞？（提示：在计算时应当考虑到每一个以太网帧在发送信道上时，在MAC帧前面还要增加若干字节的前同步码和帧定界符。）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251056773.png"></p>
+<blockquote>
+<p>在上题中的站点A和B在<strong>t&#x3D;0时同时发送了数据帧</strong>。当t&#x3D;225比特时间，A和B同时检测到发生了碰撞，并且在t &#x3D; 225 + 48 &#x3D; 273 比特时间完成了干扰信号的传输。A 和 B在CSMA&#x2F;CD算法中<strong>选择不同的r值退避</strong>。假定A和B选择的随机数分别是 rA &#x3D; 0 和 rB&#x3D;1。试问A和B各在什么时间开始重传其数据帧？A重传的数据帧在什么时间到达B？A重传的数据会不会和B重传的数据再次发生碰撞？B会不会在预定的重传时间停止发送数据？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251260098.png"></p>
+<p><strong>注意</strong>：关于碰撞问题需要学会画图分析过程。</p>
+<h2 id="局域网题目"><a href="#局域网题目" class="headerlink" title="局域网题目"></a>局域网题目</h2><blockquote>
+<p><strong>局域网</strong>的主要特点是什么？为什么局域网采用广播通信方式而广域网不采用呢？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673241624781.png"></p>
+<blockquote>
+<p>常用的局域网的<strong>网络拓扑</strong>有哪些种类？现在<strong>最流行的</strong>是哪种结构？为什么早期的以太网选择总线拓扑结构而不使用星型拓扑结构，但现在却改为使用星型拓扑结构？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249303302.png"></p>
+<blockquote>
+<p>什么叫做传统以太网？以太网有哪两个主要标准？</p>
+</blockquote>
+<p><strong>答</strong>：传统以太网就是最早流行的<strong>10Mbit&#x2F;s速率</strong>的以太网。</p>
+<p>以太网有两个标准，即<code>DIX Ethernet V2</code>标准 和 <code>IEEE 802.3</code> 标准</p>
+<blockquote>
+<p>数据率为 10Mbit&#x2F;s 的以太网在物理媒体上的<strong>码元传输速率</strong>是多少码元&#x2F;秒？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249373111.png"></p>
+<blockquote>
+<p>为什么LLC子层的标准已制定出来了但现在却很少使用？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250089281.png"></p>
+<blockquote>
+<p>有10个站连接到以太网上。试计算以下三种情况下每一个站所能得到的带宽。</p>
+<blockquote>
+<p>1）10个站都连接到一个10Mbit&#x2F;s以太网集线器。<br>2）10个站都连接到一个100Mbit&#x2F;s以太网集线器。<br>3）10个站都连接到一个10Mbit&#x2F;s以太网交换机。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250842288.png"></p>
+<p><strong>注意</strong>：判断问的是每一个站所能得到的带宽 还是 总带宽</p>
+<blockquote>
+<p>以太网交换机有何特点？用它怎样组成虚拟局域网？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250900007.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250915692.png"></p>
+<p><strong>注意</strong>：以太网交换机和集线器的区别要搞懂，特别是在带宽计算上。</p>
+<h2 id="物理设备题"><a href="#物理设备题" class="headerlink" title="物理设备题"></a>物理设备题</h2><blockquote>
+<p><strong>网络适配器</strong>的作用是什么？网络适配器工作在哪一层？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236179572.png"><br><strong>我的理解</strong>：适配器就是网卡，其作用的发送时进行帧的封装、接收时进行差错检测与帧的交付。</p>
+<blockquote>
+<p>在图T-3-33中，以太网交换机有6个接口，分别接到5台主机和一个路由器。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251394312.png"></p>
+<p><strong>注意</strong>：填补交换表时，只需要看写入的即可。</p>
+<blockquote>
+<p>图T-3-36表示有五个站分别连接在三个局域网上，并且用网桥B1和B2连接起来。每一个网桥都有两个接口（1和2）。在一开始，两个网桥中的转发表都是空的。以后有以下各站向其他的站按先后顺序发送了数据帧：A发送给E，C发送给B，D发送给C，B发送给A。试把有关数据填写在表T-3-36-a中。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251746973.png"></p>
+<blockquote>
+<p>假定一个以太网上的通信量中的80%是在本局域网上进行的，而其余的20%的通信量是在本局域网和互联网之间进行的。另一个以太网的情况则反过来。这两个以太网<strong>一个使用以太网集线器</strong>，而<strong>另一个使用以太网交换机</strong>。你认为以太网交换机应当用在哪一个网络上？（本题的目的是要学生能够清楚地知道以太网集线器和以太网交换机的区别。本题并没有一个标准答案。）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251501185.png"></p>
+<blockquote>
+<p><strong>网桥的工作原理和特点是什么</strong>？<strong>网桥与转发器以及以太网交换机有何异同</strong>？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251640376.png"><br><strong>注意</strong>：区分网桥和集线器、交换机，各自应用层次。</p>
+<hr>
+<blockquote>
+<p><strong>写在最后</strong>：本层的知识点比较多，所以涉及的题目类型也很多，要分门别类去练习，同时与理论知识结合。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/" title="从零开始的计网学习-链路层习题整理">https://danggeovo.github.io/2023/01/10/从零开始的计网学习-链路层习题整理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/" rel="prev" title="从零开始的计网学习-物理层">
+                  <i class="fa fa-angle-left"></i> 从零开始的计网学习-物理层
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" rel="next" title="从零开始的计网学习-数据链路层">
+                  从零开始的计网学习-数据链路层 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

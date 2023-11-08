@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：在学习操作系统的过程中遇到一些不懂的地方，在本篇文章中按照章节进行整理记录。内容大多来自网络和自己的理解。  操作系统-多进程图谱fork()的流程与实现 计算机通过fork()来创建进程，fork()的核心是通过复制父进程来创建子进程，换句话说，计算机中所有的进程都是通过继承0号进程和1号进程而来的。所以这里我们先介绍这两个初始进程的建立.，而后再介绍fork()这个系统调用的实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统--扩展知识">
+<meta property="og:url" content="https://danggeovo.github.io/2022/08/19/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：在学习操作系统的过程中遇到一些不懂的地方，在本篇文章中按照章节进行整理记录。内容大多来自网络和自己的理解。  操作系统-多进程图谱fork()的流程与实现 计算机通过fork()来创建进程，fork()的核心是通过复制父进程来创建子进程，换句话说，计算机中所有的进程都是通过继承0号进程和1号进程而来的。所以这里我们先介绍这两个初始进程的建立.，而后再介绍fork()这个系统调用的实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660877078286.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660878777271.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660788788428.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660789273153.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660790410590.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660741089252.png">
+<meta property="article:published_time" content="2022-08-19T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:58:19.248Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660877078286.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/08/19/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/08/19/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86/","path":"2022/08/19/操作系统--扩展知识/","title":"操作系统--扩展知识"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>操作系统--扩展知识 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%9B%BE%E8%B0%B1"><span class="nav-number">1.</span> <span class="nav-text">操作系统-多进程图谱</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-%E7%9A%84%E6%B5%81%E7%A8%8B%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">fork()的流程与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E0%E5%8F%B7-1%E5%8F%B7%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%BB%BA%E7%AB%8B%E5%BC%80%E5%A7%8B"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">从0号&#x2F;1号进程的建立开始</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fork-%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">fork()的原理和流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GDT%E3%80%81LDT"><span class="nav-number">1.2.</span> <span class="nav-text">GDT、LDT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MMU%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.3.</span> <span class="nav-text">MMU是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCB%E4%B8%AD%E6%9C%89%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.</span> <span class="nav-text">PCB中有什么</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/08/19/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="操作系统--扩展知识 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统--扩展知识
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-19 13:48:32" itemprop="dateCreated datePublished" datetime="2022-08-19T13:48:32+08:00">2022-08-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:58:19" itemprop="dateModified" datetime="2023-11-08T17:58:19+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong>：在学习操作系统的过程中遇到一些<strong>不懂的地方</strong>，在本篇文章中<strong>按照章节</strong>进行整理记录。内容大多<strong>来自网络</strong>和<strong>自己的理解</strong>。</p>
+</blockquote>
+<h1 id="操作系统-多进程图谱"><a href="#操作系统-多进程图谱" class="headerlink" title="操作系统-多进程图谱"></a>操作系统-多进程图谱</h1><h2 id="fork-的流程与实现"><a href="#fork-的流程与实现" class="headerlink" title="fork()的流程与实现"></a>fork()的流程与实现</h2><blockquote>
+<p>计算机通过<code>fork()</code>来<strong>创建进程</strong>，<strong>fork()<strong>的核心是<code>通过复制父进程来创建子进程</code>，换句话说，计算机中</strong>所有的进程</strong>都是通过<strong>继承</strong><code>0号进程和1号进程</code>而来的。所以这里我们先<strong>介绍这两个初始进程的建立.<strong>，而后再介绍fork()这个系统调用的</strong>实现流程</strong>。</p>
+</blockquote>
+<h4 id="从0号-1号进程的建立开始"><a href="#从0号-1号进程的建立开始" class="headerlink" title="从0号&#x2F;1号进程的建立开始"></a>从0号&#x2F;1号进程的建立开始</h4><blockquote>
+<p>操作系统的<strong>第一个进程</strong>：<code>0号进程</code></p>
+</blockquote>
+<p>在最开始时，操作系统中是没有进程的，也就谈不上通过<code>fork()</code>进行建立。所以<code>0号进程</code>是通过<strong>手动设置进程信息</strong>来建立的，这些信息包括：<code>PCB</code>、<code>内核栈</code>、<code>用户栈</code>、<code>用户程序</code>等.</p>
+<blockquote>
+<blockquote>
+<p>先来看一下<strong>PCB的初始化程序</strong>：</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660877078286.png"></p>
+<p>其中，<code>task_struct</code> 是一个<strong>结构体</strong>，属于Linux定义的<strong>PCB数据结构</strong>。而后通过设置具体的值来<strong>初始化</strong>这个数据结构，包括：通过<code>LDT</code>设置进程使用的地址空间，通过这个表可以在执行程序时找到此进程的<strong>代码段进和数据段</strong>；<code>tss</code>可以完成<strong>PCB与内核栈</strong>的关联。</p>
+<blockquote>
+<blockquote>
+<p>而后进行<strong>内核栈设置</strong></p>
+</blockquote>
+</blockquote>
+<p><code>内核栈</code>是在<strong>中断进入内核</strong>时使用的，如果0号进程需要还要内核栈：根据tss中的信息将内核栈段寄存器<strong>SS设置为0x10</strong>，并将<strong>ESP设置为一个地址</strong>，这个地址根据进程初始化信息有所不同。</p>
+<blockquote>
+<blockquote>
+<p>进行<strong>用户栈的设置</strong>与<strong>两栈之间的关联</strong></p>
+</blockquote>
+</blockquote>
+<p><code>用户栈</code>的设置就是<strong>直接划分一段内存</strong>即可，而后将用户程序对应的<code>CS:IP</code>信息与用户站的<code>SS:SP</code>信息放到<strong>内核栈</strong>即可完成二栈关联，即<code>iret</code>后可以由内核程序返回到该进程的<strong>用户程序</strong>进行执行。</p>
+<p>到这里，<strong>0号进程</strong>就已经<strong>建立起来</strong>了：其<code>PCB</code>中保存着此<strong>进程的信息</strong>，内核区域中有一部分区域用于其<strong>内核栈</strong>，用户区域也有一部分用于其<strong>用户栈</strong>，并且关于此进程的<strong>用户程序</strong>也被放到内存，这些程序的<strong>位置也被保存</strong>。</p>
+<p>再之后就要执行0号进程的<strong>后续程序</strong>，也就是前面我们介绍操作系统启动的<strong>最后4句程序</strong>的后两句：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660878777271.png"></p>
+<blockquote>
+<p><strong>操作系统的第二个进程</strong>：<code>1号进程</code></p>
+</blockquote>
+<p>查看上图代码，<strong>0号进程</strong>会执行”<code>if (!fork() &#123; init();&#125; for(;;) pause();&#125;</code>“</p>
+<p><strong>代码解释</strong>：<br><strong>0号进程</strong>会调用<code>fork()</code>创建<strong>1号进程</strong>，并且根据函数的返回值可以看出，1号进程会执行<code>init()函数</code>，而<strong>0号进程</strong>因为不满足if条件会执行后续的<code>pause()</code>从而通过此系统调用将<strong>自己暂停</strong>，为其他进程<strong>让出CPU</strong>。</p>
+<p>而1<strong>号进程</strong>调用的<strong>init()<strong>函数会执行<code>execve()</code>系统调用，从而在1号进程的壳子里执行可执行程序”<code>/bin/sh</code>“,这就是</strong>shell程序</strong>，所以1号进程也被成为<strong>shell进程</strong>。</p>
+<p><strong>shell进程</strong>的工作就是<strong>等待用户输入指令</strong>并<strong>通过fork()创建新的进程</strong>并<strong>使用exec()执行</strong>这个指令。</p>
+<h4 id="fork-的原理和流程"><a href="#fork-的原理和流程" class="headerlink" title="fork()的原理和流程"></a>fork()的原理和流程</h4><p><code>[先看这个](https://cloud.tencent.com/developer/article/1396092)</code>，后面再具体整体与深入。</p>
+<h2 id="GDT、LDT"><a href="#GDT、LDT" class="headerlink" title="GDT、LDT"></a>GDT、LDT</h2><blockquote>
+<p>背景介绍：段寄存器</p>
+</blockquote>
+<p><strong>保护模式</strong>下的<strong>段寄存器</strong>由<code>16位的选择器</code>与<code>64位的段描述符寄存器</code>构成,前者可见。其结构如下图：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660788788428.png"></p>
+<p>我们主要关注<strong>选择器</strong>，这个选择器类似<strong>保护模式下的段寄存器</strong>，通过其中的内容可以在<strong>段表中查询</strong>对应内容以完成<strong>地址翻译</strong>。<br>其中：16位选择子<code>前13位为索引号</code>也就是在段表中的位置；<code>第14位为0表示查询GDT表，为1表示查询LDT表</code>；<code>最后两位表示特权级</code>。</p>
+<p>段寄存器的作用就是为了<strong>查询段表</strong>获取虚拟地址，下面我们就<strong>具体介绍一下这些段表</strong>：</p>
+<blockquote>
+<p><strong>全局描述符表GDT(Global Descriptor Tables)</strong></p>
+</blockquote>
+<p><code>GDT表</code>是一张操作系统层次的表，<strong>具有唯一性</strong>。它是许多<strong>描述符</strong>组成的一张描述符表，描述符就是用来<strong>描述一个段的信息</strong>，由8个字节组成(64bit),其中信息包括了段地址和偏移地址界限、特权级等一些信息。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660789273153.png"></p>
+<p>如上图所示就是一个<strong>段描述符</strong>，其实也就是内存中的一段<strong>长度为64位</strong>的数字，不过这些数字<strong>根据位数不同</strong>表示代表不同含义，但是最终都可以分割成：<strong>段基址、段界限、类型、特权级等</strong>数据。</p>
+<p>而其中的<strong>段基址就是指虚拟内存中某一段的基址</strong>，在<strong>加上偏移</strong>即可得到某一数据具体的<strong>虚拟地址</strong>。</p>
+<p>同时，GDT的本质就是<strong>一段内存空间</strong>，其可以存储在任何位置，只要这个空间的基址被保存下来即可，这个<strong>保存GDT表基址</strong>的寄存器就是<code>GDTR寄存器</code>。</p>
+<blockquote>
+<p><strong>局部描述符表LDT(Local Decriptor Table)</strong></p>
+</blockquote>
+<p><code>LDT表</code>也是一种<strong>段表</strong>，不过与GDT表不同，LDT表<strong>不是唯一</strong>的，而是<strong>每一个进程都有一个对应的段表</strong>，用来存储此进程程序分段存储情况。</p>
+<p>与GDT表类似，LDT表也是<strong>一段内存空间</strong>，所以要寻找到他需要知道<strong>其基址</strong>。不过不同的是，LDT表的基址是<strong>存储在GDT表</strong>中的，并且在<code>LDTR寄存器</code>中记录了当前进程LDT表在GDT表的<strong>索引</strong>。换句话说，通过<strong>修改LDTR中的内容即可获取到不同进程的LDT表</strong>。</p>
+<p>在获取LDT表的基址后，就要根据段选择子的索引去获取具体段的基址。</p>
+<p><strong>具体的示意图</strong>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660790410590.png"></p>
+<blockquote>
+<p><strong>两个实例看两表</strong>:以<code>call 400</code>为例</p>
+</blockquote>
+<p>此程序需要<strong>访问400位置</strong>处的程序，但是这里的400只是<strong>偏移</strong>，要访问到具体的<strong>物理地址</strong>还要先进行<strong>地址翻译</strong>。</p>
+<p>首先根据<strong>CS寄存器</strong>中的数据<strong>决定查表</strong>。如果<strong>TI&#x3D;0则要查GDT表</strong>，<strong>为1则要查LDT表</strong>。</p>
+<blockquote>
+<blockquote>
+<p><strong>查询GDT表</strong></p>
+</blockquote>
+</blockquote>
+<ol>
+<li>根据GDTR寄存器中信息获取到GDT表的基址。</li>
+<li>根据CS寄存器中前13位构成的索引号在GDT表中查询到对应的段描述符。</li>
+<li>根据段描述符即可得到代码段的虚拟内存段基址，而后根据偏移400即可得到虚拟地址。</li>
+<li>根据虚拟地址查询页表即可得到对应的页框并获取到其中存储的程序。</li>
+</ol>
+<blockquote>
+<blockquote>
+<p><strong>查询LDT表</strong></p>
+</blockquote>
+</blockquote>
+<ol>
+<li>根据LDTR寄存器中前13位组成的索引在GDT表中获取到段描述符，此描述符是LDT表的描述符。</li>
+<li>根据段描述符定位到LDT表并通过CS寄存器获取到代码段的基址。</li>
+<li>根据代码段基址和偏移得到虚拟地址并查询页表得到物理地址。</li>
+</ol>
+<p>如上例所示，查询LDT表比之查询GDT表<strong>多一个步骤</strong>，即<strong>通过GDT表获取到LDT表基址</strong>。</p>
+<h2 id="MMU是什么"><a href="#MMU是什么" class="headerlink" title="MMU是什么"></a>MMU是什么</h2><blockquote>
+<p>MMU是<code>Memory Management Unit</code>的缩写，中文名是<strong>内存管理单元</strong>，有时称作<strong>分页内存管理单元</strong>（英语：<code>paged memory management unit</code>，缩写为PMMU）。它是一种<strong>负责处理中央处理器（CPU）的内存访问请求</strong>的<strong>计算机硬件</strong>。它的功能包括<code>虚拟地址到物理地址的转换</code>（即虚拟内存管理）、<strong>内存保护</strong>、中央处理器<strong>高速缓存的控制</strong>，在较为简单的计算机体系结构中，负责<strong>总线的仲裁</strong>以及<strong>存储体切换</strong>（bank switching，尤其是在8位的系统上）。</p>
+</blockquote>
+<blockquote>
+<p>为什么要介绍MMU</p>
+</blockquote>
+<p>因为在学习<strong>内存管理部分</strong>时涉及到了，不过当时的学习重点放在了<strong>原理层次</strong>，但是我对于实现地址翻译功能的<strong>硬件</strong>很感兴趣。于是在此进行扩展学习。</p>
+<blockquote>
+<p><strong>MMU的功能</strong></p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>1、将<strong>虚拟地址映射为物理地址</strong>。获取到虚拟地址后并不是直接送到总线的，而是经过MMU的转换。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660741089252.png"></p>
+<p>如上图所示，<code>MMU</code>是一个封装在CPU中的<strong>硬件</strong>，CPU每次执行<strong>访问内存的指令</strong>都会自动引发MMU做<strong>查表和地址转换</strong>操作，地址转换操作由<strong>硬件自动完成</strong>，不需要用指令控制MMU去做.</p>
+<p>查表是指查询<strong>LDT表和页表</strong>，这两个表在正课学习中有介绍。</p>
+<blockquote>
+<blockquote>
+<p>2、<strong>内存保护</strong>:在访问VA时进行<strong>特权级检查</strong></p>
+</blockquote>
+</blockquote>
+<p>通过前面的学习，我们知道程序执行时是有<strong>特权级的</strong>，也就是<strong>CPL</strong>；而内存中的各个区域也是有<strong>特权级</strong>的，也就是<strong>DPL</strong>。同时在页表中也为每一个页<strong>设置了访问权限</strong>：<code>可读、可写、可执行</code>。</p>
+<p>所以，当程序要<strong>访问内存时</strong>就要进行<strong>权限的检测</strong>，只有符合权限才可以进行访问操作。而这个<strong>检测权限的操作</strong>就是由<strong>MMU负责完成</strong>。</p>
+<h2 id="PCB中有什么"><a href="#PCB中有什么" class="headerlink" title="PCB中有什么"></a>PCB中有什么</h2><blockquote>
+<p>为了描述控制<strong>进程的运行</strong>，系统中存放进程的<strong>管理和控制信息</strong>的数据结构称为<code>进程控制块（PCB Process Control Block）</code>，它是<strong>进程实体</strong>的一部分，是操作系统中最重要的<strong>记录性数据结构</strong>。它是进程管理和控制的最重要的数据结构，<strong>每一个进程均有一个PCB</strong>，在创建进程时，建立PCB，伴随进程运行的全过程，直到进程撤消而撤消。</p>
+</blockquote>
+<p>PCB中记录了操作系统所需的，用于<strong>描述进程的当前情况</strong>以及<strong>控制进程运行</strong>的全部信息。PCB的作用是<code>使一个在多道程序环境下不能独立运行的程序（含数据），成为一个能独立运行的基本单位，一个能与其他进程并发执行的进程</code>。或者说，OS是根据PCB来对并发执行的进程进行控制和管理的。例如，当OS要调度某进程执行时，要从该进程的PCB中<strong>查处其现行状态及优先级</strong>；在调度到某进程后，要根据其PCB中所保存的<strong>处理机状态信息</strong>，设置该进程<strong>恢复运行的现场</strong>，并根据其PCB中的程序和数据的内存始址，<strong>找到其程序和数据</strong>；进程在执行过程中，当需要和与之合作的<strong>进程实现同步</strong>，<strong>通信或者访问文件</strong>时，也都需要访问PCB；当进程由于某种原因而暂停执行时，又须将器断点的<strong>处理机环境保存在PCB</strong>中。可见，在进程的整个生命期中，系统总是<strong>通过PCB对进程进行控制</strong>的，即系统是根据进程的PCB而不是任何别的什么而感知到该进程的存在的。所以说，<code>PCB是进程存在的唯一标志</code></p>
+<p>一个进程由<code>PCB+进程程序+进程数据+进程工作区</code>组成，其中<strong>PCB无疑是最重要</strong>的。一个PCB一般由<strong>以下部分组成</strong>：</p>
+<ol>
+<li><code>程序ID（PID、进程句柄）</code>：它是唯一的，<strong>一个进程都必须对应一个PID</strong>。PID一般是<strong>整形数字</strong></li>
+<li><code>特征信息</code>：一般分系统进程、用户进程、或者内核进程等</li>
+<li><code>进程状态</code>：<strong>运行、就绪、阻塞</strong>，表示进程现的运行情况</li>
+<li><code>优先级</code>：表示获得CPU控制权的<strong>优先级大小</strong></li>
+<li><code>通信信息</code>：进程之间的<strong>通信关系</strong>的反映，由于操作系统会提供通信信道</li>
+<li><code>现场保护区</code>：保护阻塞的进程</li>
+<li><code>资源需求、分配控制信息</code></li>
+<li><code>进程实体信息</code>，指明程序路径和名称，进程数据在物理内存还是在交换分区（分页）中</li>
+<li><code>其他信息</code>：工作单位，工作区，文件信息等</li>
+</ol>
+<p>更多信息参考如下地址：</p>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/PCB/16067368#2">https://baike.baidu.com/item/PCB/16067368#2</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Lynn-Zhang/p/5589944.html">https://www.cnblogs.com/Lynn-Zhang/p/5589944.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/08/19/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86/" title="操作系统--扩展知识">https://danggeovo.github.io/2022/08/19/操作系统--扩展知识/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/17/%EF%BC%88%E7%AC%AC%E4%BA%94%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="prev" title="（第五节）操作系统--内存管理">
+                  <i class="fa fa-angle-left"></i> （第五节）操作系统--内存管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/08/21/%EF%BC%88%E7%AC%AC%E4%B8%83%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="next" title="（第七节）操作系统--设备驱动">
+                  （第七节）操作系统--设备驱动 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

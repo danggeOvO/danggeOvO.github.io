@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面  前面在内存管理部分我们介绍了地址翻译的相关知识，即通过段基址和偏移获取虚拟地址，而后通过虚拟地址获取到物理地址。虚拟内存作为中转区域完成段页结合机制，同时32位逻辑地址可以定位到一个4G大小的区域，而这也是虚拟内存的标准大小，换句话说，每一个进程都对应一个虚拟内存且其大小为4G。但是虚拟内存毕竟是虚拟的，只有将其与物理页框映射才可以落实到具体的硬件存储中。这就导致一个问题：虚拟内存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="（第六节）操作系统--换入\换出（用空间和时间换虚存）">
+<meta property="og:url" content="https://danggeovo.github.io/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面  前面在内存管理部分我们介绍了地址翻译的相关知识，即通过段基址和偏移获取虚拟地址，而后通过虚拟地址获取到物理地址。虚拟内存作为中转区域完成段页结合机制，同时32位逻辑地址可以定位到一个4G大小的区域，而这也是虚拟内存的标准大小，换句话说，每一个进程都对应一个虚拟内存且其大小为4G。但是虚拟内存毕竟是虚拟的，只有将其与物理页框映射才可以落实到具体的硬件存储中。这就导致一个问题：虚拟内存">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660920916239.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660982682804.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660983387026.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660992557858.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660992671454.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660992682588.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660997689877.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004486763.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004557326.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004727541.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004922250.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661040812498.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661040882305.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661040991247.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661041451429.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661041084059.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661041193986.png">
+<meta property="article:published_time" content="2022-09-12T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:57:55.437Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660920916239.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/","path":"2022/09/12/（第六节）操作系统--换入_换出（用空间和时间换虚存）/","title":"（第六节）操作系统--换入\\换出（用空间和时间换虚存）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>（第六节）操作系统--换入\换出（用空间和时间换虚存） | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%84%E6%95%B4%E7%9A%84%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.</span> <span class="nav-text">规整的虚拟内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念介绍</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8D%A2%E5%85%A5%E6%9C%BA%E5%88%B6-%E8%AF%B7%E6%B1%82%E8%B0%83%E9%A1%B5"><span class="nav-number">2.</span> <span class="nav-text">换入机制-请求调页</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E8%B0%83%E9%A1%B5"><span class="nav-number">2.1.</span> <span class="nav-text">请求调页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E8%B0%83%E5%85%A5%E7%9A%84%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">页面调入的具体实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8D%A2%E5%85%A5%E6%9C%BA%E5%88%B6-%E9%A1%B5%E9%9D%A2%E6%8D%A2%E5%87%BA"><span class="nav-number">3.</span> <span class="nav-text">换入机制-页面换出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E6%8D%A2%E5%87%BA%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">页面换出的基本算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRU%E7%AE%97%E6%B3%95%E7%9A%84%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.2.</span> <span class="nav-text">LRU算法的具体实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clock%E7%AE%97%E6%B3%95"><span class="nav-number">3.3.</span> <span class="nav-text">clock算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E6%A1%86%E4%B8%AA%E6%95%B0%E5%88%86%E9%85%8D%E5%92%8C%E5%85%A8%E5%B1%80%E7%BD%AE%E6%8D%A2"><span class="nav-number">3.4.</span> <span class="nav-text">页框个数分配和全局置换</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="（第六节）操作系统--换入\换出（用空间和时间换虚存） | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          （第六节）操作系统--换入\换出（用空间和时间换虚存）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-12 13:48:32" itemprop="dateCreated datePublished" datetime="2022-09-12T13:48:32+08:00">2022-09-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:57:55" itemprop="dateModified" datetime="2023-11-08T17:57:55+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong></p>
+<blockquote>
+<p>前面在<strong>内存管理部分</strong>我们介绍了<strong>地址翻译</strong>的相关知识，即通过<strong>段基址和偏移</strong>获取<strong>虚拟地址</strong>，而后通过虚拟地址获取到<strong>物理地址</strong>。<code>虚拟内存</code>作为<strong>中转区域</strong>完成<strong>段页结合机制</strong>，同时<strong>32位逻辑地址</strong>可以定位到一个<strong>4G大小的区域</strong>，而这也是<strong>虚拟内存的标准大小</strong>，换句话说，<strong>每一个进程都对应一个虚拟内存且其大小为4G</strong>。<br>但是虚拟内存毕竟是虚拟的，只有将其<strong>与物理页框映射</strong>才可以落实到具体的硬件存储中。这就<strong>导致一个问题</strong>：<code>虚拟内存太大了而实际物理内存太小</code>，使得物理内存无法与所有的虚拟内存完成映射。因此，采取<strong>换入、换出机制</strong>，<code>使用磁盘和时间换取空间</code>。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p><code>换入</code>：<strong>用户在访问某个虚拟内存时，如果此虚拟内存没有与物理内存关联，就立马从磁盘上读取内容并建立关联</strong>。<br><code>换出</code>：<strong>将物理内存上的部分内容移到磁盘中并和虚拟内存解除关联。</strong></p>
+</blockquote>
+</blockquote>
+<p><strong>注</strong>：<a target="_blank" rel="noopener" href="https://book.douban.com/subject/30391722/">文章内容参考《操作系统原理 实现、与实践》</a>，所用图片来自<strong>书配图与网络</strong>，仅用于<strong>个人学习</strong>使用。</p>
+<h1 id="规整的虚拟内存"><a href="#规整的虚拟内存" class="headerlink" title="规整的虚拟内存"></a>规整的虚拟内存</h1><h2 id="基本概念介绍"><a href="#基本概念介绍" class="headerlink" title="基本概念介绍"></a>基本概念介绍</h2><blockquote>
+<p>什么叫规整？</p>
+</blockquote>
+<p><code>规整</code>是一个<strong>形容词</strong>，在这里是说<strong>每一个进程对应的虚拟内存都有相同的大小</strong>（<strong>32位操作系统</strong>定义的虚拟内存大小为<code>4G</code>)</p>
+<p>建立规整的虚拟内存可以<strong>简化用户程序对内存的使用</strong>。</p>
+<blockquote>
+<p>如何实现规整？</p>
+</blockquote>
+<p>通过<code>换入、换出机制</code>。对于此机制的<strong>定义上面已经給出</strong>，我们下面要介绍这种<strong>机制的原理</strong>及<strong>如何实现</strong>这种机制。不过，在此之前先来看一下<strong>换入换出的示意图</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660920916239.png"></p>
+<h1 id="换入机制-请求调页"><a href="#换入机制-请求调页" class="headerlink" title="换入机制-请求调页"></a>换入机制-请求调页</h1><h2 id="请求调页"><a href="#请求调页" class="headerlink" title="请求调页"></a>请求调页</h2><blockquote>
+<p>换入的前提：<strong>映射未建立</strong></p>
+</blockquote>
+<p>我们以<strong>下图为例</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660982682804.png"></p>
+<p>通过<strong>段基址+段内偏移</strong>得到<strong>虚拟地址</strong>为0x4040。而后就要将这个虚拟地址<strong>转换为实际物理地址</strong>，通过运算可得此虚拟地址对应的<strong>页号为4</strong>，所以<strong>查询页表</strong>得到物理地址。这时<strong>问题就出现了</strong>，<strong>页表中并没有建立映射关系</strong>，也就无法获取物理页。</p>
+<p>这时，就要使用<strong>换入机制</strong>，即在缺少虚拟页时<code>请求调页</code>。</p>
+<blockquote>
+<p>内存换入：请求调页</p>
+</blockquote>
+<p>请求调页的过程发生在：<strong>MMU发现虚拟页面在页表项中有效位为0时</strong>。调页的<strong>流程</strong>大概如下：</p>
+<ol>
+<li>MMU向CPU发送<strong>缺页中断</strong>，而后执行这个中断程序。</li>
+<li><strong>中断程序</strong>首先会先在<strong>磁盘</strong>中找到这个虚拟页面对应的内容，并将其放到一个<strong>空闲页框</strong>中。</li>
+<li><strong>修改页表</strong>项，完成虚拟内存与物理页框的<strong>映射处理</strong>。</li>
+</ol>
+<p>下图是对<strong>请求调页</strong>的<strong>流程概括</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660983387026.png"></p>
+<h2 id="页面调入的具体实现"><a href="#页面调入的具体实现" class="headerlink" title="页面调入的具体实现"></a>页面调入的具体实现</h2><blockquote>
+<p>前面我们只是介绍了<strong>请求调页的流程</strong>，下面要学习其<strong>具体实现</strong>，会从<strong>代码的层面</strong>进行介绍。</p>
+</blockquote>
+<blockquote>
+<p>代码1：从<strong>缺页中断程序</strong>开始</p>
+</blockquote>
+<p>我们要分析此系统如何实现<strong>换入机制</strong>，肯定要从<strong>第一句代码开始</strong>，这个代码就是<strong>缺页中断的代码</strong>。<br>在操作系统启动时<strong>初始IDT表</strong>时就将<strong>14号中断</strong>设置为<strong>缺页中断</strong>，具体如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660992557858.png"></p>
+<p>如上图所示，<code>page_fault</code>就是对应的<strong>中断处理函数</strong>，其具体代码如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660992671454.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660992682588.png"></p>
+<p>我们来<strong>分析一下代码</strong>：</p>
+<ul>
+<li>第一行：获取<strong>页面错误的类型</strong>，是<code>缺页</code>还是<code>越权访问</code>，并把结果<strong>保存在eax</strong>里。</li>
+<li>第二行：将edx的值保存在<code>cr2寄存器</code>，用于<strong>确定缺页的虚拟地址</strong>。</li>
+<li>第三、四行：将<strong>参数压栈</strong>，为后续函数<strong>传参</strong>。</li>
+<li>第五行：判断错误类型，并<strong>跳转到对应函数</strong>，包括<code>do_no_page</code>和<code>do_wp_page</code></li>
+<li>后续就是函数的<strong>跳转与执行</strong></li>
+</ul>
+<blockquote>
+<p><code>do_no_page</code><strong>函数</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660997689877.png"></p>
+<p><strong>分析一下代码</strong>：</p>
+<ul>
+<li>第一行：通过<strong>与运算</strong>得出<strong>虚拟页号</strong>（<code>前20位</code>）</li>
+<li>第二行：通过<code>get_free_page()</code>获取一个<strong>空闲的物理内存</strong></li>
+<li>第三行：通过<code>bread_page()</code>将<strong>磁盘内容</strong>放入物理内存中</li>
+<li>第四行：通过<code>put_page()</code>填写<strong>页表内容</strong>，完成映射</li>
+</ul>
+<p>需要注意的是，<code>bread_page</code>完成<strong>磁盘读写</strong>的实现我们放到后面<strong>文件管理</strong>时具体介绍。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong></p>
+<blockquote>
+<p>上面我们介绍了<strong>内存换入</strong>的原因与实现，过程很简单：<code>缺页中断</code>-&gt;<code>虚拟页号获取</code>-&gt;<code>物理内存获取与磁盘写入</code>-&gt;<code>页表填写完成映射</code>。到这里，主程序就可以<strong>寻址成功</strong>。<br>不只有换入，还有<code>换出</code>，因为我们在换入时会<strong>请求一个物理内存</strong>，但是我们<strong>无法保证</strong>一定有<strong>空闲的物理内存</strong>，一旦没有就要实施<strong>换出机制</strong>。换出的流程与实现要<strong>复杂一点</strong>，涉及到<strong>很多算法</strong>。</p>
+</blockquote>
+</blockquote>
+<h1 id="换入机制-页面换出"><a href="#换入机制-页面换出" class="headerlink" title="换入机制-页面换出"></a>换入机制-页面换出</h1><h2 id="页面换出的基本算法"><a href="#页面换出的基本算法" class="headerlink" title="页面换出的基本算法"></a>页面换出的基本算法</h2><p>页面换出是在<code>get_free_page</code>时实现的，而页面换出的一个<strong>很重要的问题</strong>就是：<code>如何确定要淘汰哪一页？</code></p>
+<p>我们需要<strong>一些算法</strong>来确定<strong>换出机制的淘汰对象</strong>，这里我们主要介绍<strong>以下三种算法</strong>：（比较其<strong>优缺点</strong>，找到最优算法）</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004486763.png"></p>
+<blockquote>
+<p>算法1：<strong>FIFO（先入先出）</strong></p>
+</blockquote>
+<p>我们以下面<strong>这个例子</strong>来看：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004557326.png"></p>
+<p>如图所示，使用<strong>FIFO算法</strong>进行页面<strong>换出和换入</strong>，缺页次数为7。这种算法<strong>并不是很好</strong>，因为往往导致<strong>刚刚换出的页又要被换入</strong>。</p>
+<blockquote>
+<p>算法2：MIN（取最后一个使用的进行换出）</p>
+</blockquote>
+<p>使用<strong>MIN算</strong>法实际操作我们上面的例子：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004727541.png"></p>
+<p><strong>缺页次数变少了</strong>。其实，M<code>IN算法</code>就是<strong>最优的换出算法</strong>，可以有效减少缺页次数。</p>
+<p>但是，<code>MIN算法</code>只是一种<strong>理想算法</strong>，在实际的情况下，我们<strong>不可能知道后面要发生什么</strong>，也就<strong>无法确定</strong>后续哪一个页最后被使用。</p>
+<p>但但是，我们可以<strong>借鉴一下MIN算法的思想</strong>，从而引出<code>LRU算法</code>。</p>
+<blockquote>
+<p>算法3：LRU算法</p>
+</blockquote>
+<p>使用<strong>LRU算法</strong>的示例：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661004922250.png"></p>
+<p><code>LRU算法</code>就是使用<strong>历史来预测未来</strong>：根据<code>局部性规律</code>，我们的程序往往在<strong>一个固定的段中</strong>进行跳转，比如：<strong>while循环、for循环等</strong>操作。</p>
+<p>所以<strong>如图所示</strong>，通过<strong>LRU算法</strong>得到的换出顺序与<strong>MIN算法</strong>一致，可以达到<strong>最优策略</strong>。</p>
+<h2 id="LRU算法的具体实现"><a href="#LRU算法的具体实现" class="headerlink" title="LRU算法的具体实现"></a>LRU算法的具体实现</h2><blockquote>
+<p>实现方法1：<code>时间戳</code>（<strong>模拟很简单，实践不适用</strong>）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661040812498.png"></p>
+<p>如图所示，我们<strong>维护一个表</strong>，在其中为<strong>每一个页定义一个时间戳</strong>，这个时间戳会随着页的使用而<strong>依次增加</strong>，换出时选择<strong>时间戳最小的页</strong>所在的页框进行换出。</p>
+<p>使用<strong>时间戳</strong>的方法看起来很直观，也很好实现，但是在<strong>实际情况下很难落实</strong>：<code>花费时间较多、时间戳溢出</code>等</p>
+<blockquote>
+<p>实现方法2：<code>页码栈</code>（<strong>频繁修改指针，代价较大</strong>）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661040882305.png"></p>
+<p>如图所示，维护一个<strong>页码栈</strong>，将<strong>最近使用</strong>的页放到最上面（<strong>浮起来</strong>），换出时选择<strong>沉底的页</strong>所在的页框。</p>
+<p>使用<strong>页码栈</strong>会导致每次地址访问都要<strong>修改指针</strong>，时间代价较大。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong></p>
+<blockquote>
+<p>前面我们引出了<code>LRU算法</code>，并给出了几种实现方法：<strong>时间戳、页码栈</strong>等，但是在实际情况下都很难高效实现。<br>所以我们要对LRU算法进行进一步改进：使用<code>LRU的近似实现</code></p>
+</blockquote>
+</blockquote>
+<h2 id="clock算法"><a href="#clock算法" class="headerlink" title="clock算法"></a>clock算法</h2><blockquote>
+<p><code>clock算法</code>就是对<strong>LRU算法的近似实现</strong>，将时间计数改为了<strong>是和否</strong>，而不是使用递增数字。<code>使用最近没有使用近似最少使用。</code></p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p><code>原始clock算法</code>实现（<strong>单指针</strong>）</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661040991247.png"></p>
+<p>如图所示，每一个页加一个<code>引用位</code>，每一次访问此页时就将该位<strong>置为1</strong>；而后在<strong>缺页而选择淘汰页</strong>时，将该位为1的页<strong>置0</strong>，该位为0页淘汰。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661041451429.png"></p>
+<p><strong>注</strong>：图中的每一个框框都是分配给此进程的<strong>物理页框</strong>。</p>
+<p>这种方法可以很好的<strong>节省资源</strong>，因为我们可以将页的引用位放到<strong>页码表</strong>里，当<code>MMU</code>进行查询时<strong>自动执行</strong>置0操作，而不需要像前面那样维护一个复杂的数据结构。</p>
+<blockquote>
+<blockquote>
+<p>clock算法的<strong>分析与改进</strong>（<strong>双指针</strong>）</p>
+</blockquote>
+</blockquote>
+<p><strong>原始clock算法</strong>虽然可以节省很多资源、很高效，但是其<strong>对LRU的近似并不好</strong>。 </p>
+<p>我们看<strong>下面这个例子</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661041084059.png"></p>
+<p>因为现在的计算机<strong>内存都比较大</strong>，缺页的情况发生的很少，所以会导致所有页的<strong>引用位被置1</strong>；而后在<strong>缺页时</strong>选择淘汰页时，会把所有的页的<strong>引用位都归零</strong>，并选取其中一个进行调出；这样就会导致clock算法<strong>退化为FIFO算法</strong>。</p>
+<p><strong>问题所在</strong>：记录的<strong>历史信息太长</strong>，导致“<code>最近没有使用近似最少使用</code>”中的<strong>最近</strong>没有体现出来</p>
+<p><strong>问题解决</strong>：<code>定时清除R位</code>。使用<strong>双指针</strong>的方式进行，<strong>快指针用于清除</strong>，<strong>慢指针用于选择淘汰页</strong>。</p>
+<h2 id="页框个数分配和全局置换"><a href="#页框个数分配和全局置换" class="headerlink" title="页框个数分配和全局置换"></a>页框个数分配和全局置换</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661041193986.png"></p>
+<p>如图所示，给每一个<strong>进程分配的页框数目</strong>是一个很需要考虑的问题：<strong>分配的多会使得换入、换出机制的失效</strong>，分配的少会导致<strong>颠簸现象</strong>（<code>本质还是缺页</code>）</p>
+<p>分配页框的个数也有<strong>很多算法</strong>来计算，一般思想是：<strong>计算一个工作集，使其可以覆盖局部</strong>。这里我们<strong>不再介绍</strong>。</p>
+<hr>
+<hr>
+<blockquote>
+<p><strong>写在最后</strong>：<strong>总结</strong></p>
+<blockquote>
+<p>这一节我们介绍了一个<strong>规整的虚拟内存</strong>的实现：通过<strong>换入、换出机制</strong>保证每一个进程都有一个固定大小的虚拟内存空间。同时介绍了换入换出机制的<strong>原理和实现</strong>，其中涉及到<strong>很多算法</strong>以提高换入、换出的效率。<br>到这里，操作系统中的核心视图——<code>多进程视图</code>就学习完毕了。后面我们将进行<code>IO设备驱动</code>、<code>文件管理</code>等的介绍与学习。</p>
+</blockquote>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/" title="（第六节）操作系统--换入\换出（用空间和时间换虚存）">https://danggeovo.github.io/2022/09/12/（第六节）操作系统--换入_换出（用空间和时间换虚存）/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/" rel="prev" title="初入计网">
+                  <i class="fa fa-angle-left"></i> 初入计网
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/09/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B--PE%20%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/" rel="next" title="逆向工程--PE 结构详解">
+                  逆向工程--PE 结构详解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

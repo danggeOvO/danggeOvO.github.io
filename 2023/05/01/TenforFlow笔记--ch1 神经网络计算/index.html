@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：本篇文章时学习后的收获总结，学习流程大体如下：看视频—&gt; 根据ppt整理  —&gt; 阅读笔记后进行补充。（笔记自看，多思考；实践必做，跑dome)我将使用深区域进行笔记的最后补充。（深区域就是这行字所在的区域）  人工智能三学派 什么是人工智能？让机器具备人的思维和意识。   笔记补充 连接主义的神经网络  基于连接主义的神经网络模仿神经元，使计算机具有感性思维。图 1.2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TensorFlow笔记--ch1 神经网络计算">
+<meta property="og:url" content="https://danggeovo.github.io/2023/05/01/TenforFlow%E7%AC%94%E8%AE%B0--ch1%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：本篇文章时学习后的收获总结，学习流程大体如下：看视频—&gt; 根据ppt整理  —&gt; 阅读笔记后进行补充。（笔记自看，多思考；实践必做，跑dome)我将使用深区域进行笔记的最后补充。（深区域就是这行字所在的区域）  人工智能三学派 什么是人工智能？让机器具备人的思维和意识。   笔记补充 连接主义的神经网络  基于连接主义的神经网络模仿神经元，使计算机具有感性思维。图 1.2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919391.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919544.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919390.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919570.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919581.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919568.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919385.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919558.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919565.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919561.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919567.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919564.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919382.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919392.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919389.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919383.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919393.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919560.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919563.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919384.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919782.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919783.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919784.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919887.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919785.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919788.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919786.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919789.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919787.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919906.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919907.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919908.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919914.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919915.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919916.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919917.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919990.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919989.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919997.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919998.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920095.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920084.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920091.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920077.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920081.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920082.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920083.png">
+<meta property="article:published_time" content="2023-05-01T05:26:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:18:32.984Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919391.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/05/01/TenforFlow%E7%AC%94%E8%AE%B0--ch1%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/05/01/TenforFlow%E7%AC%94%E8%AE%B0--ch1%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97/","path":"2023/05/01/TenforFlow笔记--ch1 神经网络计算/","title":"TensorFlow笔记--ch1 神经网络计算"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TensorFlow笔记--ch1 神经网络计算 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E4%B8%89%E5%AD%A6%E6%B4%BE"><span class="nav-number">1.</span> <span class="nav-text">人工智能三学派</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0%E8%A1%A5%E5%85%85"><span class="nav-number">1.1.</span> <span class="nav-text">笔记补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%BF%9E%E6%8E%A5%E4%B8%BB%E4%B9%89%E7%9A%84%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%BE%E8%AE%A1%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">基于连接主义的神经网络设计过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%A0%E9%87%8F%E7%94%9F%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">张量生成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8tf%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">常用tf函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%EF%BC%9A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E7%8E%B0%E9%B8%A2%E5%B0%BE%E8%8A%B1%E5%88%86%E7%B1%BB%EF%BC%88%E7%AE%80%E5%8C%96%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">实例：神经网络实现鸢尾花分类（简化）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95"><span class="nav-number">6.</span> <span class="nav-text">扩展方法</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/05/01/TenforFlow%E7%AC%94%E8%AE%B0--ch1%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="TensorFlow笔记--ch1 神经网络计算 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TensorFlow笔记--ch1 神经网络计算
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-01 13:26:32" itemprop="dateCreated datePublished" datetime="2023-05-01T13:26:32+08:00">2023-05-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:18:32" itemprop="dateModified" datetime="2023-11-08T18:18:32+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】人工智能</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/TensorFlow%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">TensorFlow实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong>：本篇文章时学习后的收获总结，学习流程大体如下：看视频—&gt; 根据ppt整理  —&gt; 阅读笔记后进行补充。（笔记自看，多思考；实践必做，跑dome)<br>我将使用深区域进行笔记的最后补充。（深区域就是这行字所在的区域）</p>
+</blockquote>
+<h1 id="人工智能三学派"><a href="#人工智能三学派" class="headerlink" title="人工智能三学派"></a>人工智能三学派</h1><blockquote>
+<p>什么是人工智能？让机器具备<strong>人的思维和意识</strong>。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919391.png" alt="三大学派"></p>
+<h2 id="笔记补充"><a href="#笔记补充" class="headerlink" title="笔记补充"></a>笔记补充</h2><blockquote>
+<p>连接主义的神经网络</p>
+</blockquote>
+<p>基于连接主义的神经网络模仿神经元，使计算机具有感性思维。图 1.2展示了从出生到成年，人脑中神经网络的变化。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919544.png"><br>随着我们的成长，大量的数据通过<strong>视觉、听觉</strong>涌入大脑，使我们的神经网络连接，也就是这些神经元连接线上的<strong>权重</strong>发生了变化，有些线上的权重增强了，有些线上的权重减弱了。如图 1.3 所示<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919390.png"></p>
+<h1 id="基于连接主义的神经网络设计过程"><a href="#基于连接主义的神经网络设计过程" class="headerlink" title="基于连接主义的神经网络设计过程"></a>基于连接主义的神经网络设计过程</h1><blockquote>
+<p>神经网络设计过程?</p>
+</blockquote>
+<p>我们要用计算机模仿刚刚说到的神经网络连接关系，让计算机具备感性思维。<br>首先，需要<strong>准备数据</strong>，数据量<strong>越大越好</strong>，要构成<strong>特征和标签对</strong>。如要识别猫，就要有大量猫的图片和这个图片是猫的标签，构成特征标签对。<br>随后，搭建神经网络的<strong>网络结构</strong>，并通过<strong>反向传播</strong>，优化连线的权重，直到模型的识别准确率达到要求，得到最优的连线权重，把这个<strong>模型保存</strong>起来。<br>最后，用保存的模型，输入从未见过的新数据，它会通过<strong>前向传播</strong>，输出概率值，概率值最大的一个，就是分类或预测的结果。下图展示了搭建与使用神经网络模型的流程。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919570.png" alt="神经网络设计过程"></p>
+<blockquote>
+<p>举一个例子：给鸢尾花分类（Iris）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919581.png" alt="eg1"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919568.png" alt="eg2"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919385.png" alt="搭建网络"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919558.png" alt="喂入数据"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919565.png" alt="前向传播"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919561.png" alt="损失函数"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919567.png" alt="梯度下降"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919564.png" alt="反向传播"></p>
+<p>示例代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">w = tf.Variable(tf.constant(<span class="number">5</span>, dtype=tf.float32))</span><br><span class="line">lr = <span class="number">0.2</span></span><br><span class="line">epoch = <span class="number">40</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epoch):  </span><br><span class="line"><span class="comment"># for epoch 定义顶层循环，表示对数据集循环epoch次，此例数据集数据仅有1个w,初始化时候constant赋值为5，循环40次迭代。</span></span><br><span class="line">    <span class="keyword">with</span> tf.GradientTape() <span class="keyword">as</span> tape:  </span><br><span class="line">	<span class="comment"># with结构到grads框起了梯度的计算过程。</span></span><br><span class="line">        loss = tf.square(w + <span class="number">1</span>)</span><br><span class="line">    grads = tape.gradient(loss, w)  </span><br><span class="line">	<span class="comment"># .gradient函数告知谁对谁求导</span></span><br><span class="line"></span><br><span class="line">    w.assign_sub(lr * grads)  </span><br><span class="line">	<span class="comment"># .assign_sub 对变量做自减 即：w -= lr*grads 即 w = w - lr*grads</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;After %s epoch,w is %f,loss is %f&quot;</span> % (epoch, w.numpy(), loss))</span><br><span class="line"></span><br><span class="line"><span class="comment"># lr初始值：0.2   请自改学习率  0.001  0.999 看收敛过程</span></span><br><span class="line"><span class="comment"># 最终目的：找到 loss 最小 即 w = -1 的最优参数w</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>代码结果：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919382.png" alt="结果"></p>
+<p>可见，经过18次迭代之后就可以得到最小值。但是如果<strong>学习率过小</strong>，经过40次迭代也无法得到最小值；如果<strong>学习率过大</strong>，会在最小值之间跳动，也无法得到最小值。所以我们需要通过更加科学的方法<strong>动态调整学习率</strong>，以达到最佳识别效果。</p>
+<h1 id="张量生成"><a href="#张量生成" class="headerlink" title="张量生成"></a>张量生成</h1><blockquote>
+<p>张量是TensorFlow的基础，从其名称就可以看出来。属于tensorflow的数据类型。<br>关于张量的知识有很多，下面我们以其中的几个典型来介绍：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919392.png" alt="张量"></p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919389.png" alt="dtype"></p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919383.png" alt="创建一个张量"></p>
+<p>注：这里使用tf.constant创建的张量属于常量。要使用[xx]格式给出具体值，这里<strong>有几层中括号其维度就是多少</strong>，具体可以看上张量图。</p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919393.png" alt="np转换"></p>
+<p>注：将numpy生成的一维数组转换为张量（带有维度、数据类型）</p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919560.png" alt="同数张量"></p>
+<p>注：使用这种方法可以创建数据相同的张量。不过其参数要给出维度，<strong>逗号分隔开几个数就有几维</strong>。</p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919563.png" alt="正态分布"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919384.png" alt="eg"></p>
+<p>注：函数较长，但是都是<strong>属于random</strong>。并且这个是属于<strong>随机生成</strong>，不需要指定数据。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919782.png" alt="均匀分布"></p>
+<p>注：与上正态分布格式类似，不过分布不同。</p>
+<h1 id="常用tf函数"><a href="#常用tf函数" class="headerlink" title="常用tf函数"></a>常用tf函数</h1><blockquote>
+<p>tf.cast与tf.reduce_max+tf.reduce_min</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919783.png" alt="常用函数1"></p>
+<p>注：使用cast转换后<strong>仍为张量</strong>，只是改名数据类型。<br>注2：<code>tf.reduce</code>有很多类别，上面已经有了max和min，取值后仍为张量。<br>代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">x1 = tf.constant([<span class="number">1.</span>, <span class="number">2.</span>, <span class="number">3.</span>], dtype=tf.float64)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;x1:&quot;</span>, x1)</span><br><span class="line">x2 = tf.cast(x1, tf.int32)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;x2&quot;</span>, x2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;minimum of x2：&quot;</span>, tf.reduce_min(x2))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;maxmum of x2:&quot;</span>, tf.reduce_max(x2))</span><br></pre></td></tr></table></figure>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919784.png" alt="axis"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919887.png" alt="axis示例"></p>
+<p>注：这里的axis可以指定计算的区域，<strong>0为纵向，1为横向</strong>。</p>
+<p>代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">x = tf.constant([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>]])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;x:&quot;</span>, x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;mean of x:&quot;</span>, tf.reduce_mean(x))  <span class="comment"># 求x中所有数的均值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;sum of x:&quot;</span>, tf.reduce_sum(x, axis=<span class="number">1</span>))  <span class="comment"># 求每一行的和</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919785.png" alt="变量"><br>注：使用<code>tf.Variable</code>可以生成变量，常用于训练量。</p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919788.png" alt="数学运算"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919786.png" alt="四则运算"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919789.png" alt="eg1"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919787.png" alt="三方运算"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919906.png" alt="矩阵乘法"></p>
+<p>注：矩阵乘法的计算过程要知道。</p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919907.png" alt="配对"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919908.png" alt="eg"></p>
+<p>代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">features = tf.constant([<span class="number">12</span>, <span class="number">23</span>, <span class="number">10</span>, <span class="number">17</span>])</span><br><span class="line">labels = tf.constant([<span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>])</span><br><span class="line">dataset = tf.data.Dataset.from_tensor_slices((features, labels))</span><br><span class="line"><span class="keyword">for</span> element <span class="keyword">in</span> dataset:</span><br><span class="line">    <span class="built_in">print</span>(element)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919914.png" alt="求导+with"></p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919915.png" alt="索引"></p>
+<p>注：可利用 enumerate(列表名)函数枚举出每一个元素，并在元素前配上对应的索引号，常在 for 循环中使用。</p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919916.png" alt="one_hot"></p>
+<p>注：可用<code>tf.one_hot(待转换数据，depth=几分类)</code>函数实现用<strong>独热码</strong>表示标签，在分类问题中很常见。标记类别为为 1 和 0，其中 1 表示是，0 表示非。如在鸢尾花分类任务中，如果标签是 1，表示分类结果是 1 杂色鸢尾，其用把它用独热码表示就是 0,1,0，这样可以表示出每个分类的概率：也就是百分之 0 的可能是 0狗尾草鸢尾，百分百的可能是 1 杂色鸢尾，百分之 0 的可能是弗吉尼亚鸢尾。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919917.png" alt="eg"></p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919990.png" alt="softmax"><br>注：属于激活函数的一种，用于将输出的结果转换为符合的概率分布，用于与独热码匹配。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919989.png" alt="eg"></p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919997.png" alt="自减"></p>
+<hr>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074919998.png" alt="取下标"></p>
+<h1 id="实例：神经网络实现鸢尾花分类（简化）"><a href="#实例：神经网络实现鸢尾花分类（简化）" class="headerlink" title="实例：神经网络实现鸢尾花分类（简化）"></a>实例：神经网络实现鸢尾花分类（简化）</h1><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920095.png" alt="数据集"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920084.png" alt="数据集导入"><br>注：data的格式为150x4的矩阵，target的格式为150的数组。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920091.png" alt="结构"></p>
+<p>具体代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="comment"># 利用鸢尾花数据集，实现前向传播、反向传播，可视化loss曲线</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入所需模块</span></span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入数据，分别为输入特征和标签</span></span><br><span class="line"><span class="comment"># scikit-learn 内置有一些小型标准数据集，不需要从某个外部网站下载任何文件，用datasets.load_xx()加载。</span></span><br><span class="line">x_data = datasets.load_iris().data</span><br><span class="line">y_data = datasets.load_iris().target</span><br><span class="line"><span class="built_in">print</span>(x_data, y_data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 随机打乱数据（因为原始数据是顺序的，顺序不打乱会影响准确率）</span></span><br><span class="line"><span class="comment"># seed: 随机数种子，是一个整数，当设置之后，每次生成的随机数都一样（为方便教学，以保每位同学结果一致）</span></span><br><span class="line">np.random.seed(<span class="number">116</span>)  <span class="comment"># 使用相同的seed，保证输入特征和标签一一对应</span></span><br><span class="line">np.random.shuffle(x_data)</span><br><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(y_data)</span><br><span class="line">tf.random.set_seed(<span class="number">116</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将打乱后的数据集分割为训练集和测试集，训练集为前120行，测试集为后30行</span></span><br><span class="line">x_train = x_data[:-<span class="number">30</span>]</span><br><span class="line">y_train = y_data[:-<span class="number">30</span>]</span><br><span class="line">x_test = x_data[-<span class="number">30</span>:]</span><br><span class="line">y_test = y_data[-<span class="number">30</span>:]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换x的数据类型，否则后面矩阵相乘时会因数据类型不一致报错</span></span><br><span class="line">x_train = tf.cast(x_train, tf.float32)</span><br><span class="line">x_test = tf.cast(x_test, tf.float32)</span><br><span class="line"></span><br><span class="line"><span class="comment"># from_tensor_slices函数使输入特征和标签值一一对应。（把数据集分批次，每个批次batch组数据）</span></span><br><span class="line">train_db = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(<span class="number">32</span>)</span><br><span class="line">test_db = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成神经网络的参数，4个输入特征故，输入层为4个输入节点；因为3分类，故输出层为3个神经元</span></span><br><span class="line"><span class="comment"># 用tf.Variable()标记参数可训练</span></span><br><span class="line"><span class="comment"># 使用seed使每次生成的随机数相同（方便教学，使大家结果都一致，在现实使用时不写seed）</span></span><br><span class="line">w1 = tf.Variable(tf.random.truncated_normal([<span class="number">4</span>, <span class="number">3</span>], stddev=<span class="number">0.1</span>, seed=<span class="number">1</span>))</span><br><span class="line">b1 = tf.Variable(tf.random.truncated_normal([<span class="number">3</span>], stddev=<span class="number">0.1</span>, seed=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">lr = <span class="number">0.1</span>  <span class="comment"># 学习率为0.1</span></span><br><span class="line">train_loss_results = []  <span class="comment"># 将每轮的loss记录在此列表中，为后续画loss曲线提供数据</span></span><br><span class="line">test_acc = []  <span class="comment"># 将每轮的acc记录在此列表中，为后续画acc曲线提供数据</span></span><br><span class="line">epoch = <span class="number">500</span>  <span class="comment"># 循环500轮</span></span><br><span class="line">loss_all = <span class="number">0</span>  <span class="comment"># 每轮分4个step，loss_all记录四个step生成的4个loss的和</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练部分</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epoch):  <span class="comment"># 数据集级别的循环，每个epoch循环一次数据集</span></span><br><span class="line">    <span class="keyword">for</span> step, (x_train, y_train) <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_db):  <span class="comment"># batch级别的循环 ，每个step循环一个batch</span></span><br><span class="line">        <span class="keyword">with</span> tf.GradientTape() <span class="keyword">as</span> tape:  <span class="comment"># with结构记录梯度信息</span></span><br><span class="line">            y = tf.matmul(x_train, w1) + b1  <span class="comment"># 神经网络乘加运算</span></span><br><span class="line">            y = tf.nn.softmax(y)  <span class="comment"># 使输出y符合概率分布（此操作后与独热码同量级，可相减求loss）</span></span><br><span class="line">            y_ = tf.one_hot(y_train, depth=<span class="number">3</span>)  <span class="comment"># 将标签值转换为独热码格式，方便计算loss和accuracy</span></span><br><span class="line">            loss = tf.reduce_mean(tf.square(y_ - y))  <span class="comment"># 采用均方误差损失函数mse = mean(sum(y-out)^2)</span></span><br><span class="line">            loss_all += loss.numpy()  <span class="comment"># 将每个step计算出的loss累加，为后续求loss平均值提供数据，这样计算的loss更准确</span></span><br><span class="line">        <span class="comment"># 计算loss对各个参数的梯度</span></span><br><span class="line">        grads = tape.gradient(loss, [w1, b1])</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 实现梯度更新 w1 = w1 - lr * w1_grad    b = b - lr * b_grad</span></span><br><span class="line">        w1.assign_sub(lr * grads[<span class="number">0</span>])  <span class="comment"># 参数w1自更新</span></span><br><span class="line">        b1.assign_sub(lr * grads[<span class="number">1</span>])  <span class="comment"># 参数b自更新</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每个epoch，打印loss信息</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Epoch &#123;&#125;, loss: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(epoch, loss_all/<span class="number">4</span>))</span><br><span class="line">    train_loss_results.append(loss_all / <span class="number">4</span>)  <span class="comment"># 将4个step的loss求平均记录在此变量中</span></span><br><span class="line">    loss_all = <span class="number">0</span>  <span class="comment"># loss_all归零，为记录下一个epoch的loss做准备</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试部分</span></span><br><span class="line">    <span class="comment"># total_correct为预测对的样本个数, total_number为测试的总样本数，将这两个变量都初始化为0</span></span><br><span class="line">    total_correct, total_number = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> x_test, y_test <span class="keyword">in</span> test_db:</span><br><span class="line">        <span class="comment"># 使用更新后的参数进行预测</span></span><br><span class="line">        y = tf.matmul(x_test, w1) + b1</span><br><span class="line">        y = tf.nn.softmax(y)</span><br><span class="line">        pred = tf.argmax(y, axis=<span class="number">1</span>)  <span class="comment"># 返回y中最大值的索引，即预测的分类</span></span><br><span class="line">        <span class="comment"># 将pred转换为y_test的数据类型</span></span><br><span class="line">        pred = tf.cast(pred, dtype=y_test.dtype)</span><br><span class="line">        <span class="comment"># 若分类正确，则correct=1，否则为0，将bool型的结果转换为int型</span></span><br><span class="line">        correct = tf.cast(tf.equal(pred, y_test), dtype=tf.int32)</span><br><span class="line">        <span class="comment"># 将每个batch的correct数加起来</span></span><br><span class="line">        correct = tf.reduce_sum(correct)</span><br><span class="line">        <span class="comment"># 将所有batch中的correct数加起来</span></span><br><span class="line">        total_correct += <span class="built_in">int</span>(correct)</span><br><span class="line">        <span class="comment"># total_number为测试的总样本数，也就是x_test的行数，shape[0]返回变量的行数</span></span><br><span class="line">        total_number += x_test.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="comment"># 总的准确率等于total_correct/total_number</span></span><br><span class="line">    acc = total_correct / total_number</span><br><span class="line">    test_acc.append(acc)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Test_acc:&quot;</span>, acc)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;--------------------------&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制 loss 曲线</span></span><br><span class="line">plt.title(<span class="string">&#x27;Loss Function Curve&#x27;</span>)  <span class="comment"># 图片标题</span></span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epoch&#x27;</span>)  <span class="comment"># x轴变量名称</span></span><br><span class="line">plt.ylabel(<span class="string">&#x27;Loss&#x27;</span>)  <span class="comment"># y轴变量名称</span></span><br><span class="line">plt.plot(train_loss_results, label=<span class="string">&quot;$Loss$&quot;</span>)  <span class="comment"># 逐点画出trian_loss_results值并连线，连线图标是Loss</span></span><br><span class="line">plt.legend()  <span class="comment"># 画出曲线图标</span></span><br><span class="line">plt.show()  <span class="comment"># 画出图像</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制 Accuracy 曲线</span></span><br><span class="line">plt.title(<span class="string">&#x27;Acc Curve&#x27;</span>)  <span class="comment"># 图片标题</span></span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epoch&#x27;</span>)  <span class="comment"># x轴变量名称</span></span><br><span class="line">plt.ylabel(<span class="string">&#x27;Acc&#x27;</span>)  <span class="comment"># y轴变量名称</span></span><br><span class="line">plt.plot(test_acc, label=<span class="string">&quot;$Accuracy$&quot;</span>)  <span class="comment"># 逐点画出test_acc值并连线，连线图标是Accuracy</span></span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>对以上代码的补充分析：</p>
+</blockquote>
+<p>1、数据集读入、数据集乱序、将数据集分割成永不相见的训练集和测试集、将数据配成[输入特征，标签]对。</p>
+<p>补充1：<br>人类在认识这个世界的时候信息是没有规律的，杂乱无章的涌入大脑的，所以喂入神经网络的<strong>数据集</strong>也需要被打乱顺序。</p>
+<p>补充2：<br>因为使用了<strong>同样的随机种子</strong>，所以打乱顺序后输入特征和标签仍然是<strong>一一对应</strong>的。</p>
+<p>补充3：<br>使用 from_tensor_slices 把训练集的输入特征和标签<strong>配对打包</strong>，将每 32 组输入特征标签对打包为一个 batch，在喂入神经网络时会以 <strong>batch 为单位</strong>喂入。</p>
+<blockquote>
+<p>训练过程？</p>
+</blockquote>
+<p>补充1：<br>用两层 for 循环进行更新参数：第一层 for 循环是针对<strong>整个数据集</strong>进行循环，故用 epoch 表示；第二层 for 循环是<strong>针对 batch</strong>的，用 step 表示。</p>
+<p>补充2：<br>因为训练集有 120 组数据，batch 是 32，每个 step 只能喂入 32 组数据，需要 <strong>batch 级别循环 4 次</strong>，所以 loss 除以 4，求得每次 step 迭代的平均 loss。</p>
+<h1 id="扩展方法"><a href="#扩展方法" class="headerlink" title="扩展方法"></a>扩展方法</h1><blockquote>
+<p>梯度爆炸?</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920077.png"></p>
+<p>参数更新量为学习率与损失函数偏导数相乘，二者乘积过大，则会导致梯度爆炸。<br>解决梯度爆炸问题可针对学习率进行调整，也可对数据进行调整。</p>
+<p>故解决方法可为：<br>(1)<strong>逐步减小</strong>学习率，0.1、0.01 等；<br>(2)对数据进行预处理后再输入神经网络，减小偏差值的大小，抑制梯度爆炸，即数据<strong>归一化与标准化</strong>，其主要方法有<strong>线性归一化</strong>、<strong>非线性归一化</strong>、<strong>Z-Score 标准化</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920081.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920082.png"></p>
+<p>以线性归一化为例，其代码实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">normalize</span>(<span class="params">data</span>):</span><br><span class="line">	x_data = data.T <span class="comment"># 每一列为同一属性，转置到每一行</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">		x_data[i] = (x_data[i] - tf.reduce_min(x_data[i])) / </span><br><span class="line">		(tf.reduce_max(x_data[i]) - tf.reduce_min(x_data[i]))</span><br><span class="line"> 	<span class="keyword">return</span> x_data.T <span class="comment"># 转置回原格式</span></span><br></pre></td></tr></table></figure>
+
+<p>指数衰减学习率：指数衰减学习率可在训练初期赋予网络较大学习率，并在训练过程中逐步减小，可有效增加网络收敛速度。<br>在 tensorflow 中对应函数为<br><code>tf.compat.v1.train.exponential_decay(learning_rate_base,global_step,decay_step,deca y_rate,staircase =True(False),name)</code>，当 staircase 为 True 时，学习率呈现阶梯状递减。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920083.png" alt="学习率"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/05/01/TenforFlow%E7%AC%94%E8%AE%B0--ch1%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97/" title="TensorFlow笔记--ch1 神经网络计算">https://danggeovo.github.io/2023/05/01/TenforFlow笔记--ch1 神经网络计算/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/01/TenforFlow%E7%AC%94%E8%AE%B0--ch2%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%BC%98%E5%8C%96/" rel="prev" title="TenforFlow笔记--ch2 神经网络优化">
+                  <i class="fa fa-angle-left"></i> TenforFlow笔记--ch2 神经网络优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/11/%5B%E2%88%9A%5D%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E4%BB%A3%E7%A0%81%E9%80%86%E5%90%91%E5%9F%BA%E7%A1%80/" rel="next" title="代码逆向基础">
+                  代码逆向基础 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

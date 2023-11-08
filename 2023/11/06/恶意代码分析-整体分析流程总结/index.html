@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="基础静态分析 静态分析一般是看导入函数与字符串，可以通过IDA查看；具体节的内容可以通过PEview查看；资源节可以通过Resource-Hackintg查看；壳可以通过PEiD查看。  一、关于导入函数这里要仔细看看WinAPI总结，里面会把学习过程中用到的常见API进行总结，包括该函数的类别与具体功能、参数。 在具体分析过程中不需要记住这些api的实现细节，而是要分门别类的记忆这些API的作用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="恶意代码整体分析流程总结">
+<meta property="og:url" content="https://danggeovo.github.io/2023/11/06/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="基础静态分析 静态分析一般是看导入函数与字符串，可以通过IDA查看；具体节的内容可以通过PEview查看；资源节可以通过Resource-Hackintg查看；壳可以通过PEiD查看。  一、关于导入函数这里要仔细看看WinAPI总结，里面会把学习过程中用到的常见API进行总结，包括该函数的类别与具体功能、参数。 在具体分析过程中不需要记住这些api的实现细节，而是要分门别类的记忆这些API的作用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231106105629720.png">
+<meta property="article:published_time" content="2023-11-06T05:53:32.000Z">
+<meta property="article:modified_time" content="2023-11-06T05:54:06.606Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="恶意代码">
+<meta property="article:tag" content="分析流程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231106105629720.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/11/06/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/11/06/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/","path":"2023/11/06/恶意代码分析-整体分析流程总结/","title":"恶意代码整体分析流程总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>恶意代码整体分析流程总结 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">基础静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%85%B3%E4%BA%8E%E5%AF%BC%E5%85%A5%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">一、关于导入函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%85%B3%E4%BA%8E%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.2.</span> <span class="nav-text">二、关于字符串</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%8A%A8%E6%80%81%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">基础动态分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%A5%E5%91%8A%E8%BE%93%E5%87%BA"><span class="nav-number">4.</span> <span class="nav-text">报告输出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="nav-number">4.1.</span> <span class="nav-text">概述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E6%9C%AC%E6%A0%87%E7%AD%BE%EF%BC%9A"><span class="nav-number">4.2.</span> <span class="nav-text">样本标签：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90-%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD%E6%8E%A8%E6%B5%8B"><span class="nav-number">4.3.</span> <span class="nav-text">基础静态分析-恶意功能推测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%8A%A8%E6%80%81%E5%88%86%E6%9E%90%E2%80%93%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">4.4.</span> <span class="nav-text">基础动态分析–恶意功能监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E2%80%94%E6%81%B6%E6%84%8F%E5%8A%9F%E8%83%BD%E8%90%BD%E5%AE%9E"><span class="nav-number">4.5.</span> <span class="nav-text">源码分析—恶意功能落实</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85-ATT-CK%E4%BD%93%E7%B3%BB"><span class="nav-number">4.6.</span> <span class="nav-text">补充-ATT&amp;CK体系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E6%9C%AC%E5%A4%84%E7%BD%AE"><span class="nav-number">4.7.</span> <span class="nav-text">样本处置</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/11/06/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="恶意代码整体分析流程总结 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          恶意代码整体分析流程总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-06 13:53:32 / 修改时间：13:54:06" itemprop="dateCreated datePublished" datetime="2023-11-06T13:53:32+08:00">2023-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】恶意代码分析与处置</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">分析方法论</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="基础静态分析"><a href="#基础静态分析" class="headerlink" title="基础静态分析"></a>基础静态分析</h1><blockquote>
+<p>静态分析一般是看<strong>导入函数与字符串</strong>，可以通过<code>IDA</code>查看；<strong>具体节的内容</strong>可以通过<code>PEview</code>查看；<strong>资源节</strong>可以通过<code>Resource-Hackintg</code>查看；<strong>壳</strong>可以通过<code>PEiD</code>查看。</p>
+</blockquote>
+<h2 id="一、关于导入函数"><a href="#一、关于导入函数" class="headerlink" title="一、关于导入函数"></a>一、关于导入函数</h2><p>这里要仔细看看<code>WinAPI总结</code>，里面会把学习过程中用到的常见API进行总结，包括该函数的类别与具体功能、参数。</p>
+<p>在具体分析过程中不需要记住这些api的实现细节，而是要分门别类的记忆这些API的作用，也就是说当看到某一个或者某一类敏感API时能够大体推测出其在整个恶意代码攻击流程中的哪一块。、</p>
+<p>当<strong>打开一个恶意软件的导入表</strong>后，从以下几个方面进行分析：</p>
+<ol>
+<li><p><strong>文件方面的API</strong>：搜索<code>file</code>字符串</p>
+<p>一般该类API都是使用在恶意代码的<strong>启动与持久化</strong>方面，比如将某些恶意载荷保存为一个已有文件或者修改原有文件实现特洛伊木马化。</p>
+<p>具体API名字可以参见<code>WinAPI</code>总结。</p>
+</li>
+<li><p><strong>注册表方面的API</strong>：搜索<code>reg</code>字符串</p>
+<p>一般该类API都是使用在<strong>启动和持久化</strong>方面，比如一些自启动目录、一些主动加载的DLL路径。</p>
+<p>具体API名字可以参见<code>WinAPI</code>总结。</p>
+</li>
+<li><p><strong>进程方面的API</strong>：搜索<code>proc</code>、<code>module</code>或者<code>thread</code>字符串</p>
+<p>一般该类API使用在进程注入、替换方面，特别是与一些内存申请、写入API结合。</p>
+<p>具体API名字可以参见<code>WinAPI</code>总结。</p>
+</li>
+<li><p><strong>资源节方面的API</strong>：搜到<code>resource</code>字符串</p>
+<p>一般该类API使用在恶意载荷的存储，后续通过这些API进行导出、执行。</p>
+<p>具体API名字可以参见<code>WinAPI</code>总结。</p>
+</li>
+<li><p><strong>网络方面的API</strong>：</p>
+<p>后续写</p>
+</li>
+<li><p><strong>反制措施方面的API</strong>：反沙箱、反虚拟机、反汇编、反调试。</p>
+</li>
+<li><p><strong>路径方面的API</strong>：搜索<code>get</code>字符串</p>
+<p>这部分API一般与<strong>系统文件的修改</strong>有关。</p>
+</li>
+<li><p><strong>加密方面的API</strong>：搜索<code>key、crypt、Cert、CP</code>字符串</p>
+<p>这部分API顾名思义，就是<strong>用于加密</strong>的，可能恶意软件会使用一些标准加密算法，就会<strong>导入一些常见的加密函数</strong>。</p>
+</li>
+<li><p><strong>核心行为方面的API</strong>：</p>
+<p>这部分要与恶意软件分类结合，每一类恶意功能比如窃密、挖矿、勒索、后门等都会有一些常见的API，这也是识别特征之一。</p>
+</li>
+</ol>
+<h2 id="二、关于字符串"><a href="#二、关于字符串" class="headerlink" title="二、关于字符串"></a>二、关于字符串</h2><p>当使用<code>string.exe</code>或者<code>ida</code>获取某<strong>恶意软件的字符串</strong>时，可以从以下几个方面进行猜测：</p>
+<ol>
+<li><strong>xxx.dll</strong>：包括一些<strong>知名的dll</strong>，比如kernel32、user32、ntdll这些，一般不用管；其次一些<strong>系统dll</strong>，比如psapi这些一般要关注其调用了哪些api；最后时一些<strong>自定义的dll</strong>,一般可以猜测是恶意载荷所在。</li>
+<li><strong>目录、路径：</strong>包括一些注册表目录，一定要看看有哪些注册表操作，是不是自启动、该目录的作用是什么；其次一些系统目录比如system32、temp等，就要考虑是不是有对这些路径下文件的修改。</li>
+<li><strong>函数名：</strong>在字符串里出现的函数名一般是使用<code>getprocaddress</code>调用的，动态加载。</li>
+<li><strong>加解密相干的字符串</strong>：比如base64的索引集、一些加密算法使用的特征字符串，比如<code>SSL</code>。</li>
+<li><strong>url、网络连接</strong>：候补。</li>
+</ol>
+<h1 id="基础动态分析"><a href="#基础动态分析" class="headerlink" title="基础动态分析"></a>基础动态分析</h1><blockquote>
+<p>基础的动态分析一般是使用行为监控工具捕获该恶意文件的行为，包括<strong>文件操作、网络通信、注册表操作、进程操作</strong>等。</p>
+</blockquote>
+<p>推荐使用的工具包括：</p>
+<ul>
+<li><code>火绒剑、Procmon</code>：比较全面的过滤与监控工具</li>
+<li><code>regshot</code>：注册表对比工具，可以更加细致的给出注册表的改变</li>
+<li><code>wirshark</code>：网络监控工具，用于捕获与分析数据包</li>
+<li><code>各类沙箱</code>：一般使用微步云沙箱、VT或者公司专用沙箱等</li>
+</ul>
+<p>在虚拟隔离环境下，运行恶意样本并进行恶意行为的监控与记录。</p>
+<p>这一步是承上启下的一步，承接上一步基础静态分析推断的恶意功能，对其<strong>进行验证</strong>；同时为下一步具体的代码分析<strong>提供切入点</strong>。</p>
+<p>一般恶意样本的代码都是比较复杂的，涉及的函数与调用关系很难一眼理清。所以，通过基础静态分析获取的<strong>关键API和字符串</strong>进行交叉引用，通过基础动态分析获取的恶意行为进行<strong>函数功能推测</strong>等，都可以帮助我们快速、高效的完成整个分析与处置过程。</p>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>这部分是整个分析过程的关键，也是耗费时间和精力最多的地方。</p>
+<p>具体操作即通过IDA或者其他反汇编工具获取恶意样本的汇编代码与伪代码，进而分析上述恶意功能的具体代码实现。同时可以结合OD、x64dbg等调试器进行动态调试，获取实时运行结果。</p>
+<p>具体的分析方法与技巧很多，这里不再赘述，只给出一个提醒：<strong>不要陷入繁琐的代码细节，要从宏观把握函数功能</strong>。</p>
+<p>这一步的最终目的是从代码层次落实恶意功能，补充完善沙箱分析结果，为后续具体的样本处置提供依据。</p>
+<h1 id="报告输出"><a href="#报告输出" class="headerlink" title="报告输出"></a>报告输出</h1><h2 id="概述："><a href="#概述：" class="headerlink" title="概述："></a><strong>概述</strong>：</h2><p>利用简短的一段话说清楚样本来源、判别结果、执行流程、具体恶意功能，一般是分析完毕后再写，帮助客户了解基本信息。</p>
+<p><strong>给个示例</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">（样本来源）近日，XX同事工作主机疑似被植入恶意程序导致个人微信被攻击者控制滥用，（判别结果）经研判分析，确认工作主机被植入“游蛇”木马（又称银狐、谷堕）。（执行流程）该木马初始组件为虚假WPS安装包文件“wps一键安装 (<span class="number">1</span>).exe”，该组件运行后会在受害者主机中创建一个名为“八幺二八幺二”的已安装软件信息，该软件不具备可执行文件，且附带一个卸载程序。卸载程序执行后会删除不必要的木马文件、初始组件、个人文档视频图片等文件夹。（恶意功能）最终载荷为修改后的gh0st远控木马，通过创建计划任务进行持久化驻留。截至分析时，C2仍存活，但已失去控制功能（上线包无响应）。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>下面分析过程<strong>以单一样本为例</strong>，如果样本存在文件释放、替换的功能，新的样本也可以按照如下步骤进行。</p>
+<h2 id="样本标签："><a href="#样本标签：" class="headerlink" title="样本标签："></a>样本标签：</h2><p>给出该样本的基础信息，包括文件名、哈希值、处理器架构、文件大小、文件格式、时间戳、数字签名等，可以通过沙箱直接获取。</p>
+<p><strong>给个示例：</strong></p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231106105629720.png" alt="image-20231106105629720" style="zoom:33%;" />
+
+
+
+<h2 id="基础静态分析-恶意功能推测"><a href="#基础静态分析-恶意功能推测" class="headerlink" title="基础静态分析-恶意功能推测"></a>基础静态分析-恶意功能推测</h2><p>见上部分，写报告注意给出具体解释，<strong>衔接好</strong>各个部分。</p>
+<p>这里注意要<strong>描述下源文件的基础信息</strong>，比如文件名、文件类型、文件图标等，可以提供截图。因为很多恶意代码比如钓鱼邮件会进行混淆。</p>
+<h2 id="基础动态分析–恶意功能监控"><a href="#基础动态分析–恶意功能监控" class="headerlink" title="基础动态分析–恶意功能监控"></a>基础动态分析–恶意功能监控</h2><p>见上部分，一定还要全面监控。</p>
+<ul>
+<li><strong>文件方面</strong>记录好文件<code>修改、替换、删除、移动、创建</code>情况，对于涉及的文件要进行具体分析。</li>
+<li><strong>注册表方面</strong>注意<code>自启动项目</code>，一般会作为持久化操作的一项，提供执行后截图。</li>
+<li><strong>网络方面</strong>记录好<code>请求情况</code>，包括目的ip、域名、协议类型、具体数据等</li>
+<li><strong>进程方面</strong>记录好<code>进程树</code>，包括产生的子进程、运行的cmd，设置的定时任务等</li>
+</ul>
+<p>这部分一般与<code>沙箱</code>结合，查缺补漏。同时与<code>威胁情报</code>结合，判别域名、IP的情况。</p>
+<h2 id="源码分析—恶意功能落实"><a href="#源码分析—恶意功能落实" class="headerlink" title="源码分析—恶意功能落实"></a>源码分析—恶意功能落实</h2><p>从源码入手，选择<strong>初始函数或者导入表敏感函数</strong>为切入点，分析恶意功能的具体实现。</p>
+<p>要<strong>熟悉恶意代码的攻击流程与实现手法</strong>，比如隐蔽启动的方式（线程注入、进程注入等）、持久化操作（注册表、服务、特洛伊木马化等）、核心载荷启动、恶意功能执行（挖矿、勒索、远控、感染等）</p>
+<p>要学会<strong>画流程图</strong>，理清各个函数之间的调用关系，这很重要。</p>
+<hr>
+<p>上部分即为单样本分析流程，子文件可以参照分析。</p>
+<h2 id="补充-ATT-CK体系"><a href="#补充-ATT-CK体系" class="headerlink" title="补充-ATT&amp;CK体系"></a>补充-ATT&amp;CK体系</h2><p>关于威胁框架的介绍可以看博客文章。ATT&amp;CK 攻击链。</p>
+<p>通过ATTCK框架进行<strong>恶意代码行为映射</strong>，规范化报告的同时可以借鉴处置方法。</p>
+<h2 id="样本处置"><a href="#样本处置" class="headerlink" title="样本处置"></a>样本处置</h2><p><strong>木马\病毒落地排查与清除</strong></p>
+<p>再次列出<code>落地文件、注册表项目、计划任务、网络侧请求</code>等，并给出对应的处置措施。</p>
+<p>文件要进行删除和恢复、进程要进行终止、注册表项和计划任务要进行清除、网络侧要进行ip封禁与防火墙策略配置。</p>
+<p>通过<strong>日志审计</strong>等方式清理样本涉及的后渗透木马或工具。</p>
+<p><strong>IOCs提取</strong></p>
+<p>对于涉及到的文件哈希、IP地址、域名等进行统计记录，可以作为检测的一环。</p>
+<p><strong>规则编写</strong></p>
+<p>根据样本分析结果进行检测规则的编写，比如YARA规则、AVL规则等，可以进一步提高检测准确性。</p>
+<p><strong>安全加固</strong></p>
+<p>修复已知漏洞、加强员工意识培训、定期更换强密码等</p>
+<blockquote>
+<p><strong>写在最后</strong>：上述流程梳理只是针对恶意样本分析，后续会继续介绍流量行为分析流程。上述内容会不断改进。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/11/06/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/" title="恶意代码整体分析流程总结">https://danggeovo.github.io/2023/11/06/恶意代码分析-整体分析流程总结/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81/" rel="tag"># 恶意代码</a>
+              <a href="/tags/%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B/" rel="tag"># 分析流程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/03/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E5%86%99%E5%9C%A8%E6%9C%80%E5%89%8D%E9%9D%A2/" rel="prev" title="前言、目录与准备">
+                  <i class="fa fa-angle-left"></i> 前言、目录与准备
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/" rel="next" title="系统安全复习">
+                  系统安全复习 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

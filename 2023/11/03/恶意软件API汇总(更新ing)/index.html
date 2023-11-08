@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="该地会汇总笔者在学习恶意样本分析过程中遇到的知名API，其中包括书上介绍的、实践分析过程中遇到的，会以功能为标题进行整理。  恶意代码分析实战核心功能：窃密击键记录 位置：恶意代码分析实战-11章-击键记录 功能：实现击键记录获取-登录凭证获取 函数名：SetWindowsHookEx、GetAsyncKeyState和GetForegroundWindow   SetWindowsHookEx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="恶意软件API汇总(更新ing)">
+<meta property="og:url" content="https://danggeovo.github.io/2023/11/03/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6API%E6%B1%87%E6%80%BB(%E6%9B%B4%E6%96%B0ing)/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="该地会汇总笔者在学习恶意样本分析过程中遇到的知名API，其中包括书上介绍的、实践分析过程中遇到的，会以功能为标题进行整理。  恶意代码分析实战核心功能：窃密击键记录 位置：恶意代码分析实战-11章-击键记录 功能：实现击键记录获取-登录凭证获取 函数名：SetWindowsHookEx、GetAsyncKeyState和GetForegroundWindow   SetWindowsHookEx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230913171304978.png">
+<meta property="og:image" content="c:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230912165300260.png">
+<meta property="og:image" content="c:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230912171212640.png">
+<meta property="article:published_time" content="2023-11-03T05:58:32.000Z">
+<meta property="article:modified_time" content="2023-11-06T06:18:30.305Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="恶意代码">
+<meta property="article:tag" content="API">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230913171304978.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/11/03/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6API%E6%B1%87%E6%80%BB(%E6%9B%B4%E6%96%B0ing)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/11/03/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6API%E6%B1%87%E6%80%BB(%E6%9B%B4%E6%96%B0ing)/","path":"2023/11/03/恶意软件API汇总(更新ing)/","title":"恶意软件API汇总(更新ing)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>恶意软件API汇总(更新ing) | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98"><span class="nav-number">1.</span> <span class="nav-text">恶意代码分析实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%EF%BC%9A%E7%AA%83%E5%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">核心功能：窃密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BB%E9%94%AE%E8%AE%B0%E5%BD%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">击键记录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E8%8A%82%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">资源节使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">文件操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%BA%90%E6%96%87%E4%BB%B6%E7%9A%84%E7%A7%BB%E5%8A%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">进程源文件的移动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%B8%8B%E8%BD%BD%E5%88%B0%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.2.</span> <span class="nav-text">网络下载到文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E8%A1%A8%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text">注册表操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.</span> <span class="nav-text">网络连接操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%93%8D%E4%BD%9C"><span class="nav-number">1.6.</span> <span class="nav-text">进程操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E6%93%8D%E4%BD%9C-%E6%90%9C%E7%B4%A2%E6%8C%87%E5%AE%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">遍历操作-搜索指定进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA%E4%B8%8E%E8%BF%9B%E7%A8%8B%E6%9B%BF%E6%8D%A2"><span class="nav-number">1.6.2.</span> <span class="nav-text">进程创建与进程替换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%86%8A%E7%8C%AB%E7%83%A7%E9%A6%99%E6%A0%B7%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">熊猫烧香样本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AD%94%E7%AA%9F%E6%A0%B7%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">魔窟样本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mydoom%E6%A0%B7%E6%9C%AC"><span class="nav-number">4.</span> <span class="nav-text">Mydoom样本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E9%BB%84%E8%9C%82%E6%A0%B7%E6%9C%AC"><span class="nav-number">5.</span> <span class="nav-text">大黄蜂样本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B8%B8%E8%9B%87%E6%A0%B7%E6%9C%AC"><span class="nav-number">6.</span> <span class="nav-text">游蛇样本</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/11/03/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6API%E6%B1%87%E6%80%BB(%E6%9B%B4%E6%96%B0ing)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="恶意软件API汇总(更新ing) | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          恶意软件API汇总(更新ing)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-03 13:58:32" itemprop="dateCreated datePublished" datetime="2023-11-03T13:58:32+08:00">2023-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-06 14:18:30" itemprop="dateModified" datetime="2023-11-06T14:18:30+08:00">2023-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】恶意代码分析与处置</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">分析方法论</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>该地会汇总笔者在学习恶意样本分析过程中遇到的<strong>知名API</strong>，其中包括书上介绍的、实践分析过程中遇到的，会以功能为标题进行整理。</p>
+</blockquote>
+<h1 id="恶意代码分析实战"><a href="#恶意代码分析实战" class="headerlink" title="恶意代码分析实战"></a>恶意代码分析实战</h1><h2 id="核心功能：窃密"><a href="#核心功能：窃密" class="headerlink" title="核心功能：窃密"></a>核心功能：窃密</h2><h3 id="击键记录"><a href="#击键记录" class="headerlink" title="击键记录"></a>击键记录</h3><blockquote>
+<p><strong>位置</strong>：恶意代码分析实战-11章-击键记录</p>
+<p><strong>功能</strong>：实现击键记录获取-登录凭证获取</p>
+<p><strong>函数名</strong>：<code>SetWindowsHookEx</code>、<code>GetAsyncKeyState</code>和<code>GetForegroundWindow</code></p>
+</blockquote>
+<ol>
+<li><p><code>SetWindowsHookEx</code>介绍：</p>
+<p><strong>函数功能：</strong></p>
+<p><code>SetWindowsHookEx</code> 函数用于安装一个钩子过程，以监视和拦截特定的事件或消息。它允许你拦截和处理全局的<strong>鼠标、键盘、消息</strong>和其他系统事件。</p>
+<p><strong>函数格式</strong>：</p>
+<p><strong>参数介绍</strong>：</p>
+<ul>
+<li><p>idHook（int）：指定要安装的<strong>钩子类型</strong>。它可以取以下值之一：</p>
+<ul>
+<li>WH_KEYBOARD：键盘钩子，用于监视键盘输入。</li>
+<li>WH_MOUSE：鼠标钩子，用于监视鼠标输入。</li>
+<li>WH_KEYBOARD_LL：低级键盘钩子，用于监视全局键盘输入。</li>
+<li>WH_MOUSE_LL：低级鼠标钩子，用于监视全局鼠标输入。</li>
+<li>其他钩子类型，可以根据需要选择。</li>
+</ul>
+</li>
+<li><p>lpfn（HOOKPROC）：指向<strong>钩子过程</strong>的指针。钩子过程是一个回调函数，当特定事件发生时，系统会调用此函数。钩子过程的具体实现根据钩子类型而异。</p>
+</li>
+<li><p>hMod（HINSTANCE）：指定<strong>包含钩子过程的 DLL 的句柄</strong>。如果钩子过程位于当前进程的可执行文件中，可以传递 NULL。</p>
+</li>
+<li><p>dwThreadId（DWORD）：标识要安装钩子的线程的<strong>线程标识符</strong>。如果要安装一个全局钩子，可以将此参数设置为 0，并且钩子过程将在所有线程上调用。</p>
+</li>
+</ul>
+<p><strong>返回值</strong>：</p>
+<p>如果函数成功，返回值是一个钩子的句柄（HHOOK）。如果函数失败，返回值为 NULL。</p>
+<p><strong>歌曰：</strong>安装钩子需要具有足够的权限，因此通常需要以管理员身份运行应用程序。</p>
+<hr>
+</li>
+<li><p><code>GetAsyncKeyState</code>函数</p>
+<p><strong>函数功能：</strong></p>
+<p><code>GetAsyncKeyState</code> 函数用于<strong>检索指定虚拟键的状态</strong>（按下或释放）。它可以用于获取当前键盘上某个键的状态，无论该键是否与当前活动窗口相关。</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SHORT <span class="title function_">GetAsyncKeyState</span><span class="params">(</span></span><br><span class="line"><span class="params">  <span class="type">int</span> vKey</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数</strong>：</p>
+<ul>
+<li><code>vKey</code>（int）：指定要<strong>检索状态的虚拟键码</strong>。可以使用预定义的虚拟键码（如 <code>VK_RETURN</code>、<code>VK_ESCAPE</code> 等）或自定义虚拟键码。</li>
+</ul>
+<p><strong>返回值：</strong></p>
+<p>如果指定的虚拟键当前被按下，则返回值的最高位（MSB）被设置为1；如果指定的虚拟键当前未被按下，则返回值为0。对于返回值的其余位（除了最高位），它们是按下时返回的计数值，以指示键被按下的次数。</p>
+</li>
+<li><p><code>GetForegroundWindow</code>函数</p>
+<p><strong>函数功能：</strong></p>
+<p><code>GetForegroundWindow</code> 函数用于获取<strong>当前具有焦点的窗口的句柄</strong>。它返回当前活动窗口的句柄，即用户当前正在与之交互的窗口。</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HWND <span class="title function_">GetForegroundWindow</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数</strong>：</p>
+<ul>
+<li>无</li>
+</ul>
+<p><strong>返回值：</strong></p>
+<p>返回值是当前具有焦点的窗口的句柄（HWND）。如果没有窗口具有焦点，返回值为 <code>NULL</code>。</p>
+</li>
+</ol>
+<h2 id="资源节使用"><a href="#资源节使用" class="headerlink" title="资源节使用"></a>资源节使用</h2><blockquote>
+<p><strong>位置</strong>：恶意代码分析实战-示例</p>
+<p><strong>功能</strong>：资源节隐藏载荷，进行读取与载入</p>
+<p><strong>函数</strong>：<code>FindResource、LoadResource、LockResource、SizeofResource、VirtualAlloc、FreeResource</code></p>
+</blockquote>
+<p>以下是关于这些函数的介绍：</p>
+<ol>
+<li><p><code>FindResource</code> 函数：</p>
+<ul>
+<li><strong>用途</strong>：在可执行文件（或 DLL）的资源表中<strong>查找指定的资源</strong>。</li>
+<li><strong>参数</strong>：<ul>
+<li><code>hModule</code>：指定包含资源的模块的句柄，通常是可执行文件或 DLL 的句柄。如果为 <code>NULL</code>，表示使用当前可执行文件或 DLL。</li>
+<li><code>lpName</code>：指定资源的<strong>名称或标识符</strong>。</li>
+<li><code>lpType</code>：指定资源的<strong>类型</strong>。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：如果函数调用成功，返回指向资源的句柄；否则返回 <code>NULL</code>。</li>
+</ul>
+</li>
+<li><p><code>LoadResource</code> 函数：</p>
+<ul>
+<li><strong>用途</strong>：加载指定资源的内容，返回资源的句柄。</li>
+<li><strong>参数</strong>：<ul>
+<li><code>hModule</code>：指定包含资源的模块的句柄，通常是可执行文件或 DLL 的句柄。如果为 <code>NULL</code>，表示使用当前可执行文件或 DLL。</li>
+<li><code>hResInfo</code>：指定资源的句柄，可以使用 <code>FindResource</code> 函数获取。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：如果函数调用成功，返回指向资源的句柄；否则返回 <code>NULL</code>。</li>
+</ul>
+</li>
+<li><p><code>LockResource</code> 函数：</p>
+<ul>
+<li><strong>用途</strong>：锁定 <code>LoadResource</code> 返回的资源句柄，返回资源的指针。</li>
+<li><strong>参数</strong>：<ul>
+<li><code>hResData</code>：指向资源的句柄，通常是 <code>LoadResource</code> 函数的返回值。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：如果函数调用成功，返回指向资源数据的指针；否则返回 <code>NULL</code>。</li>
+</ul>
+</li>
+<li><p><code>SizeofResource</code> 函数：</p>
+<ul>
+<li><strong>用途</strong>：获取指定资源的大小。</li>
+<li><strong>参数</strong>：<ul>
+<li><code>hModule</code>：指定包含资源的模块的句柄，通常是可执行文件或 DLL 的句柄。如果为 <code>NULL</code>，表示使用当前可执行文件或 DLL。</li>
+<li><code>hResInfo</code>：指定资源的句柄，可以使用 <code>FindResource</code> 函数获取。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：如果函数调用成功，返回资源的大小；否则返回 0。</li>
+</ul>
+</li>
+<li><p><code>VirtualAlloc</code> 函数：</p>
+<ul>
+<li>用途：在进程的虚拟地址空间中分配内存。</li>
+<li>参数：<ul>
+<li><code>lpAddress</code>：指定要分配的内存的首选地址。如果为 <code>NULL</code>，系统将自动选择一个地址。</li>
+<li><code>dwSize</code>：指定要分配的内存的大小（以字节为单位）。</li>
+<li><code>flAllocationType</code>：指定内存分配的类型和属性，例如 <code>MEM_COMMIT</code>、<code>MEM_RESERVE</code>、<code>MEM_RESET</code> 等。</li>
+<li><code>flProtect</code>：指定内存保护属性，例如 <code>PAGE_READWRITE</code>、<code>PAGE_EXECUTE_READ</code> 等。</li>
+</ul>
+</li>
+<li>返回值：如果函数调用成功，返回指向分配内存的首地址的指针；否则返回 <code>NULL</code>。</li>
+</ul>
+</li>
+<li><p><code>FreeResource</code> 函数：</p>
+<ul>
+<li><strong>用途</strong>：释放由 <code>FindResource</code>、<code>LoadResource</code> 和 <code>LockResource</code> 函数加载的资源。</li>
+<li><strong>参数</strong>：<ul>
+<li><code>hResData</code>：指向资源的句柄，通常是 <code>LoadResource</code> 函数的返回值。</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：无。</li>
+</ul>
+</li>
+</ol>
+<p>这些函数通常在处理和操作可执行文件或 DLL 中的资源时使用。它们允许你查找、加载、访问和释放资源的内容。</p>
+<p><strong>实例</strong>：</p>
+<p><img src="C:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230913171304978.png" alt="image-20230913171304978"></p>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2><h3 id="进程源文件的移动"><a href="#进程源文件的移动" class="headerlink" title="进程源文件的移动"></a>进程源文件的移动</h3><blockquote>
+<p>主要用于源文件的替换操作，先把源文件放到temp目录下。涉及到的API有： <code>GetWindowsDirectoryA、GetTempPathA、 snprintf、MoveFileA</code>。</p>
+</blockquote>
+<ul>
+<li><code>GetWindowsDirectoryA</code>：该函数用于获取 Windows 操作系统的安装目录。</li>
+<li><code>GetTempPathA</code>：该函数用于获取临时文件夹的路径。</li>
+<li><code>snprintf</code>：<code>snprintf</code> 是一个 C 标准库函数，用于将格式化的数据写入字符串缓冲区。</li>
+<li><code>MoveFileA</code>：该函数用于重命名或移动文件或目录。</li>
+</ul>
+<h3 id="网络下载到文件"><a href="#网络下载到文件" class="headerlink" title="网络下载到文件"></a>网络下载到文件</h3><blockquote>
+<p>用于从网络下载数据到指定文件，进行软件更新。</p>
+</blockquote>
+<p><code>URLDownloadToFile</code> 函数：</p>
+<p>函数功能：它可以从指定的 URL 下载文件，并将其保存到本地文件系统中的指定位置。</p>
+<p>函数格式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HRESULT <span class="title function_">URLDownloadToFile</span><span class="params">(</span></span><br><span class="line"><span class="params">  LPUNKNOWN            pCaller,</span></span><br><span class="line"><span class="params">  LPCWSTR              szURL,</span></span><br><span class="line"><span class="params">  LPCWSTR              szFileName,</span></span><br><span class="line"><span class="params">  DWORD                dwReserved,</span></span><br><span class="line"><span class="params">  LPBINDSTATUSCALLBACK lpfnCB</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数</strong>：</p>
+<ul>
+<li><code>pCaller</code>: 指向 <code>IUnknown</code> 接口的指针，可以为 <code>NULL</code>。</li>
+<li><code>szURL</code>: 要下载的文件的 URL 地址。</li>
+<li><code>szFileName</code>: 下载的文件保存的本地路径和文件名。</li>
+<li><code>dwReserved</code>: 保留参数，必须为 0。</li>
+<li><code>lpfnCB</code>: 指向 <code>IBindStatusCallback</code> 接口的指针，用于接收下载进度回调，可以为 <code>NULL</code>。</li>
+</ul>
+<p><strong>返回值</strong>：函数返回值为 <code>HRESULT</code> 类型的值，用于表示操作的结果。如果函数调用成功，返回值为 <code>S_OK</code>，否则可能返回其他错误代码。</p>
+<p><strong>歌曰</strong>：<code>URLDownloadToFile</code> 函数已被标记为过时（deprecated），不推荐在新的应用程序中使用。在现代的 Windows 系统中，推荐使用更强大和灵活的网络库或框架，如 <code>WinINet、WinHTTP、CURL</code> 等来进行文件下载操作。</p>
+<h2 id="注册表操作"><a href="#注册表操作" class="headerlink" title="注册表操作"></a>注册表操作</h2><h2 id="网络连接操作"><a href="#网络连接操作" class="headerlink" title="网络连接操作"></a>网络连接操作</h2><h2 id="进程操作"><a href="#进程操作" class="headerlink" title="进程操作"></a>进程操作</h2><blockquote>
+<p>创建（挂起）- 进程替换、打开进程-获取句柄、遍历操作-搜索指定进程、创建线程-进程注入。</p>
+</blockquote>
+<h3 id="遍历操作-搜索指定进程"><a href="#遍历操作-搜索指定进程" class="headerlink" title="遍历操作-搜索指定进程"></a>遍历操作-搜索指定进程</h3><blockquote>
+<p>一般是<code>psapi.dll</code> 提供的一组函数。可以查询系统中的进程和模块信息，这些函数可以用于编写诸如<strong>进程监视、进程注入、进程枚举</strong>等类型的系统工具和应用程序。</p>
+</blockquote>
+<ul>
+<li><code>EnumProcesses</code>：枚举系统中正在运行的进程。</li>
+<li><code>EnumProcessModules</code>：枚举指定进程中加载的模块。</li>
+<li><code>GetModuleBaseName</code>：获取指定进程中模块的基本名称。</li>
+<li><code>GetModuleFileNameEx</code>：获取指定进程中模块的完整路径。</li>
+<li><code>GetModuleInformation</code>：获取指定进程中模块的详细信息。</li>
+<li><code>GetProcessImageFileName</code>：获取指定进程的可执行文件路径。</li>
+<li><code>GetProcessId</code>：获取指定进程的进程 ID。</li>
+<li><code>GetProcessTimes</code>：获取指定进程的运行时间和 CPU 时间等。</li>
+</ul>
+<p>下面主要细致介绍下前三个函数：</p>
+<ol>
+<li><p><code>EnumProcesses</code>函数介绍：</p>
+<p><strong>函数功能</strong>：用于枚举系统中正在运行的进程。</p>
+<p><strong>函数格式</strong>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">BOOL <span class="title function_">EnumProcesses</span><span class="params">(</span></span><br><span class="line"><span class="params">  DWORD   *lpidProcess,</span></span><br><span class="line"><span class="params">  DWORD   cb,</span></span><br><span class="line"><span class="params">  DWORD   *lpcbNeeded</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数</strong>：</p>
+<ul>
+<li><code>lpidProcess</code>：指向一个接收进程 ID 列表的数组的指针。调用该函数时，数组将被填充为系统中正在运行的进程的 ID。每个进程 ID 都是一个 <code>DWORD</code> 类型的值。</li>
+<li><code>cb</code>：指定 <code>lpidProcess</code> 数组的大小，以字节为单位。</li>
+<li><code>lpcbNeeded</code>：指向一个变量的指针，用于接收函数执行所需的实际字节数。如果传入的 <code>cb</code> 小于所需的大小，则此变量将包含所需的大小值</li>
+</ul>
+<p><strong>返回值</strong>：返回值为 <code>BOOL</code> 类型，表示函数执行的成功或失败。如果函数成功执行，则返回值为非零；如果函数失败，则返回值为零。</p>
+<p><strong>实际例子</strong>：</p>
+<p><img src="C:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230912165300260.png" alt="image-20230912165300260"></p>
+</li>
+<li><p><code>EnumProcessModules</code>函数：</p>
+<p><strong>函数功能</strong>：枚举指定进程中加载的模块（DLL），存储句柄。</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">BOOL <span class="title function_">EnumProcessModules</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE  hProcess,</span></span><br><span class="line"><span class="params">  HMODULE *lphModule,</span></span><br><span class="line"><span class="params">  DWORD   cb,</span></span><br><span class="line"><span class="params">  LPDWORD lpcbNeeded</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数：</strong></p>
+<ul>
+<li><code>hProcess</code>：指定要枚举模块的进程的句柄。通常使用 <code>OpenProcess</code> 函数打开进程并获取句柄。</li>
+<li><code>lphModule</code>：指向存储模块句柄的数组的指针。调用该函数时，数组将被填充为进程中加载的模块的句柄。每个模块句柄是一个 <code>HMODULE</code> 类型的值。</li>
+<li><code>cb</code>：指定 <code>lphModule</code> 数组的大小，以字节为单位。</li>
+<li><code>lpcbNeeded</code>：指向一个变量的指针，用于接收函数执行所需的实际字节数。如果传入的 <code>cb</code> 小于所需的大小，则此变量将包含所需的大小值。</li>
+</ul>
+<p><strong>返回值</strong>：返回值为 <code>BOOL</code> 类型，表示函数执行的成功或失败。如果函数成功执行，则返回值为非零；如果函数失败，则返回值为零。</p>
+</li>
+<li><p><code>GetModuleBaseNameA</code>函数：</p>
+<p><strong>函数功能</strong>：用于获取指定进程中模块的基本名称（即模块的文件名）</p>
+<p><strong>函数格式</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DWORD <span class="title function_">GetModuleBaseNameA</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE  hProcess,</span></span><br><span class="line"><span class="params">  HMODULE hModule,</span></span><br><span class="line"><span class="params">  LPSTR   lpBaseName,</span></span><br><span class="line"><span class="params">  DWORD   nSize</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数</strong>：</p>
+<ul>
+<li><code>hProcess</code>：指定要获取模块名称的进程的句柄。通常使用 <code>OpenProcess</code> 函数打开进程并获取句柄。</li>
+<li><code>hModule</code>：指定要获取基本名称的模块的句柄。如果指定 <code>NULL</code>，则返回主模块（即进程的可执行文件）的基本名称。</li>
+<li><code>lpBaseName</code>：指向接收基本名称的字符缓冲区的指针。</li>
+<li><code>nSize</code>：指定接收基本名称的字符缓冲区的大小，以字节为单位。</li>
+</ul>
+<p><strong>返回值</strong>：返回值为 <code>DWORD</code> 类型，表示实际复制到缓冲区中的字符数，不包括终止 null 字符。如果函数失败，则返回值为 0。</p>
+<p><strong>实践一下</strong>：</p>
+<p><img src="C:\Users\qidan\AppData\Roaming\Typora\typora-user-images\image-20230912171212640.png" alt="image-20230912171212640"></p>
+<p><strong>歌曰：</strong></p>
+<p><code>GetModuleBaseNameA</code> 是 ANSI 版本的函数，适用于使用 ANSI 字符集的应用程序。如果需要使用 Unicode 字符集，可以使用 <code>GetModuleBaseNameW</code> 函数。</p>
+</li>
+</ol>
+<h3 id="进程创建与进程替换"><a href="#进程创建与进程替换" class="headerlink" title="进程创建与进程替换"></a>进程创建与进程替换</h3><blockquote>
+<p>这部分主要是进程替换过程中涉及的函数，包括：<code>CreateProcess</code>、<code>VirtualAlloc</code>、<code>WriteProcessMemory</code>、<code>SetThreadContext</code>、<code>RssumeThread</code>。</p>
+</blockquote>
+<ol>
+<li><p><code>CreateProcess</code>函数：</p>
+<p><strong>函数功能</strong>：用于创建新的进程。它可以创建一个新的进程并且启动执行指定的可执行文件。</p>
+<p><strong>函数格式</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">BOOL <span class="title function_">CreateProcess</span><span class="params">(</span></span><br><span class="line"><span class="params">  LPCWSTR               lpApplicationName,</span></span><br><span class="line"><span class="params">  LPWSTR                lpCommandLine,</span></span><br><span class="line"><span class="params">  LPSECURITY_ATTRIBUTES lpProcessAttributes,</span></span><br><span class="line"><span class="params">  LPSECURITY_ATTRIBUTES lpThreadAttributes,</span></span><br><span class="line"><span class="params">  BOOL                  bInheritHandles,</span></span><br><span class="line"><span class="params">  DWORD                 dwCreationFlags,</span></span><br><span class="line"><span class="params">  LPVOID                lpEnvironment,</span></span><br><span class="line"><span class="params">  LPCWSTR               lpCurrentDirectory,</span></span><br><span class="line"><span class="params">  LPSTARTUPINFOW        lpStartupInfo,</span></span><br><span class="line"><span class="params">  LPPROCESS_INFORMATION lpProcessInformation</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数</strong>：</p>
+<ul>
+<li><code>lpApplicationName</code>：可执行文件的路径或文件名。</li>
+<li><code>lpCommandLine</code>：命令行参数。</li>
+<li><code>lpProcessAttributes</code>：进程对象的安全属性，可以为<code>NULL</code>。</li>
+<li><code>lpThreadAttributes</code>：线程对象的安全属性，可以为<code>NULL</code>。</li>
+<li><code>bInheritHandles</code>：指定新进程是否继承父进程的句柄。</li>
+<li><code>dwCreationFlags</code>：指定创建进程的标志和选项。<code>dwCreationFlags</code> 参数设置 <code>CREATE_SUSPENDED</code> 标志表示挂起。</li>
+<li><code>lpEnvironment</code>：新进程的环境变量，可以为<code>NULL</code>。</li>
+<li><code>lpCurrentDirectory</code>：新进程的当前工作目录，可以为<code>NULL</code>。</li>
+<li><code>lpStartupInfo</code>：指向<code>STARTUPINFOW</code>结构的指针，用于指定新进程的启动信息。</li>
+<li><code>lpProcessInformation</code>：指向<code>PROCESS_INFORMATION</code>结构的指针，用于接收新进程的信息。</li>
+</ul>
+<p><strong>返回值</strong>：函数返回值为<code>BOOL</code>类型，表示函数调用是否成功。如果函数成功，返回值为<code>TRUE</code>，否则返回值为<code>FALSE</code>。</p>
+</li>
+<li><p><code>VirtualAllocEx</code>函数</p>
+<p><strong>函数功能：</strong>  </p>
+<p><code>VirtualAllocEx函数</code>用于<strong>在指定的外部进程中分配内存空间</strong>。它允许一个进程分配内存，而该内存可以在不同的进程之间共享。这个函数的常见用途之一是在<strong>远程进程中注入代码或数据</strong>。</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LPVOID <span class="title function_">VirtualAllocEx</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE hProcess,</span></span><br><span class="line"><span class="params">  LPVOID lpAddress,</span></span><br><span class="line"><span class="params">  SIZE_T dwSize,</span></span><br><span class="line"><span class="params">  DWORD  flAllocationType,</span></span><br><span class="line"><span class="params">  DWORD  flProtect</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数：</strong></p>
+<ul>
+<li>hProcess：要分配内存的<strong>目标进程的句柄</strong>。</li>
+<li>lpAddress：指定分配内存的<strong>起始地址</strong>，如果为NULL，则由系统自动选择。</li>
+<li>dwSize：要分配的<strong>内存大小</strong>，以字节为单位。</li>
+<li>flAllocationType：内存<strong>分配类型</strong>的标志，指定内存的使用方式，例如MEM_COMMIT表示立即提交内存，MEM_RESERVE表示保留内存。</li>
+<li>flProtect：<strong>内存保护标志</strong>，指定内存区域的访问权限，例如PAGE_READWRITE表示可读写。</li>
+</ul>
+<p><strong>返回值：</strong></p>
+<p>VirtualAllocEx函数的返回值是<strong>分配的内存的起始地址</strong>。如果分配内存失败，返回值为NULL。可以使用GetLastError函数获取更多关于失败原因的信息。</p>
+</li>
+<li><p><code>WriteProcessMemory</code>函数</p>
+<p><strong>函数功能：</strong></p>
+<p><code>WriteProcessMemory</code>函数用于在指定的外部进程中写入数据。它允许<strong>一个进程将数据写入其他进程的分配的内存空间</strong>。这个函数的常见用途之一是在远程进程中修改数据或注入代码。</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">BOOL <span class="title function_">WriteProcessMemory</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE  hProcess,</span></span><br><span class="line"><span class="params">  LPVOID  lpBaseAddress,</span></span><br><span class="line"><span class="params">  LPCVOID lpBuffer,</span></span><br><span class="line"><span class="params">  SIZE_T  nSize,</span></span><br><span class="line"><span class="params">  SIZE_T  *lpNumberOfBytesWritten</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数：</strong></p>
+<ul>
+<li>hProcess：要写入数据的<strong>目标进程的句柄</strong>。</li>
+<li>lpBaseAddress：要写入数据的<strong>内存地址</strong>。</li>
+<li>lpBuffer：指向要写入的<strong>数据缓冲区</strong>的指针。</li>
+<li>nSize：要写入的<strong>数据大小</strong>，以字节为单位。</li>
+<li>lpNumberOfBytesWritten：指向保存实际<strong>写入字节数</strong>的变量的指针。</li>
+</ul>
+<p><strong>返回值：</strong></p>
+<p>WriteProcessMemory函数的返回值是一个<strong>BOOL类型的值</strong>，表示写入操作是否成功。如果写入成功，返回值为非零；如果写入失败，返回值为零。可以使用GetLastError函数获取更多关于失败原因的信息。</p>
+</li>
+<li><p><code>GetThreadContext</code> 函数:</p>
+<p><strong>函数功能</strong>：用于获取指定线程的上下文信息。</p>
+<p><strong>函数格式</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BOOL <span class="title function_">GetThreadContext</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE    hThread,</span></span><br><span class="line"><span class="params">  LPCONTEXT lpContext</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>hThread</code>：要获取上下文信息的目标线程的句柄。</li>
+<li><code>lpContext</code>：指向 <code>CONTEXT</code> 结构体的指针，用于接收线程的上下文信息。</li>
+</ul>
+<p><strong>流程</strong>：调用 <code>GetThreadContext</code> 函数时，传递目标线程的句柄和指向 <code>CONTEXT</code> 结构体的指针。函数将填充指定的 <code>CONTEXT</code> 结构体，以提供有关线程的寄存器值、标志寄存器状态、堆栈指针等信息。</p>
+</li>
+<li><p><code>SetThreadContext</code>函数：</p>
+<p><strong>函数功能</strong>：用于设置指定线程的上下文信息，包括寄存器值、标志位等。（在这里一般用于设置入口点）</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BOOL <span class="title function_">SetThreadContext</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE hThread,</span></span><br><span class="line"><span class="params">  <span class="type">const</span> CONTEXT *lpContext</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数：</strong></p>
+<ul>
+<li><code>hThread</code>：要设置上下文的线程句柄。</li>
+<li><code>lpContext</code>：指向<code>CONTEXT</code>结构的指针，包含要设置的上下文信息。</li>
+</ul>
+<p><strong>返回值：</strong>函数返回值为<code>BOOL</code>类型，表示函数调用是否成功。如果函数成功，返回值为<code>TRUE</code>，否则返回值为<code>FALSE</code>。</p>
+</li>
+<li><p><code>RssumeThread</code>函数：</p>
+<p><strong>函数功能</strong>：用于恢复被挂起的线程的执行。</p>
+<p><strong>函数格式：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DWORD <span class="title function_">ResumeThread</span><span class="params">(</span></span><br><span class="line"><span class="params">  HANDLE hThread</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>函数参数：</strong></p>
+<ul>
+<li><code>hThread</code>：要恢复执行的线程句柄。</li>
+</ul>
+<p><strong>返回值：</strong>函数返回值为线程的先前挂起计数。如果函数调用失败，返回值为<code>DWORD</code>类型的错误代码。</p>
+</li>
+</ol>
+<p><strong>总结</strong>：一般是连环使用，先是创建一个挂起的进程，之后清空数据再替换数据，然后修改入口点最后启动进程。</p>
+<hr>
+<p><code>Createprocess</code>创建与上下文的扩展：</p>
+<ol>
+<li><p><strong>挂起态创建</strong>：</p>
+<p>在使用该函数创建一个新的进程的时候，可以指定dwCreationFlags参数为4，表示挂起该进程，直到使用<code>RssumeThread</code>函数才进行执行；</p>
+</li>
+<li><p><code>IpStartupinfo</code>参数介绍：</p>
+<p>该参数是一个结构体，指定新进程的启动信息。下面是该结构体的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">STARTUPINFOA</span> &#123;</span></span><br><span class="line">  DWORD  cb;</span><br><span class="line">  LPSTR  lpReserved;</span><br><span class="line">  LPSTR  lpDesktop;</span><br><span class="line">  LPSTR  lpTitle;</span><br><span class="line">  DWORD  dwX;</span><br><span class="line">  DWORD  dwY;</span><br><span class="line">  DWORD  dwXSize;</span><br><span class="line">  DWORD  dwYSize;</span><br><span class="line">  DWORD  dwXCountChars;</span><br><span class="line">  DWORD  dwYCountChars;</span><br><span class="line">  DWORD  dwFillAttribute;</span><br><span class="line">  DWORD  dwFlags;</span><br><span class="line">  WORD   wShowWindow;</span><br><span class="line">  WORD   cbReserved2;</span><br><span class="line">  LPBYTE lpReserved2;</span><br><span class="line">  HANDLE hStdInput;</span><br><span class="line">  HANDLE hStdOutput;</span><br><span class="line">  HANDLE hStdError;</span><br><span class="line">&#125; STARTUPINFOA, *LPSTARTUPINFOA;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>cb</code>：结构体的大小，以字节为单位，用于指定结构体的版本。</li>
+<li><code>lpReserved</code>：保留字段，未使用，应设置为 <code>NULL</code>。</li>
+<li><code>lpDesktop</code>：新进程要使用的桌面名称，通常为 <code>NULL</code> 表示使用默认桌面。</li>
+<li><code>lpTitle</code>：新进程的窗口标题，可以为 <code>NULL</code>。</li>
+<li><code>dwX</code>、<code>dwY</code>：新进程的初始窗口左上角的屏幕坐标。</li>
+<li><code>dwXSize</code>、<code>dwYSize</code>：新进程的初始窗口的宽度和高度。</li>
+<li><code>dwXCountChars</code>、<code>dwYCountChars</code>：新进程的控制台窗口的字符单元数。</li>
+<li><code>dwFillAttribute</code>：控制台窗口的填充属性。</li>
+<li><code>dwFlags</code>：指定启动标志，例如 <code>STARTF_USESHOWWINDOW</code>、<code>STARTF_USESTDHANDLES</code> 等。</li>
+<li><code>wShowWindow</code>：指定新进程的窗口如何显示，如 <code>SW_SHOW</code>、<code>SW_HIDE</code> 等。</li>
+<li><code>cbReserved2</code>、<code>lpReserved2</code>：保留字段，未使用，应设置为 0 或 <code>NULL</code>。</li>
+<li><code>hStdInput</code>、<code>hStdOutput</code>、<code>hStdError</code>：指定新进程的标准输入、输出和错误句柄。</li>
+</ul>
+<p>所以我们可以先以挂起态创建某进程，再修改该结构体内容。</p>
+</li>
+<li><p><code>IpProcessInformation</code>参数介绍：</p>
+<p>用于接收新进程的信息，该结构体定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PROCESS_INFORMATION</span> &#123;</span></span><br><span class="line">  HANDLE hProcess;</span><br><span class="line">  HANDLE hThread;</span><br><span class="line">  DWORD  dwProcessId;</span><br><span class="line">  DWORD  dwThreadId;</span><br><span class="line">&#125; PROCESS_INFORMATION, *LPPROCESS_INFORMATION;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>hProcess</code>：新<strong>进程的句柄</strong>，用于操作和管理该进程。</li>
+<li><code>hThread</code>：新进程的<strong>主线程句柄</strong>，用于操作和管理该主线程。</li>
+<li><code>dwProcessId</code>：新进程的<strong>进程标识符</strong>（Process ID）。</li>
+<li><code>dwThreadId</code>：新进程的<strong>主线程标识符</strong>（Thread ID）。</li>
+</ul>
+</li>
+<li><p><code>IpContext</code>介绍：</p>
+<p><code>CONTEXT</code> 结构体用于保存和描述线程的上下文信息，下面是结构体定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CONTEXT</span> &#123;</span></span><br><span class="line">  DWORD   ContextFlags;</span><br><span class="line">  DWORD   Dr0;</span><br><span class="line">  DWORD   Dr1;</span><br><span class="line">  DWORD   Dr2;</span><br><span class="line">  DWORD   Dr3;</span><br><span class="line">  DWORD   Dr6;</span><br><span class="line">  DWORD   Dr7;</span><br><span class="line">  FLOATING_SAVE_AREA FloatSave;</span><br><span class="line">  DWORD   SegGs;</span><br><span class="line">  DWORD   SegFs;</span><br><span class="line">  DWORD   SegEs;</span><br><span class="line">  DWORD   SegDs;</span><br><span class="line">  DWORD   Edi;</span><br><span class="line">  DWORD   Esi;</span><br><span class="line">  DWORD   Ebx;</span><br><span class="line">  DWORD   Edx;</span><br><span class="line">  DWORD   Ecx;</span><br><span class="line">  DWORD   Eax;</span><br><span class="line">  DWORD   Ebp;</span><br><span class="line">  DWORD   Eip;</span><br><span class="line">  DWORD   SegCs;</span><br><span class="line">  DWORD   EFlags;</span><br><span class="line">  DWORD   Esp;</span><br><span class="line">  DWORD   SegSs;</span><br><span class="line">  BYTE    ExtendedRegisters[MAXIMUM_SUPPORTED_EXTENSION];</span><br><span class="line">&#125; CONTEXT, *PCONTEXT;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>ContextFlags</code>：用于指定上下文中包含的特定标志。</li>
+<li><code>Dr0</code> 至 <code>Dr7</code>：调试寄存器，用于保存调试相关的信息。</li>
+<li><code>FloatSave</code>：浮点寄存器的保存区域。</li>
+<li><code>SegGs</code> 至 <code>SegSs</code>：段寄存器，用于保存段选择子。</li>
+<li><code>Edi</code> 至 <code>Eax</code>：通用寄存器，用于保存通用数据。</li>
+<li><code>Ebp</code>：基址指针寄存器，指向当前栈帧的基址。</li>
+<li><code>Eip</code>：指令指针寄存器，存储下一条要执行的指令的地址。</li>
+<li><code>SegCs</code>：代码段寄存器，保存当前代码段的选择子。</li>
+<li><code>EFlags</code>：标志寄存器，包含了一些特定的控制和状态标志。</li>
+<li><code>Esp</code>：堆栈指针寄存器，指向当前栈顶的地址。</li>
+<li><code>SegSs</code>：堆栈段寄存器，保存当前堆栈段的选择子。</li>
+<li><code>ExtendedRegisters</code>：用于保存扩展寄存器的数据。</li>
+</ul>
+<p>通过传递一个指向 <code>CONTEXT</code> 结构体的指针作为参数，可以<strong>获取或设置</strong>线程的上下文信息。这些信息包括<strong>寄存器的值、标志寄存器的状态、堆栈指针、代码指针</strong>等。</p>
+</li>
+</ol>
+<p>​	</p>
+<h1 id="熊猫烧香样本"><a href="#熊猫烧香样本" class="headerlink" title="熊猫烧香样本"></a>熊猫烧香样本</h1><h1 id="魔窟样本"><a href="#魔窟样本" class="headerlink" title="魔窟样本"></a>魔窟样本</h1><h1 id="Mydoom样本"><a href="#Mydoom样本" class="headerlink" title="Mydoom样本"></a>Mydoom样本</h1><h1 id="大黄蜂样本"><a href="#大黄蜂样本" class="headerlink" title="大黄蜂样本"></a>大黄蜂样本</h1><h1 id="游蛇样本"><a href="#游蛇样本" class="headerlink" title="游蛇样本"></a>游蛇样本</h1><hr>
+<blockquote>
+<p><strong>写在最后</strong>：这是<strong>不断更新</strong>的一章，后续分析各种家族样本与书籍示例时都会学习到新的API，会以样本为分类进行记录。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/11/03/%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6API%E6%B1%87%E6%80%BB(%E6%9B%B4%E6%96%B0ing)/" title="恶意软件API汇总(更新ing)">https://danggeovo.github.io/2023/11/03/恶意软件API汇总(更新ing)/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81/" rel="tag"># 恶意代码</a>
+              <a href="/tags/API/" rel="tag"># API</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/10/20/%5B%E2%88%9A%5DATT&CK%E5%92%8CNAS%E6%A1%86%E6%9E%B6/" rel="prev" title="威胁分析框架概述">
+                  <i class="fa fa-angle-left"></i> 威胁分析框架概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/11/03/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E5%86%99%E5%9C%A8%E6%9C%80%E5%89%8D%E9%9D%A2/" rel="next" title="前言、目录与准备">
+                  前言、目录与准备 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

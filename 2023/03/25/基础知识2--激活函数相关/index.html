@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：  本篇文章用于记录神经网络中激活函数相关的知识，主要包括：激活函数的含义、用处、分类、选择等。 参考内容如下： 详解激活函数（Sigmoid&#x2F;Tanh&#x2F;ReLU&#x2F;Leaky ReLu等） 美！最常用的10个激活函数！ 人工神经网络的驱动者：激活函数是什么？  什么是激活函数激活函数（Activation-Function）是一种添加到人工神经网络中的函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基础知识--激活函数相关">
+<meta property="og:url" content="https://danggeovo.github.io/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：  本篇文章用于记录神经网络中激活函数相关的知识，主要包括：激活函数的含义、用处、分类、选择等。 参考内容如下： 详解激活函数（Sigmoid&#x2F;Tanh&#x2F;ReLU&#x2F;Leaky ReLu等） 美！最常用的10个激活函数！ 人工神经网络的驱动者：激活函数是什么？  什么是激活函数激活函数（Activation-Function）是一种添加到人工神经网络中的函">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662164395086.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662258710204.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662258936528.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662258960252.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259301064.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259313282.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259022471.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259043344.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259074806.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259090809.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259144647.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259160032.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259194937.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259205886.png">
+<meta property="article:published_time" content="2023-03-25T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:54:04.771Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662164395086.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/","path":"2023/03/25/基础知识2--激活函数相关/","title":"基础知识--激活函数相关"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基础知识--激活函数相关 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">什么是激活函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E4%BC%A0%E6%92%AD%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">神经网络的传播流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">激活函数的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E4%B8%AA%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">常用的几个激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sigmoid%E5%87%BD%E6%95%B0"><span class="nav-number">4.0.1.</span> <span class="nav-text">Sigmoid函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SoftMax%E5%87%BD%E6%95%B0"><span class="nav-number">4.0.2.</span> <span class="nav-text">SoftMax函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tanh-%E5%8F%8C%E6%9B%B2%E6%AD%A3%E5%88%87%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">4.0.3.</span> <span class="nav-text">Tanh &#x2F; 双曲正切激活函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReLU%E5%87%BD%E6%95%B0"><span class="nav-number">4.0.4.</span> <span class="nav-text">ReLU函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Leaky-ReLU%E5%87%BD%E6%95%B0"><span class="nav-number">4.0.5.</span> <span class="nav-text">Leaky ReLU函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ELU%E5%87%BD%E6%95%B0"><span class="nav-number">4.0.6.</span> <span class="nav-text">ELU函数</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基础知识--激活函数相关 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基础知识--激活函数相关
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-25 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-25T13:48:32+08:00">2023-03-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:54:04" itemprop="dateModified" datetime="2023-11-08T17:54:04+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】人工智能</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">基础知识</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong>：</p>
+</blockquote>
+<p>本篇文章用于记录神经网络中<code>激活函数</code>相关的知识，主要包括：激活函数的<code>含义</code>、<code>用处</code>、<code>分类</code>、<code>选择</code>等。</p>
+<p><strong>参考内容</strong>如下：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/427541517">详解激活函数（Sigmoid&#x2F;Tanh&#x2F;ReLU&#x2F;Leaky ReLu等）</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU5MTgzNzE0MA==&mid=2247492551&idx=2&sn=47e41d48424fedfde2eb08c583b54c53&chksm=fe2a417cc95dc86a78f09719be682c1ea6ea3889e8da660826aedad18b9267165fcbf0d7079f&mpshare=1&scene=23&srcid=0903zPZdr8efEPL6x2WvnAdq&sharer_sharetime=1662164012375&sharer_shareid=0c850b83a40c9f40b901c93134e9d9bf#rd">美！最常用的10个激活函数！</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/443926198_453160">人工神经网络的驱动者：激活函数是什么？</a> </p>
+<h1 id="什么是激活函数"><a href="#什么是激活函数" class="headerlink" title="什么是激活函数"></a>什么是激活函数</h1><p><code>激活函数</code>（Activation-Function）是一种添加到<strong>人工神经网络</strong>中的函数，旨在帮助网络学习数据中的<strong>复杂模式</strong>。类似于人类大脑中基于神经元的模型，激活函数<strong>最终决定</strong>了要发射给下一个神经元的内容。</p>
+<p>在人工神经网络中，一个节点的激活函数定义了该节点在给定的<strong>输入或输入集合</strong>下的<strong>输出</strong>。也就是说，<code>激活函数</code>决定了神经网络每一层节点的输出值，不同的激活函数可以得到不同的<strong>输出值曲线</strong>，以适应<strong>不同的需求</strong>。</p>
+<h1 id="神经网络的传播流程"><a href="#神经网络的传播流程" class="headerlink" title="神经网络的传播流程"></a>神经网络的传播流程</h1><blockquote>
+<p>在介绍具体的激活函数之前，我们需要先了解一下神经网络的传播流程，以确定激活函数在这个传播过程中的实施位置，从全局的角度进行理解。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662164395086.png"></p>
+<p>上图给出了神经网络的前向传播流程，或者说是神经网络其中一个节点的传播流程。神经网络是由很多节点构成的，每一个节点的实现都是相同的，所以我们这里只需要了解单独一个节点的传播流程即可。</p>
+<p>可以将此节点的传播流程分为两个部分：</p>
+<ul>
+<li>值的计算：输入值与权值的乘积和+偏置项</li>
+<li>激活函数：将上值作为自变量输入到激活函数而后将映射值作为输出即可。</li>
+</ul>
+<p>每一个节点的输出都是下一层节点的一个输入。</p>
+<h1 id="激活函数的原理"><a href="#激活函数的原理" class="headerlink" title="激活函数的原理"></a>激活函数的原理</h1><blockquote>
+<p>前面介绍激活函数时提到：<strong>激活函数可以帮助网络学习数据的复杂模式</strong>，但是到底是<strong>如果帮助的呢</strong>？</p>
+</blockquote>
+<p><strong>答</strong>：<strong>激活函数</strong>是向神经网络中引入<code>非线性因素</code>，通过激活函数神经网络就可以<strong>拟合各种曲线</strong>。</p>
+<blockquote>
+<p>为什么需要加入<strong>非线性因素</strong>？</p>
+</blockquote>
+<p>因为我们使用到的绝大多数数据集都是非线性分布的，而神经网络中值的计算：v&#x3D;wx+b显然是线性的。在神经网络中，如果网络的每层都是<strong>线性映射</strong>，那么这些层组合起来依然是<strong>线性</strong>的。因此，多层的线性映射复合后实际上只是起到了<strong>一层的效果</strong>，这样就算<strong>增加神经网络层数</strong>也无法提高模型的<strong>表达能力</strong>。<br>为了使网络的<strong>映射不是线性</strong>的，所有层的<strong>输出</strong>都要传递到<strong>非线性函数</strong>中，如 <code>ReLU 函数</code>和 <code>Tanh函数</code>等，这样作用之后就成为了<strong>非线性的</strong>。这些非线性函数就是<code>激活函数</code>。</p>
+<blockquote>
+<p>通过一张图简要看一下<strong>激活函数的作用</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662258710204.png"></p>
+<p>如图所示，<strong>前两层</strong>为加入<strong>激活函数</strong>后的模型效果，<strong>第三层</strong>为<strong>线性模型</strong>的效果。</p>
+<h1 id="常用的几个激活函数"><a href="#常用的几个激活函数" class="headerlink" title="常用的几个激活函数"></a>常用的几个激活函数</h1><h3 id="Sigmoid函数"><a href="#Sigmoid函数" class="headerlink" title="Sigmoid函数"></a>Sigmoid函数</h3><blockquote>
+<p>函数图像与映射关系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662258936528.png"></p>
+<p>其<strong>函数表达式</strong>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662258960252.png"></p>
+<blockquote>
+<p>函数介绍</p>
+</blockquote>
+<p><code>Sigmoid 函数</code>的输出范围是<strong>0到1</strong>。由于输出值限定在0到1，因此它对每个神经元的<strong>输出进行了归一化</strong></p>
+<blockquote>
+<p>适用场景</p>
+</blockquote>
+<p>用于将<strong>预测概率</strong>作为<strong>输出</strong>的模型。由于概率的取值范围是 0 到 1，因此 Sigmoid 函数非常合适。常用于<strong>二分类问题</strong>中。将输出压缩到[0，1]范围内。大部分时候都与<strong>二元交叉熵损失</strong>一起使用。</p>
+<blockquote>
+<p>飞桨实现</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/Sigmoid_cn.html">函数界面</a></p>
+<h3 id="SoftMax函数"><a href="#SoftMax函数" class="headerlink" title="SoftMax函数"></a>SoftMax函数</h3><blockquote>
+<p>函数图像与映射关系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259301064.png"></p>
+<p>其<strong>函数表达式</strong>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259313282.png"></p>
+<blockquote>
+<p><strong>函数介绍</strong></p>
+</blockquote>
+<p>对于<strong>长度为 K</strong> 的任意实向量，<code>Softmax</code>可以将其压缩为长度为K，值在<code>（0，1）</code>范围内，并且向量中元素的<strong>总和为 1</strong> 的实向量。</p>
+<blockquote>
+<p><strong>适用场景</strong></p>
+</blockquote>
+<p>在<strong>多分类</strong>中经常使用，使网络输出的是有效的<strong>概率分布</strong>。这意味着所有值都在 [0，1] 范围内，且总和为 1。可与<strong>多元交叉熵损失</strong>一起使用。</p>
+<blockquote>
+<p>飞桨实现</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/Softmax_cn.html#paddle.nn.Softmax">函数介绍界面</a></p>
+<h3 id="Tanh-双曲正切激活函数"><a href="#Tanh-双曲正切激活函数" class="headerlink" title="Tanh &#x2F; 双曲正切激活函数"></a>Tanh &#x2F; 双曲正切激活函数</h3><blockquote>
+<p>函数图像与映射关系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259022471.png"></p>
+<p>其<strong>函数表达式</strong>如下:</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259043344.png"></p>
+<blockquote>
+<p>函数介绍</p>
+</blockquote>
+<p>tanh 是一个双曲正切函数。<code>tanh</code> 函数和 <code>sigmoid</code> 函数的曲线相对相似。但是它比 sigmoid 函数<strong>更有一些优势。</strong></p>
+<blockquote>
+<p>适用场景</p>
+</blockquote>
+<p>在一般的<strong>二元分类问题</strong>中，<code>tanh函数</code>用于<strong>隐藏层</strong>，而<code>sigmoid函数</code>用于<strong>输出层</strong>，但这并不是固定的，需要根据特定问题进行调整。</p>
+<blockquote>
+<p>飞桨实现</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/Tanh_cn.html">函数界面</a></p>
+<h3 id="ReLU函数"><a href="#ReLU函数" class="headerlink" title="ReLU函数"></a>ReLU函数</h3><blockquote>
+<p>函数图像与映射关系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259074806.png"></p>
+<p>其<strong>函数表达式</strong>如下:</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259090809.png"></p>
+<blockquote>
+<p>函数介绍</p>
+</blockquote>
+<p><code>ReLU 函数</code>是深度学习中较为流行的一种激活函数，相比于 <code>sigmoid 函数</code>和 <code>tanh 函数</code>，它具有<strong>如下优点</strong>：</p>
+<ul>
+<li>当<strong>输入为正</strong>时，不存在<strong>梯度饱和</strong>问题。</li>
+<li><strong>计算速度</strong>快得多。ReLU 函数中只存在线性关系，因此它的计算速度比 sigmoid 和 tanh 更快</li>
+</ul>
+<p>当然<strong>也有缺点</strong>：</p>
+<ul>
+<li><code>Dead ReLU</code> 问题。当输入为负时，<strong>ReLU完全失效</strong>，在正向传播过程中，这不是问题。有些区域很敏感，有些则不敏感。但是在反向传播过程中，如果输入负数，则梯度将完全为零，sigmoid 函数和 tanh 函数也具有相同的问题；</li>
+<li>我们发现 ReLU 函数的输出<strong>为0或正数</strong>，这意味着ReLU函数<strong>不是以0为中心</strong>的函数。</li>
+</ul>
+<blockquote>
+<p>飞桨实现</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/ReLU_cn.html">函数界面</a></p>
+<h3 id="Leaky-ReLU函数"><a href="#Leaky-ReLU函数" class="headerlink" title="Leaky ReLU函数"></a>Leaky ReLU函数</h3><blockquote>
+<p>函数图像与映射关系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259144647.png"></p>
+<p>其<strong>函数表达式</strong>如下:</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259160032.png"></p>
+<blockquote>
+<p>函数介绍</p>
+</blockquote>
+<p>它是一种专门设计用于解决 <code>Dead ReLU</code> 问题的激活函数,leak 有助于<strong>扩大</strong> ReLU 函数的<strong>范围</strong>，通常 a 的值为 <code>0.01</code> 左右；</p>
+<blockquote>
+<p>飞桨实现</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/LeakyReLU_cn.html#leakyrelu">函数界面</a></p>
+<h3 id="ELU函数"><a href="#ELU函数" class="headerlink" title="ELU函数"></a>ELU函数</h3><blockquote>
+<p>函数图像与映射关系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259194937.png"></p>
+<p>其<strong>函数表达式</strong>如下:</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1662259205886.png"></p>
+<blockquote>
+<p>函数介绍</p>
+</blockquote>
+<p><code>ELU</code>的提出也解决了<strong>ReLU的问题</strong>。与ReLU相比，ELU<strong>有负值</strong>，这会使激活的平均值接近零。均值激活接近于零可以使<strong>学习更快</strong>，因为它们使梯度<strong>更接近自然梯度</strong>。</p>
+<blockquote>
+<p>飞桨实现</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/ELU_cn.html#elu">函数界面</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/" title="基础知识--激活函数相关">https://danggeovo.github.io/2023/03/25/基础知识2--激活函数相关/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/10/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF--%E4%BF%A1%E6%81%AF%E4%BE%A6%E5%AF%9F/" rel="prev" title="网络安全技术--信息侦察">
+                  <i class="fa fa-angle-left"></i> 网络安全技术--信息侦察
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/" rel="next" title="永恒之蓝漏洞复现（流程模拟）">
+                  永恒之蓝漏洞复现（流程模拟） <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

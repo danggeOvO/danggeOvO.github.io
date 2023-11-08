@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：本篇文章的主要资料来源为《[公众号蓝蓝考研]计算机网络背诵版》，同时会在遇到重点问题时广泛收集网上资料，使得记录更加详细。本次整理仅用于个人学习。   老规矩，先来看一下数据链路层的考点：  基本概念 差错控制 流量控制 介质访问控制 局域网与广域网 链路层设备  注：数据链路层是计算机网络中很核心的一部分，所以涉及到的知识点很多，考点也多。同时因为数据链路层是既与通信相关，又有很多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始的计网学习-数据链路层">
+<meta property="og:url" content="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：本篇文章的主要资料来源为《[公众号蓝蓝考研]计算机网络背诵版》，同时会在遇到重点问题时广泛收集网上资料，使得记录更加详细。本次整理仅用于个人学习。   老规矩，先来看一下数据链路层的考点：  基本概念 差错控制 流量控制 介质访问控制 局域网与广域网 链路层设备  注：数据链路层是计算机网络中很核心的一部分，所以涉及到的知识点很多，考点也多。同时因为数据链路层是既与通信相关，又有很多">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186771336.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186830736.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673171282514.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673171442822.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673171708957.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673172117331.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673175600249.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673175924668.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186855051.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673177412198.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673177432645.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673178517527.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673179288761.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673179405902.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673179513818.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186916358.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673180854887.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673180934595.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673180979802.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181036849.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181076766.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181139495.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181550900.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181952789.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182056302.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182073438.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182139683.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182189236.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182313110.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182354974.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182389573.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182406809.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186968886.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183188527.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183282900.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183342640.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183371592.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183415523.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183659863.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183698928.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183723002.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183754632.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183811431.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186991283.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183994240.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184324245.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184339411.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184372146.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187022847.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184558466.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184698611.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184727346.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187043225.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184931579.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673185205768.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187068223.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187086480.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673185755693.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187117373.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187135990.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187151748.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187164281.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187190752.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187208552.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186551607.png">
+<meta property="article:published_time" content="2023-01-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:56:07.011Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186771336.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/","path":"2023/01/10/从零开始的计网学习-数据链路层/","title":"从零开始的计网学习-数据链路层"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从零开始的计网学习-数据链路层 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">数据链路层的基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="nav-number">1.2.</span> <span class="nav-text">数据链路层的功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E5%B8%A7"><span class="nav-number">1.3.</span> <span class="nav-text">组帧</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E6%88%90%E5%B8%A7%E4%B8%8E%E9%80%8F%E6%98%8E%E4%BC%A0%E8%BE%93"><span class="nav-number">1.3.1.</span> <span class="nav-text">封装成帧与透明传输</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E6%8E%A7%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">差错控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.1.</span> <span class="nav-text">差错的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E9%94%99%E7%BC%96%E7%A0%81"><span class="nav-number">2.2.</span> <span class="nav-text">检错编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A0%E9%94%99%E7%BC%96%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text">纠错编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E4%B8%8E%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.</span> <span class="nav-text">流量控制与可靠传输协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E4%BC%A0%E8%BE%93%E6%A6%82%E8%BF%B0"><span class="nav-number">3.1.</span> <span class="nav-text">流量传输概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2-%E7%AD%89%E5%BE%85%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.2.</span> <span class="nav-text">停止-等待协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%B8%A7%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E2%80%93%E5%90%8E%E9%80%80N%E5%B8%A7%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.3.</span> <span class="nav-text">多帧滑动窗口–后退N帧协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.4.</span> <span class="nav-text">选择重传协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E8%B4%A8%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">介质访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E9%81%93%E5%88%92%E5%88%86%E4%BB%8B%E8%B4%A8%E6%8E%A7%E5%88%B6"><span class="nav-number">4.1.</span> <span class="nav-text">信道划分介质控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E4%BB%8B%E8%B4%A8%E6%8E%A7%E5%88%B6"><span class="nav-number">4.2.</span> <span class="nav-text">随机访问介质控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E8%AE%BF%E9%97%AE%E4%BB%8B%E8%B4%A8%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">4.3.</span> <span class="nav-text">轮询访问介质访问控制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91"><span class="nav-number">5.</span> <span class="nav-text">局域网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5-1"><span class="nav-number">5.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E4%B8%8EIEEE802-3%E6%A0%87%E5%87%86"><span class="nav-number">5.2.</span> <span class="nav-text">以太网与IEEE802.3标准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E7%9F%A5%E8%AF%86"><span class="nav-number">5.3.</span> <span class="nav-text">补充知识</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%BF%E5%9F%9F%E7%BD%91"><span class="nav-number">6.</span> <span class="nav-text">广域网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%9F%9F%E7%BD%91%E6%A6%82%E8%BF%B0"><span class="nav-number">6.1.</span> <span class="nav-text">广域网概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E5%8D%8F%E8%AE%AE"><span class="nav-number">6.2.</span> <span class="nav-text">两种协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%E8%AE%BE%E5%A4%87"><span class="nav-number">7.</span> <span class="nav-text">数据链路层设备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82%E6%89%A9%E5%B1%95%E4%BB%A5%E5%A4%AA%E7%BD%91"><span class="nav-number">7.1.</span> <span class="nav-text">物理层扩展以太网</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从零开始的计网学习-数据链路层 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从零开始的计网学习-数据链路层
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-10T13:48:32+08:00">2023-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:56:07" itemprop="dateModified" datetime="2023-11-08T17:56:07+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>写在最前面：本篇文章的主要资料来源为<code>《[公众号蓝蓝考研]计算机网络背诵版》</code>，同时会在遇到重点问题时广泛收集网上资料，使得记录更加详细。本次整理仅用于个人学习。</p>
+</blockquote>
+<hr>
+<p>老规矩，先来看一下数据链路层的考点：</p>
+<ul>
+<li>基本概念</li>
+<li>差错控制</li>
+<li>流量控制</li>
+<li>介质访问控制</li>
+<li>局域网与广域网</li>
+<li>链路层设备</li>
+</ul>
+<p><strong>注</strong>：数据链路层是计算机网络中很核心的一部分，所以涉及到的<strong>知识点很多，考点也多</strong>。同时因为数据链路层是既与通信相关，又有很多计网相关的协议，所以属于<strong>承上启下的一层</strong>。</p>
+<hr>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="数据链路层的基本概念"><a href="#数据链路层的基本概念" class="headerlink" title="数据链路层的基本概念"></a>数据链路层的基本概念</h3><blockquote>
+<p>数据链路层负责通过一条链路从一个节点向另一个物理链路<strong>直接相连的相邻节点</strong>传输数据报</p>
+</blockquote>
+<p>其中：</p>
+<ul>
+<li><strong>节点</strong>：主机、路由器等</li>
+<li><strong>链路</strong>：网络中两个节点之间的物理通道，链路的传输介质有双绞线、光纤、微波等，分为有线链路和无线链路。</li>
+<li><strong>帧</strong>：链路层的协议数据单元，封装网络层数据报。</li>
+</ul>
+<h3 id="数据链路层的功能"><a href="#数据链路层的功能" class="headerlink" title="数据链路层的功能"></a>数据链路层的功能</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186771336.png"></p>
+<h3 id="组帧"><a href="#组帧" class="headerlink" title="组帧"></a>组帧</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186830736.png"></p>
+<h4 id="封装成帧与透明传输"><a href="#封装成帧与透明传输" class="headerlink" title="封装成帧与透明传输"></a>封装成帧与透明传输</h4><blockquote>
+<p>封装成帧</p>
+</blockquote>
+<p>封装成帧就是在一段数据的前后部分添加<strong>首部和尾部</strong>，这样就<strong>构成了一个帧</strong>。接收端在接收到<strong>物理层上交</strong>的比特流后就可以根据首部和尾部的标记，从收到的比特流中<strong>识别帧的开始和结束</strong>。</p>
+<p>首部和尾部包含许多控制信息，其中<strong>帧定界符</strong>的作用就是确定帧的界限。</p>
+<p>考虑到差错控制等多种因素，每一种数据链路层协议都规定了帧的<strong>数据部分的长度上限</strong>，即<strong>最大传送单元MTU</strong>。</p>
+<hr>
+<p><strong>扩展</strong>：MTU的相关知识(参考文章：<a target="_blank" rel="noopener" href="https://info.support.huawei.com/info-finder/encyclopedia/zh/MTU.html">https://info.support.huawei.com/info-finder/encyclopedia/zh/MTU.html</a>)</p>
+<blockquote>
+<p><strong>什么是MTU?</strong></p>
+</blockquote>
+<p><strong>最大传输单元MTU</strong>（Maximum Transmission Unit，MTU），是指<strong>网络能够传输的最大数据包大小</strong>，以<strong>字节为单位</strong>。MTU的大小决定了发送端一次能够发送报文的最大字节数。如果MTU超过了接收端所能够承受的最大值，或者是超过了发送路径上途经的某台设备所能够承受的最大值，就会造成报文分片甚至丢弃，加重网络传输的负担。如果太小，那实际传送的数据量就会过小，影响传输效率。</p>
+<blockquote>
+<p>**为什么要有MTU?**（MTU的作用）</p>
+</blockquote>
+<p>网络中通常以<strong>数据包为单位</strong>进行信息传递，那么，一次传送多大的包合适、多大的包<strong>最高效</strong>就成为一个核心问题之一。如果<strong>包大小设置的很大</strong>，意味着报文中的有效数据也更多，通信效率更高，但传送一个数据包的延迟也越大，数据包中bit位发生错误的概率也越大。并且如果这个报文丢掉了，重传的代价也很大。如果<strong>包大小设置的过小</strong>，则意味传输相同的数据量，设备需要处理更多的报文，这样会极大的考验设备的线速转发能力。通过设置MTU来调节网络上数据包的大小，<strong>让不同的网络找到最适宜的MTU从而提高转发效率，这就是MTU的作用。</strong></p>
+<blockquote>
+<p><strong>MTU是一个确定的值吗？</strong></p>
+</blockquote>
+<p>MTU是数据链路层的概念，指数据链路层对数据帧长度的限制。<strong>不同链路介质类型的网络有不同的默认MTU值</strong>，以下是一些常见网络的默认值：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673171282514.png"></p>
+<blockquote>
+<p>为什么以太网的MTU通常设置为1500</p>
+</blockquote>
+<p>RFC标准定义<strong>以太网的默认MTU值为1500</strong>。那么这1500的取值是怎么来的呢？</p>
+<p>早期的以太网使用<strong>共享链路</strong>的工作方式，为了<strong>保证CSMA&#x2F;CD（载波多路复用&#x2F;冲突检测）机制</strong>，所以规定了以太帧长度<strong>最小为64字节，最大为1518字节</strong>。最小64字节是为了<strong>保证最极端的冲突能被检测到</strong>，64字节是能被检测到的最小值；最大不超过1518字节是为了<strong>防止过长的帧传输时间过长</strong>而占用共享链路太长时间导致其他业务阻塞。所以规定以太网帧大小为64~1518字节，虽然技术不断发展，但协议一直没有更改。</p>
+<p>以太网最大的数据帧是1518字节，这样<strong>刨去帧头14字节和帧尾CRC校验部分4字节，那么剩下承载上层IP报文的地方最大就只有1500字节</strong>，这个值就是以太网的默认MTU值。这个MTU就是网络层协议非常关心的地方，因为网络层协议比如IP协议会根据这个值来<strong>决定是否把上层传下来的数据进行分片</strong>，如果单个IP报文长度大于MTU，则会在发送出接口前被分片，被切割为小于或等于MTU长度的IP包。</p>
+<blockquote>
+<p>MTU的示意图</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673171442822.png"></p>
+<p>如图所示，<strong>IP数据报的长度就是MTU的长度</strong>。但是实际上，<strong>不同的厂商，甚至同一厂商的不同产品型号对MTU的定义也不尽相同</strong>，通常分为以下几种：</p>
+<ul>
+<li>MTU用以<strong>指示整个IP报文的最大长度</strong>（IP头+三层Payload），MTU是一个三层的定义，即MTU &#x3D; IP MTU。例如在Huawei NetEngine系列路由、CloudEngine系列交换机上，MTU是三层的定义，指<strong>IP MTU</strong>。</li>
+<li>MTU的值等于<strong>IP报文与以太帧头的总和</strong>，即MTU &#x3D; IP MTU + 14字节。例如在Cisco部分设备上，MTU是指IP MTU + 以太帧头。</li>
+<li>MTU的值等于<strong>IP报文与以太帧头、CRC部分的总和</strong>，即MTU &#x3D; IP MTU + 18字节。例如在Juniper部分设备上，MTU是指IP MTU + 以太帧头 + CRC部分。</li>
+</ul>
+<p>在实际设置MTU值时，需要<strong>特别关注各厂商、产品对于MTU的定义</strong>。在本篇文章中以第一章定义为准。</p>
+<blockquote>
+<p><strong>超过MTU的报文如何进行分片？</strong></p>
+</blockquote>
+<p>以太网缺省<strong>MTU&#x3D;1500字节</strong>，这是以太网接口对IP层的约束，如果IP层有&lt;&#x3D;1500字节需要发送，只需要一个IP包就可以完成发送任务；如果<strong>IP层有&gt;1500字节数据需要发送，需要分片才能完成发送</strong>。</p>
+<p>以主机发送一个数据载荷<strong>长度为2000字节的报文为例</strong>说明其分片的过程（假设出接口的MTU值为1500）。在<strong>网络层会对报文进行封装</strong>，其结构组成：<strong>IP头部20字节+数据载荷长度2000字节，报文封装后，整个报文长度为2020字节</strong>。在出接口进行转发的时候，发现IP报文的长度超过了MTU的值1500，因此要<strong>进行分片处理</strong>，详情见下图。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673171708957.png"><br>第一片报文，IP报文头固定20字节，数据载荷可以封装1480字节（MTU值1500字节-IP报文头20字节，<strong>数据载荷长度须是8的倍数</strong>）；</p>
+<p>第二片报文，复制第一片的IP头，IP报文头固定20字节，数据载荷为剩余的520字节（总数据载荷长度2000字节减去第一片中已封装的1480字节）。如果最后一片报文的长度不足46字节，会自动填充至46字节。</p>
+<p>所有分片报文在发送至目的主机后，在<strong>目的主机进行分片重组，恢复为原报文</strong>。在进行重组时，通过IP标志位中的<strong>MF</strong>用来分辨这是不是最后一个分片，<strong>片偏移</strong>用来分辨这个分片相对原数据报的位置。通过这几个字段，可以准确的完成数据报的重组操作。</p>
+<hr>
+<p><strong>帧同步</strong>：接收方应当能从接收到的二进制比特流中<strong>区分帧的起始和终止</strong>。</p>
+<blockquote>
+<p><strong>组帧的四种方法</strong>（即通过不同的方式判断一个完整的帧）</p>
+</blockquote>
+<p><strong>方法一：字符计数法</strong></p>
+<p>即在<strong>帧首部使用一个计数字段</strong>（第一个字节，8位）来标明帧内字符数，表明包含计数字段在内的帧长度。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673172117331.png"></p>
+<ul>
+<li><strong>优点</strong>：很简洁明了</li>
+<li><strong>缺点</strong>：当计数字段发生错误会导致严重错误。因为是一个数据流，一旦一个错了，后续也会出错。</li>
+</ul>
+<p><strong>方法二：字符（节）填充法</strong></p>
+<p>采取<strong>特定的标识字符来标识某一帧的开始和结束</strong>，如果数据中有与标识字符相同的字符，则在前面填充<strong>转义字符</strong>，接收方将转义字符去掉即可得到原数据。</p>
+<p><strong>方法三：零比特填法</strong></p>
+<p>使用固定的比特模式<code>01111110</code>来标识帧的开始和结束。</p>
+<ul>
+<li>在<strong>发送</strong>时，每次碰到<code>11111</code>就在后面填充一位0</li>
+<li>在<strong>接收</strong>时，先通过01111110找到起始位置，再查找数据中连续的5个1将其后面的0去除得到原数据</li>
+</ul>
+<hr>
+<p><strong>扩展</strong>：字节填充与零比特填充（参考文章：<a target="_blank" rel="noopener" href="http://justin955.top/archives/74/">http://justin955.top/archives/74/</a> ）</p>
+<blockquote>
+<p><strong>填充的目的</strong></p>
+</blockquote>
+<p>在数据链路层进行封装成帧的过程中，会有<strong>帧界定符Flag</strong>作为一头一尾用来封装。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673175600249.png"><br>PPP协议中使用的是<code>0x7E:01111110</code>作为定界符，即路由器检测到某个字节为0x7E就说明上个帧传输结束，开始下个帧的传输。</p>
+<p>那么新的问题出现了：如果我们的<strong>数据中存在0x7E</strong>，路由器就会把它误认为定界符，那岂不是会导致帧传输出现错误吗？</p>
+<p>解决这个问题，我们采用了最简单粗暴的方式，即：<strong>对发送的数据进行转义，将会被误解的数据用另一种方式表达，使得数据中不存在会被误解的数据。</strong></p>
+<blockquote>
+<p><strong>两种传输方式–两种填充方法</strong></p>
+</blockquote>
+<p>首先需要知道，在进行数据传输时，常见的有两种传输方式：<strong>异步传输和同步传输</strong></p>
+<ul>
+<li>在<strong>同步传输</strong>中，数据以块或帧的形式发送。此传输是全双工类型。在发送者和接收者之间强制性同步。在同步传输中，<strong>数据之间没有间隙</strong>。与异步传输相比，传输大量数据更加有效和可靠。</li>
+<li>在<strong>异步传输</strong>中，数据<strong>以字节或字符的形式</strong>发送。该传输是半双工型传输。在该传输中，在数据的起始位和停止位都添加了奇偶校验位。它不需要同步。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673175924668.png"><br><strong>注</strong>：简记为“<code>同流异字</code>”</p>
+<ul>
+<li>异步传输是<strong>以字节为单位</strong>，逐个字节发送，所以需要以字节为单位进行转换-<strong>字节填充</strong></li>
+<li>同步传输则是<strong>发送整个数据流</strong> ，传输整个比特流，以比特为单位进行转换-(零)<strong>比特填充</strong></li>
+</ul>
+<p>二者的目的都是为了<strong>使得数据中不会出现标识字符</strong>，只是实现的方式不同。</p>
+<hr>
+<p><strong>方法四：违规编码法</strong></p>
+<p>在曼彻斯特编码中，高-&gt;低表示1，低-&gt;高表示0。那么<strong>低-低</strong>和<strong>高-高就</strong>是违规编码。使用违规编码标识帧的开始和结束。</p>
+<blockquote>
+<p>透明传输</p>
+</blockquote>
+<p>透明传输是指不管<strong>所传输的数据是什么样的比特组合</strong>，都应当可以在链路上传输。</p>
+<h2 id="差错控制"><a href="#差错控制" class="headerlink" title="差错控制"></a>差错控制</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186855051.png"></p>
+<h3 id="差错的原因"><a href="#差错的原因" class="headerlink" title="差错的原因"></a>差错的原因</h3><blockquote>
+<p>差错检测分为<strong>检测编码</strong>和<strong>纠错编码</strong>。差错基本上都是由于<strong>噪声</strong>引起的，注意下面两点：</p>
+</blockquote>
+<ul>
+<li>检错编码可以<strong>检测而不能直接定位错误</strong>，因此无法纠错、</li>
+<li>纠错编码可以完成前向纠错，但是成本很高，<strong>甚少使用</strong></li>
+</ul>
+<blockquote>
+<p>噪声的种类</p>
+</blockquote>
+<ul>
+<li><p><strong>全局性</strong></p>
+<ul>
+<li>定义描述：由于线路本身的电气特性所产生的随机噪声，是<strong>信道固有</strong>的，随机产生的</li>
+<li>解决方法：<strong>提高信噪比</strong></li>
+</ul>
+</li>
+<li><p><strong>局部性</strong></p>
+<ul>
+<li>定义描述：外界特定的<strong>短暂原因</strong>所造成的冲击噪声，这是<strong>产生差错的主要原因</strong></li>
+<li>解决方法：利用<strong>编码技术解决</strong></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>差错的种类</strong></p>
+</blockquote>
+<ul>
+<li><strong>位错</strong>：0变1,1变0</li>
+<li><strong>帧错</strong>：丢失、重复、失序</li>
+</ul>
+<blockquote>
+<p><strong>链路层提供的服务种类</strong></p>
+</blockquote>
+<ul>
+<li>通信质量好的网络：无确认无连接服务</li>
+<li>通信质量差的网络：有确认无连接服务</li>
+<li>无线传输链路：有确认有连接服务</li>
+</ul>
+<h3 id="检错编码"><a href="#检错编码" class="headerlink" title="检错编码"></a>检错编码</h3><blockquote>
+<p><strong>奇偶校验码</strong></p>
+</blockquote>
+<p>在待发送的数据后面<strong>增加一位检错码</strong>，使得数据中的<strong>1的个数为奇数或者偶数</strong></p>
+<p><strong>缺点</strong>：只能检测出奇数个或者偶数个的错误，<strong>检错能力为50%</strong></p>
+<blockquote>
+<p><strong>循环冗余编码</strong>（CRC校验）</p>
+</blockquote>
+<p>将数据拆分为相同大小的组，每一组加上<strong>冗余码</strong>后构成帧再发送。</p>
+<p>冗余码采用<strong>生成多项式与数据相除</strong>得到，具体流程如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673177412198.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673177432645.png"></p>
+<p><strong>注意</strong>：加到数据后面的是余数而不是商。</p>
+<p><strong>提醒</strong>：使用CRC校验可以<strong>实现无错传输</strong>，但是<strong>不是可靠传输</strong>。</p>
+<h3 id="纠错编码"><a href="#纠错编码" class="headerlink" title="纠错编码"></a>纠错编码</h3><p><strong>海明码</strong>是计算机网络中数据链路层的针对帧的位错提出的一种纠错编码方式，下面我们将对其进行详细的介绍。</p>
+<blockquote>
+<p>海明距离（汉明距离）</p>
+</blockquote>
+<ul>
+<li>两个合法编码的对应比特取值不同的比特称为<strong>两个码字的汉明距离</strong></li>
+<li>在一个有效编码集中，任意两个合法编码的汉明距离的最小值称为该<strong>编码集的汉明距离</strong></li>
+</ul>
+<p>对于一个n位数据，</p>
+<ul>
+<li>使用海明码进行检错：汉明距离为n+1</li>
+<li>使用海明码进行纠错：汉明距离为2n+1</li>
+</ul>
+<blockquote>
+<p>海明码的作用</p>
+</blockquote>
+<p>实现<strong>双比特检错、单比特纠错</strong></p>
+<blockquote>
+<p><strong>海明码的步骤</strong>：4步<br>（<a target="_blank" rel="noopener" href="https://blog.csdn.net/Michael__Wu/article/details/114936902">https://blog.csdn.net/Michael__Wu/article/details/114936902</a> ）</p>
+</blockquote>
+<p><strong>第一步：确定校验码的位数</strong></p>
+<p>若数据有m位，检验码有r位，则检验码应该满足：<code>2^r &gt;= m+r+1</code></p>
+<p><strong>第二步：确定校验码和数据的位置</strong></p>
+<p>每个校验码应该放置在最终<strong>海明码的2的整数次幂</strong>的位置</p>
+<p><strong>例子</strong>：发送数据位101101，即m&#x3D;6，可得r&#x3D;4。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673178517527.png"></p>
+<p><strong>第三步：求出校验码的值</strong></p>
+<p>每位校验码码位对应的位数的二进制(<code>0001, 0010, 0100, 1000</code>)表示中只有一个1。</p>
+<p>因为根据校验码位置确定的原则, P1,P2,P3,P4的位数分别为2^0,2^1,2^2,2^3, 其二进制表示分别为0001, 0010, 0100, 1000。</p>
+<p>那么海明码的每一位(<code>p1,p2,d1,p3,d2,d3,d4,p4,d5,d6</code>)对应码位(<code>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</code>)的二进制表示(<code>0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010</code>)中与校验码码位(1, 2, 4, 8)的二进制表示(<code>0001, 0010, 0100, 1000</code>)的1的位置<strong>同为1的所有码的码值的异或运算应为0</strong></p>
+<p>假设p1,p2,p3,p4的码值分别为x1,x2,x3,x4, 那么应有p1,d1,d2,d4,d5码值的异或运算为0, 即校验码位的码值为0, 同理得出p2,p3,p4的码值分别为0, 0, 1</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673179288761.png"></p>
+<p><strong>第四步：检错并纠错</strong></p>
+<p>对各位进行奇偶检验，若为奇数，则证明数据出错</p>
+<p>将每位校验码所校验的位数再次求奇偶检验，得到新的结果转置得到的二进制值即为出错位数。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673179405902.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673179513818.png"></p>
+<p><strong>注意</strong>：无论是差错检验还是纠错检验都是在<strong>原数据的基础上加上一些校验码</strong>，而后利用算法的性质进行检验。</p>
+<h2 id="流量控制与可靠传输协议"><a href="#流量控制与可靠传输协议" class="headerlink" title="流量控制与可靠传输协议"></a>流量控制与可靠传输协议</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186916358.png"></p>
+<h3 id="流量传输概述"><a href="#流量传输概述" class="headerlink" title="流量传输概述"></a>流量传输概述</h3><ul>
+<li><strong>数据链路层</strong><ul>
+<li>流量控制是<strong>点对点</strong>的</li>
+<li>方法：接收端收不下就不发送确认</li>
+</ul>
+</li>
+<li><strong>传输层</strong><ul>
+<li>流量控制是<strong>端对端</strong>的</li>
+<li>接收端给接收端发送一个窗口公告</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>可靠传输与流量控制</p>
+</blockquote>
+<ul>
+<li><strong>可靠传输</strong>：发送端发送什么，接收端就接收什么</li>
+<li><strong>流量控制</strong>：控制发送速率，使得接收方有足够的缓冲空间来接收每一个帧</li>
+</ul>
+<blockquote>
+<p>滑动窗口机制</p>
+</blockquote>
+<ul>
+<li>解决<strong>可靠传输</strong>：发送方<strong>自动重传</strong></li>
+<li>解决<strong>流量控制</strong>：在没收到<strong>窗口确认</strong>的情况下不发送下一个</li>
+</ul>
+<h3 id="停止-等待协议"><a href="#停止-等待协议" class="headerlink" title="停止-等待协议"></a>停止-等待协议</h3><blockquote>
+<p><strong>什么是停等协议</strong></p>
+</blockquote>
+<p>停止等待就是指<strong>每发送完一个分组就停止发送</strong>，<strong>等待对方确认</strong>，在收到确认后再发送下一个分组</p>
+<blockquote>
+<p><strong>为什么要有停等协议？</strong></p>
+</blockquote>
+<ul>
+<li>比特出错、丢包问题等</li>
+<li>实现流量控制</li>
+</ul>
+<blockquote>
+<p><strong>研究停等协议的前提</strong></p>
+</blockquote>
+<ul>
+<li>以<strong>半双工</strong>的形式进行</li>
+<li>不考虑数据在哪一层进行传输</li>
+</ul>
+<blockquote>
+<p><strong>停等协议的几种情况</strong></p>
+</blockquote>
+<p><strong>情况一：无差错情况</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673180854887.png"><br>每一帧都会停止等待，所以仅需要1位对帧进行编号。</p>
+<p><strong>情况二：有差错情况</strong></p>
+<blockquote>
+<blockquote>
+<p><strong>帧丢失或出错</strong></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673180934595.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673180979802.png"></p>
+<blockquote>
+<blockquote>
+<p><strong>ACK丢失</strong></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181036849.png"></p>
+<blockquote>
+<blockquote>
+<p><strong>ACK迟到</strong></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181076766.png"></p>
+<blockquote>
+<p><strong>停等协议的信道利用率</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181139495.png"></p>
+<p><strong>注</strong>：这里涉及到了<strong>计算问题</strong>，要留心。</p>
+<p><strong>停等协议的信道利用率很低</strong>。</p>
+<p><strong>一个例子：</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181550900.png"><br><strong>注</strong>：没有说确认帧发送时延就不用算。</p>
+<h3 id="多帧滑动窗口–后退N帧协议"><a href="#多帧滑动窗口–后退N帧协议" class="headerlink" title="多帧滑动窗口–后退N帧协议"></a>多帧滑动窗口–后退N帧协议</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673181952789.png"></p>
+<p>与停等协议比，<strong>后退N帧协议</strong>：</p>
+<ul>
+<li>需要更大的编码范围</li>
+<li>发送方需要缓存多个帧</li>
+</ul>
+<blockquote>
+<p><strong>滑动窗口介绍</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182056302.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182073438.png"></p>
+<blockquote>
+<p><strong>发送方的响应事件</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182139683.png"></p>
+<blockquote>
+<p><strong>接收方的响应事件</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182189236.png"></p>
+<blockquote>
+<p>后退N帧协议的性能分析</p>
+</blockquote>
+<ul>
+<li><strong>优点</strong>：连续发送帧，<strong>提高信道利用率</strong></li>
+<li><strong>缺点</strong>：重传是需要发送已经发送过的帧，<strong>传送效率低</strong></li>
+</ul>
+<h3 id="选择重传协议"><a href="#选择重传协议" class="headerlink" title="选择重传协议"></a>选择重传协议</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182313110.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182354974.png"></p>
+<blockquote>
+<p><strong>发送方的响应事件</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182389573.png"></p>
+<blockquote>
+<p><strong>接收方的响应事件</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673182406809.png"><br><strong>注意</strong>：有很多方法实现流量控制，其目的都是为了提高数据的传输效率，保证数据可以高效、可靠、正确的完成传输。要理解<strong>不同流量控制协议的不同点及其实现原理</strong>。</p>
+<h2 id="介质访问控制"><a href="#介质访问控制" class="headerlink" title="介质访问控制"></a>介质访问控制</h2><blockquote>
+<p>介质访问控制：采取一定的措施，使两对节点之间的通信不会发生干扰，分为两种：</p>
+</blockquote>
+<ul>
+<li><strong>静态划分信道</strong><ul>
+<li>信道划分介质访问控制</li>
+</ul>
+</li>
+<li><strong>动态划分信道</strong><ul>
+<li><strong>轮询访问</strong>介质控制</li>
+<li><strong>随机访问</strong>介质控制</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>两种链路类型</p>
+</blockquote>
+<ul>
+<li><strong>点对点链路</strong><ul>
+<li>两个相邻节点的通过链路连接，没有第三者</li>
+<li>应用：PPP协议，常用于以太网</li>
+</ul>
+</li>
+<li><strong>广播式链路</strong><ul>
+<li>所有主机共享通信介质</li>
+<li>应用：早期以太网、局域网</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>扩展</strong>：以太网和因特网 <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/470680">https://cloud.tencent.com/developer/news/470680</a></p>
+</blockquote>
+<h3 id="信道划分介质控制"><a href="#信道划分介质控制" class="headerlink" title="信道划分介质控制"></a>信道划分介质控制</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186968886.png"></p>
+<p><strong>多路复用</strong>：将多个信号组合在一个信道上进行传输，到目的地后在分离为多个信号</p>
+<p><strong>本质上是将广播信号转为点对点链路</strong></p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/suxiaorui/article/details/87096375">https://blog.csdn.net/suxiaorui/article/details/87096375</a></p>
+<blockquote>
+<p>频分多路复用（FDM)</p>
+</blockquote>
+<p>所谓频分多路复用就是将我们的信道资源按频率上进行划分，分成一个个频带的子信道，让每个信号只去用其中的某一个频带的子信道。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183188527.png"><br><strong>应用</strong>：家里的电视有很多频道，这种<strong>电视信号就是这种频分多路复用技术</strong>。</p>
+<p>频分多路复用的<strong>各用户占用不同的带宽资源</strong>，用户在分配到一定的频带后，在通 信过程中自始至终都占用这个频带 。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183282900.png"></p>
+<blockquote>
+<p>时分多路复用（TDM)</p>
+</blockquote>
+<p>时分复用则是将时间划分为一段段等长的<strong>时分复用帧</strong>（TDM 帧），每个用户在每个 TDM 帧中<strong>占用固定序号的时隙</strong> </p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183342640.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183371592.png"></p>
+<blockquote>
+<p>波分多路复用（WDM)</p>
+</blockquote>
+<p>介质为<strong>光纤</strong>，原理类似于<strong>光的频分多路复用</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183415523.png"></p>
+<blockquote>
+<p><strong>码分多路复用(CDM)</strong></p>
+</blockquote>
+<ul>
+<li><p>广泛应用于<strong>无线链路共享</strong> (如蜂窝网,卫星通信等)  </p>
+</li>
+<li><p>每个用户配一个唯一的 m bit码片序 列(chipping sequence)，其中“0”用“-1”表示、“1”用“+1”表 示，</p>
+<ul>
+<li>如 S 站的码片序列：(–1 –1 –1 +1 +1 –1 +1 +1)</li>
+</ul>
+</li>
+<li><p>各用户使用相同频率载波，利用各自码片序列编码数据 </p>
+</li>
+<li><p>编码信号 &#x3D; (原始数据) × (码片序列)</p>
+<ul>
+<li>如发送比特 1（+1），则发送自己的 m bit 码片序列 </li>
+<li>如发送比特 0（-1），则发送该码片序列的m bit 码片序列的反码</li>
+</ul>
+</li>
+<li><p>各用户码片序列相互正交(orthogonal)<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183659863.png"></p>
+</li>
+<li><p>令{di}为原始数据序列，各用户的叠加向量为<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183698928.png"></p>
+</li>
+<li><p>解码 : 码片序列与编码信号的内积<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183723002.png"></p>
+</li>
+</ul>
+<p><strong>两个例子</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183754632.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183811431.png"></p>
+<p><strong>注</strong>：码分复用的计算是很简单的，但是要理解原理。<br>可以看一下这个文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u011240016/article/details/52705205">https://blog.csdn.net/u011240016/article/details/52705205</a></p>
+<h3 id="随机访问介质控制"><a href="#随机访问介质控制" class="headerlink" title="随机访问介质控制"></a>随机访问介质控制</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186991283.png"></p>
+<p>所有的用户都可以随机的发送消息，<strong>发送消息时占用全部带宽</strong></p>
+<blockquote>
+<p><strong>ALOHA协议</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673183994240.png"><br><strong>技术特点</strong>：</p>
+<ul>
+<li>不监听信道</li>
+<li>不按时间槽发送</li>
+<li>随机重发</li>
+</ul>
+<p><strong>冲突检测：</strong></p>
+<ul>
+<li>在传输数据发送冲突时，接收方收到错误帧，返回错误信号</li>
+<li>发送方在发现超时或者错误后随机时间内重发数据</li>
+</ul>
+<p><strong>时隙ALOHA协议</strong>：把时间分为若干个相同的时间片，所有用户在时间片开始时刻同步接入网络信道，若发送冲突则必须等到下一个时间片开始时刻再发送</p>
+<blockquote>
+<p><strong>CSMA协议</strong></p>
+</blockquote>
+<p><strong>载波监听多路访问协议</strong>(CSMA) :在发送帧之前，先<strong>监听信道</strong>，根据<strong>信道状态</strong>决定是否发送数据</p>
+<ul>
+<li><strong>CS</strong>:载波侦听&#x2F;监听,每- 个站在发送数据之前要检测一下总线上是否有其他计算机在发送数据</li>
+<li><strong>MA</strong>:多点接入，表示许多计算机以多点接入的方式连接在一 根总线上</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184324245.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184339411.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184372146.png"></p>
+<blockquote>
+<p><strong>CSMA&#x2F;CD协议</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187022847.png"></p>
+<p>与CSMA协议相比多了CD，即<strong>碰撞检测</strong>。下面介绍该协议的工作原理：</p>
+<ol>
+<li><strong>碰撞检测</strong></li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184558466.png"><br>2. 确定重传时机</p>
+<p> <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184698611.png"></p>
+<ol start="3">
+<li>最小帧长</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184727346.png"></p>
+<blockquote>
+<p><strong>CSMA&#x2F;CA协议</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187043225.png"></p>
+<h3 id="轮询访问介质访问控制"><a href="#轮询访问介质访问控制" class="headerlink" title="轮询访问介质访问控制"></a>轮询访问介质访问控制</h3><blockquote>
+<p><strong>轮询协议</strong></p>
+</blockquote>
+<p>主节点轮流邀请从属节点发送数据</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>轮询开销</li>
+<li>等待延时</li>
+<li>单点故障</li>
+</ul>
+<blockquote>
+<p><strong>令牌传递协议</strong></p>
+</blockquote>
+<p> <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673184931579.png"><br> <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673185205768.png"></p>
+<h2 id="局域网"><a href="#局域网" class="headerlink" title="局域网"></a>局域网</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187068223.png"></p>
+<h3 id="以太网与IEEE802-3标准"><a href="#以太网与IEEE802-3标准" class="headerlink" title="以太网与IEEE802.3标准"></a>以太网与IEEE802.3标准</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187086480.png"></p>
+<blockquote>
+<p>MAC子层与LLC子层</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673185755693.png"><br>将<strong>数据链路层</strong>分为了两个子层：</p>
+<ul>
+<li><strong>LLC子层</strong>: 逻辑链路控制子层，<strong>为网络层提供服务</strong><ul>
+<li>无确认无连接、面向连接、 带确认无连接</li>
+<li>高速传送</li>
+<li>差错控制</li>
+<li>给帧加序号</li>
+</ul>
+</li>
+<li><strong>MAC子层</strong>:介质访问控制子层，MAC子层的存在<strong>屏蔽了不同物理链路种类的差异性</strong><ul>
+<li>数据帧的封装&#x2F;卸装</li>
+<li>帧的寻址和识别</li>
+<li>帧的接收与发送</li>
+<li>竞争处理</li>
+<li>比特差错检测</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>以太网概述<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/mfs_bad/article/details/112009446">https://blog.csdn.net/mfs_bad/article/details/112009446</a></p>
+</blockquote>
+<p>以太网是一种计算机局域网技术。IEEE组织的IEEE 802.3标准制定了以太网的技术标准，它规定了包括物理层的连线、电子信号和介质访问层协议的内容。以太网是应用最普遍的局域网技术，取代了其他局域网技术如令牌环、FDDI和ARCNET。</p>
+<h3 id="补充知识"><a href="#补充知识" class="headerlink" title="补充知识"></a>补充知识</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187117373.png"></p>
+<h2 id="广域网"><a href="#广域网" class="headerlink" title="广域网"></a>广域网</h2><h3 id="广域网概述"><a href="#广域网概述" class="headerlink" title="广域网概述"></a>广域网概述</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187135990.png"></p>
+<ul>
+<li><strong>广域网</strong><ul>
+<li>协议位于<strong>网络层、数据链路层、物理层</strong></li>
+<li>强调资源共享</li>
+<li>采用点到点连接</li>
+<li>通信子网采用分组交换技术</li>
+</ul>
+</li>
+<li><strong>局域网</strong><ul>
+<li>协议位于<strong>数据链路层、物理层</strong></li>
+<li>强调数据传输</li>
+<li>采用多点接入模式</li>
+</ul>
+</li>
+</ul>
+<h3 id="两种协议"><a href="#两种协议" class="headerlink" title="两种协议"></a>两种协议</h3><p>具体看这个：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/003ccda4ebee">https://www.jianshu.com/p/003ccda4ebee</a></p>
+<ul>
+<li><strong>PPP协议</strong><ul>
+<li>面向字节</li>
+<li>有2B的协议字段</li>
+<li>无序号和确认机制</li>
+<li>不可靠</li>
+</ul>
+</li>
+<li><strong>HDLC协议</strong><ul>
+<li>面向比特</li>
+<li>通过控制字段标志协议</li>
+<li>有序号和确认机制</li>
+<li>可靠</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187151748.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187164281.png"></p>
+<h2 id="数据链路层设备"><a href="#数据链路层设备" class="headerlink" title="数据链路层设备"></a>数据链路层设备</h2><h3 id="物理层扩展以太网"><a href="#物理层扩展以太网" class="headerlink" title="物理层扩展以太网"></a>物理层扩展以太网</h3><ul>
+<li>使用光纤连接使得传输距离更远</li>
+<li>使用集线器将多台设备组成一个冲突域</li>
+<li>使用主干集线器连接多个冲突域形成更大的冲突域</li>
+</ul>
+<p><strong>冲突域</strong>：连接在同一个物理层设备上的电脑中，同时只能有一台电脑进行通信，成为一个冲突域</p>
+<p>主要使用的设备有：<strong>网桥和交换机</strong><br>看这个：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/sddai/p/5399480.html">https://www.cnblogs.com/sddai/p/5399480.html</a></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187190752.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673187208552.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673186551607.png"></p>
+<hr>
+<blockquote>
+<p><strong>写在最后</strong>：这一层的知识很多，因为涉及的领域很广，不像网络层、传输层等专注于某几个特定协议。对于数据链路层的学习，需要掌握其主要的功能：差错控制、流量控制、介质访问控制等，要知道其中实现的具体方法、几种功能的不同之处。同时还要对局域网、广域网、使用的设备等进行了解。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" title="从零开始的计网学习-数据链路层">https://danggeovo.github.io/2023/01/10/从零开始的计网学习-数据链路层/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/" rel="prev" title="从零开始的计网学习-链路层习题整理">
+                  <i class="fa fa-angle-left"></i> 从零开始的计网学习-链路层习题整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE%E6%B1%87%E6%80%BB/" rel="next" title="从零开始的计网学习——常见协议汇总">
+                  从零开始的计网学习——常见协议汇总 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

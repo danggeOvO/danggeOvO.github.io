@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：本篇文章会介绍PE结构的相关知识，并通过PE根据分析实际文件进行进一步解析。   PE文件简介 PE文件结构 结构全貌 DOS 头部详解（IMAGE_DOS_HEADER） PE 头部详解——IMAGE_NT_HEADERS PE标识符–Signature PE文件头–IMAGE_FILE_HEADER 可选头详解——IMAGE_OPTIONAL_HEADER 基础字段–Standa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向工程--PE 结构详解">
+<meta property="og:url" content="https://danggeovo.github.io/2022/11/09/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B--PE%20%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：本篇文章会介绍PE结构的相关知识，并通过PE根据分析实际文件进行进一步解析。   PE文件简介 PE文件结构 结构全貌 DOS 头部详解（IMAGE_DOS_HEADER） PE 头部详解——IMAGE_NT_HEADERS PE标识符–Signature PE文件头–IMAGE_FILE_HEADER 可选头详解——IMAGE_OPTIONAL_HEADER 基础字段–Standa">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1664972541776.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665030703733.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665031209857.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665031893372.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665032486132.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665032811555.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665033266212.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665033279655.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665033470473.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665039705441.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665041263432.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665043373565.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665042178617.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665042197812.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665042343931.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665043103626.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665044708729.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665045204604.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665046534448.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665115198591.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665115438383.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665283959691.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665284275807.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665916481929.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665918249607.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665920279211.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665968236503.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665969821895.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665970609979.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1666932649511.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1666933447805.png">
+<meta property="article:published_time" content="2022-11-09T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:59:41.791Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="逆向工程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1664972541776.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/11/09/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B--PE%20%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/11/09/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B--PE%20%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/","path":"2022/11/09/逆向工程--PE 结构详解/","title":"逆向工程--PE 结构详解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>逆向工程--PE 结构详解 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PE%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">PE文件简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">PE文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E5%85%A8%E8%B2%8C"><span class="nav-number">2.1.</span> <span class="nav-text">结构全貌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DOS-%E5%A4%B4%E9%83%A8%E8%AF%A6%E8%A7%A3%EF%BC%88IMAGE-DOS-HEADER%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">DOS 头部详解（IMAGE_DOS_HEADER）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PE-%E5%A4%B4%E9%83%A8%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94IMAGE-NT-HEADERS"><span class="nav-number">2.3.</span> <span class="nav-text">PE 头部详解——IMAGE_NT_HEADERS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PE%E6%A0%87%E8%AF%86%E7%AC%A6%E2%80%93Signature"><span class="nav-number">2.3.1.</span> <span class="nav-text">PE标识符–Signature</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PE%E6%96%87%E4%BB%B6%E5%A4%B4%E2%80%93IMAGE-FILE-HEADER"><span class="nav-number">2.3.2.</span> <span class="nav-text">PE文件头–IMAGE_FILE_HEADER</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%80%89%E5%A4%B4%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94IMAGE-OPTIONAL-HEADER"><span class="nav-number">2.3.3.</span> <span class="nav-text">可选头详解——IMAGE_OPTIONAL_HEADER</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%AD%97%E6%AE%B5%E2%80%93Standard-fields"><span class="nav-number">2.3.3.1.</span> <span class="nav-text">基础字段–Standard fields</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NT%E9%99%84%E5%8A%A0%E5%AD%97%E6%AE%B5%E2%80%93NT-additional-fields"><span class="nav-number">2.3.3.2.</span> <span class="nav-text">NT附加字段–NT additional fields</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E8%A1%A8%E8%AF%A6%E8%A7%A3%E2%80%94%E2%80%94IMAGE-SECTION-HEADER"><span class="nav-number">2.4.</span> <span class="nav-text">节表详解——IMAGE_SECTION_HEADER</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E5%9C%B0%E5%9D%80%E5%8F%8A%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.</span> <span class="nav-text">三种地址及转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E5%9C%B0%E5%9D%80%E8%AF%A6%E8%A7%A3"><span class="nav-number">3.1.</span> <span class="nav-text">三种地址详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.</span> <span class="nav-text">地址转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">3.2.1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%90%8C%E5%AF%B9%E9%BD%90%E5%80%BC%E7%9A%84%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.2.</span> <span class="nav-text">相同对齐值的地址转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%AF%B9%E9%BD%90%E5%80%BC%E7%9A%84%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.3.</span> <span class="nav-text">不同对齐值的地址转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%B7%A5%E5%85%B7%E7%9B%B4%E6%8E%A5%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.4.</span> <span class="nav-text">通过工具直接转换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95%E7%9B%B8%E5%85%B3%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">数据目录相关结构详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E8%A1%A8"><span class="nav-number">4.1.</span> <span class="nav-text">导入表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E8%A1%A8%E7%9A%84%E6%9F%A5%E7%9C%8B"><span class="nav-number">4.1.1.</span> <span class="nav-text">导入表的查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.2.</span> <span class="nav-text">导入表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E8%A1%A8%E6%95%B4%E4%BD%93%E6%A6%82%E8%BF%B0"><span class="nav-number">4.1.3.</span> <span class="nav-text">导入表整体概述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E8%A1%A8"><span class="nav-number">4.2.</span> <span class="nav-text">导出表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E8%A1%A8%E6%A6%82%E8%BF%B0"><span class="nav-number">4.2.1.</span> <span class="nav-text">导出表概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">4.2.2.</span> <span class="nav-text">导出表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E8%A1%A8%E5%AE%9E%E8%AE%AD"><span class="nav-number">4.2.3.</span> <span class="nav-text">导出表实训</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/11/09/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B--PE%20%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="逆向工程--PE 结构详解 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向工程--PE 结构详解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-09 13:48:32" itemprop="dateCreated datePublished" datetime="2022-11-09T13:48:32+08:00">2022-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:59:41" itemprop="dateModified" datetime="2023-11-08T17:59:41+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】逆向工程知识</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86/PE%E6%96%87%E4%BB%B6%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">PE文件基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>13k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>23 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>写在最前面：本篇文章会介绍PE结构的相关知识，并通过PE根据分析实际文件进行进一步解析。</p>
+</blockquote>
+<ul>
+<li><a href="#pe%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B">PE文件简介</a></li>
+<li><a href="#pe%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84">PE文件结构</a><ul>
+<li><a href="#%E7%BB%93%E6%9E%84%E5%85%A8%E8%B2%8C">结构全貌</a></li>
+<li><a href="#dos-%E5%A4%B4%E9%83%A8%E8%AF%A6%E8%A7%A3image_dos_header">DOS 头部详解（IMAGE_DOS_HEADER）</a></li>
+<li><a href="#pe-%E5%A4%B4%E9%83%A8%E8%AF%A6%E8%A7%A3image_nt_headers">PE 头部详解——IMAGE_NT_HEADERS</a><ul>
+<li><a href="#pe%E6%A0%87%E8%AF%86%E7%AC%A6-signature">PE标识符–Signature</a></li>
+<li><a href="#pe%E6%96%87%E4%BB%B6%E5%A4%B4-image_file_header">PE文件头–IMAGE_FILE_HEADER</a></li>
+<li><a href="#%E5%8F%AF%E9%80%89%E5%A4%B4%E8%AF%A6%E8%A7%A3image_optional_header">可选头详解——IMAGE_OPTIONAL_HEADER</a><ul>
+<li><a href="#%E5%9F%BA%E7%A1%80%E5%AD%97%E6%AE%B5-standard-fields">基础字段–Standard fields</a></li>
+<li><a href="#nt%E9%99%84%E5%8A%A0%E5%AD%97%E6%AE%B5-nt-additional-fields">NT附加字段–NT additional fields</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%8A%82%E8%A1%A8%E8%AF%A6%E8%A7%A3image_section_header">节表详解——IMAGE_SECTION_HEADER</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E7%A7%8D%E5%9C%B0%E5%9D%80%E5%8F%8A%E8%BD%AC%E6%8D%A2">三种地址及转换</a><ul>
+<li><a href="#%E4%B8%89%E7%A7%8D%E5%9C%B0%E5%9D%80%E8%AF%A6%E8%A7%A3">三种地址详解</a></li>
+<li><a href="#%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">地址转换</a><ul>
+<li><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">准备工作</a></li>
+<li><a href="#%E7%9B%B8%E5%90%8C%E5%AF%B9%E9%BD%90%E5%80%BC%E7%9A%84%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">相同对齐值的地址转换</a></li>
+<li><a href="#%E4%B8%8D%E5%90%8C%E5%AF%B9%E9%BD%90%E5%80%BC%E7%9A%84%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">不同对齐值的地址转换</a></li>
+<li><a href="#%E9%80%9A%E8%BF%87%E5%B7%A5%E5%85%B7%E7%9B%B4%E6%8E%A5%E8%BD%AC%E6%8D%A2">通过工具直接转换</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95%E7%9B%B8%E5%85%B3%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3">数据目录相关结构详解</a><ul>
+<li><a href="#%E5%AF%BC%E5%85%A5%E8%A1%A8">导入表</a><ul>
+<li><a href="#%E5%AF%BC%E5%85%A5%E8%A1%A8%E7%9A%84%E6%9F%A5%E7%9C%8B">导入表的查看</a></li>
+<li><a href="#%E5%AF%BC%E5%85%A5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84">导入表的结构</a></li>
+<li><a href="#%E5%AF%BC%E5%85%A5%E8%A1%A8%E6%95%B4%E4%BD%93%E6%A6%82%E8%BF%B0">导入表整体概述</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AF%BC%E5%87%BA%E8%A1%A8">导出表</a><ul>
+<li><a href="#%E5%AF%BC%E5%87%BA%E8%A1%A8%E6%A6%82%E8%BF%B0">导出表概述</a></li>
+<li><a href="#%E5%AF%BC%E5%87%BA%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84">导出表的结构</a></li>
+<li><a href="#%E5%AF%BC%E5%87%BA%E8%A1%A8%E5%AE%9E%E8%AE%AD">导出表实训</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="PE文件简介"><a href="#PE文件简介" class="headerlink" title="PE文件简介"></a>PE文件简介</h1><blockquote>
+<p><code>PE（Portable Executable）</code>，即可移植的执行体。在 Windows 操作系统平台（包括 Win 9x、Win NT、Win CE 等）下，所有的<strong>可执行文件</strong>（包括 <strong>EXE 文件、DLL 文件、SYS 文件、OCX文件、COM 文件</strong>等）均使用 <strong>PE 文件结构</strong>。这些使用 PE 文件结构的可执行文件也可以称为<strong>PE 文件</strong>。</p>
+</blockquote>
+<ul>
+<li><strong>windows 平台</strong>： <code>PE（Portable Executable）</code> 文件结构。</li>
+<li><strong>Linux 平台</strong>：<code>ELF（Executable and Linking Format）</code> 文件结构</li>
+</ul>
+<p><strong>注</strong>：二者在<strong>结构上大同小异</strong>，所以这里以<strong>PE文件结构</strong>为例进行介绍。</p>
+<h1 id="PE文件结构"><a href="#PE文件结构" class="headerlink" title="PE文件结构"></a>PE文件结构</h1><h2 id="结构全貌"><a href="#结构全貌" class="headerlink" title="结构全貌"></a>结构全貌</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1664972541776.png"></p>
+<p>学习PE结构，先从<strong>全局入手</strong>。如上图所示，可以把可执行文件大致分为<strong>两个部分</strong>。</p>
+<ul>
+<li>其一的<code>DOS 头</code>、<code>PE 头</code>和<code>节表</code>属于构成可执行文件的<strong>数据管理结构或数据组织结构部分</strong></li>
+<li>其二的<code>节表数据</code>才是可执行文件真正的<strong>数据部分</strong>，包含着程序执行时真正的代码、数据、资源等内容</li>
+</ul>
+<hr>
+<blockquote>
+<p>DOS 头分为两部分，分别是<code>“MZ 头部”</code>和<code>“DOS 存根”</code>。前者设置开始的两个字节为“MZ”，用于标识<strong>文件信息</strong>；后者则是用于<strong>输出提示字符串</strong>。</p>
+</blockquote>
+<blockquote>
+<p>PE 头部保存着 Windows 系统<strong>加载可执行文件</strong>的重要信息。</p>
+<blockquote>
+<p>PE 头部由 <strong>IMAGE_NT_ HEADERS</strong> 定义，从该结构体的定义名称可以看出IMAGE_NT_HEADERS 是由多个结构体组合而成的，该结构体中包含<code>IMAGE_NT_SIGNATRUE</code>（它不是结构体，而是一个宏定义）、<code>IMAGE_FILE_HEADER</code> 和 <code>IMAGE_OPTIONAL_HEADER</code> 三部分。<br>PE 头部在 PE 文件中的位置不是固定不变的，PE 头部的位置由 <strong>DOS 头部的某个字段</strong>给出。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>PE 头部之后就是一个<strong>结构体数组</strong>构成的<code>节表</code>。节表中描述了各个节在整个<strong>文件中的位置</strong>与<strong>加载入内存后的位置</strong>，同时定义了<strong>节的属性</strong>（只读、可读写、可执行等）。如果 PE 文件中有 N 个节，那么节表就是由 N 个<code>IMAGE_SECTION_HEADER</code> 组成的数组。</p>
+</blockquote>
+<blockquote>
+<p>可执行文件中的真正<strong>程序代码部分</strong>就保存在 PE 结构的<strong>节数据</strong>中，当然，数据、资源等内容也保存在节中。<em>节表只是描述了节数据的起始地址、大小及属性等信息。</em></p>
+</blockquote>
+<p><strong>注</strong>：对于PE结构的学习一定<strong>不要只抓细节</strong>，因为每一个部分都有很多结构体，每一个结构体中又有很多属性，这些属性不仅有其本身的含义还与其他部分关联。所以，在学习时要<strong>先理清整体体系</strong>，而后由各个部分入手，每一个部分也只需要先记住<strong>最重要的几个点</strong>即可。同时，要将PE文件的学习<strong>与计算机基础关联</strong>在一起。</p>
+<p>闲话少说，我们下面<strong>开始正文的介绍</strong>。(以32位PE结构为例)。其中会涉及到很多代码部分，其来源为<code>winnt.h</code>头文件。</p>
+<h2 id="DOS-头部详解（IMAGE-DOS-HEADER）"><a href="#DOS-头部详解（IMAGE-DOS-HEADER）" class="headerlink" title="DOS 头部详解（IMAGE_DOS_HEADER）"></a>DOS 头部详解（IMAGE_DOS_HEADER）</h2><p> 前面我们提到过，DOS头本质是一个<strong>结构体</strong>。下面我们来具体看一下这个结构体的内容：</p>
+<p> <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665030703733.png"><br> <code>_IMAGE_DOS_HEADER</code>即为DOS头结构体。如上图所示，其中有很多属性，对此我们现在只需要掌握两个：</p>
+<ul>
+<li><code>e_magic</code>:是一个 <strong>DOS 可执行文件的标识符</strong>，占用 2 个字节。（也就是在文件开头定义为MZ字符）</li>
+<li><code>e_lfanew</code>:此字段保存<strong>PE头的初始位置</strong>，占4个字节即32位地址。</li>
+</ul>
+<p>下面我们通过一个例子来更加清晰的理解这两个字段的含义。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665031209857.png"></p>
+<p>如上图，开始两个字节<strong>e_magic字段</strong>，也就是MZ字符；框一是<strong>e_lifnew字段</strong>，用于定位到PE头。</p>
+<p><strong>注</strong>：位于<strong>e_lfanew字段</strong>与<strong>PE头</strong>之间的数据就是<code>DOS存根</code>，用于<strong>输出提示信息</strong>，本身没什么用，不需要记。</p>
+<h2 id="PE-头部详解——IMAGE-NT-HEADERS"><a href="#PE-头部详解——IMAGE-NT-HEADERS" class="headerlink" title="PE 头部详解——IMAGE_NT_HEADERS"></a>PE 头部详解——IMAGE_NT_HEADERS</h2><blockquote>
+<p>前面就已经提到过，<code>IMAGE_NT_HEADERS</code>本身不是一个结构体，而是一个<strong>宏定义</strong>，由：<strong>PE标识符</strong>、<strong>文件头</strong>和<strong>可选头</strong>三者组成。其<strong>具体定义</strong>如下：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665031893372.png"><br>如上图，PE头部有三个属性，与上面的定义一一对应。下面我们就依次介绍这些结构体。</p>
+</blockquote>
+<h3 id="PE标识符–Signature"><a href="#PE标识符–Signature" class="headerlink" title="PE标识符–Signature"></a>PE标识符–Signature</h3><p>此部分就是PE标识符，占4个字节，内容可见上图的winhex界面。在winnt.h里也有一个宏定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> IMAGE_NT_SIGNATURE                  0x50450000  <span class="comment">// PE00</span></span></span><br></pre></td></tr></table></figure>
+
+<p>该值非常重要。在<strong>判断一个文件是否是 PE 文件</strong>时，首先要判断文件的<code>起始位置是否为“MZ”</code>，如果是“MZ”，那么通过 DOS 头部的相应偏移取得“PE 头部的位置”，接着判断文件该位置的<code>前四个字节是否为“PE\0\0”</code>。如果是的话，则说明该文件是一个<strong>有效的 PE 文件</strong>。</p>
+<h3 id="PE文件头–IMAGE-FILE-HEADER"><a href="#PE文件头–IMAGE-FILE-HEADER" class="headerlink" title="PE文件头–IMAGE_FILE_HEADER"></a>PE文件头–IMAGE_FILE_HEADER</h3><p><code>IMAGE_FILE_HEADER</code> 结构体的大小为 <strong>20 个字节</strong>，主要描述<strong>文件的相关信息</strong>，其<strong>具体定义</strong>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665032486132.png"><br>下面就行具体属性的介绍：</p>
+<ol>
+<li><p><code>Machine字段</code>：该字段表示可执行文件的<strong>目标CPU类型</strong>。其<strong>具体宏定义</strong>如下：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665032811555.png"></p>
+</li>
+<li><p><code>NumberOfSection</code>：该字段是 <strong>WORD 类型</strong>，占用 2 个字节。该字段表示 PE 文件的<strong>节表的个数</strong>。</p>
+</li>
+<li><p><code>TimeDataStamp</code>：该字段表明文件是<strong>何时被创建</strong>的,占4个字节。这个值是自 <strong>1970 年 1 月 1 日</strong>以来用格林尼威治时间计算的秒数。</p>
+</li>
+<li><p><code>SizeOfOptionalHeader</code>：该字段为 WORD 类型，占用 <strong>2 个字节</strong>。定义<code>IMAGE_OPTIONAL_HEADER</code> 结构体的大小。（在计算位置时，可选头大小需要<strong>通过这个字段获取</strong>而不是使用sizeof)</p>
+</li>
+<li><p><code>Characteristics</code>：该字段为 WORD 类型，占用 2 个字节。该字段<strong>指定文件的类型</strong>，其具体<strong>宏定义</strong>如下：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665033266212.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665033279655.png"></p>
+<hr>
+<p>下面我们通过一个<strong>具体的示例</strong>来看一下这些字段的具体含义：</p>
+</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665033470473.png"><br>如上图所示，<strong>深色部分</strong>为文件头对应的<strong>20个字节信息</strong>。按照我们上面的介绍来一一对应：</p>
+<ul>
+<li><code>Machine=014c</code>：表示指定的<strong>CPU为Intel 32</strong>.</li>
+<li><code>NumberOfSection=0030</code>：表示<strong>节表个数为0030h</strong></li>
+<li><code>TimeDataStamp=618fbe83</code>：表示文件创建时间</li>
+<li><code>SizeOfOptionalHeader=00E0</code>：表示<strong>可选头结构体大小为00E0h</strong></li>
+<li><code>Characteristics=010F</code>：这个有一点复杂，需要<strong>分解</strong>，最终表示此文件<strong>目标平台为32位</strong>、<strong>不存在重定位信息</strong>、<strong>文件可执行</strong>、<strong>Line nunbers stripped from file</strong>、<strong>Local symbols stripped from file</strong>.</li>
+</ul>
+<h3 id="可选头详解——IMAGE-OPTIONAL-HEADER"><a href="#可选头详解——IMAGE-OPTIONAL-HEADER" class="headerlink" title="可选头详解——IMAGE_OPTIONAL_HEADER"></a>可选头详解——IMAGE_OPTIONAL_HEADER</h3><blockquote>
+<p>不要以貌取人，虽然这个部分叫做可选头，但是却是一个<strong>必须存在的头部</strong>，甚至是PE头三个组成部分中<strong>最重要的部分</strong>,主要是用来<code>管理 PE 文件被操作系统装载时所需要的信息</code><br>可选头的大小在<strong>文件头中已经给出</strong>，其大小为0x00E0 字节（224个字节）。</p>
+</blockquote>
+<p>还是先给出<code>可选头结构体</code>的<strong>具体定义</strong> (代码较多，不使用截图了）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Optional header format.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_OPTIONAL_HEADER</span> &#123;</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Standard fields.==基础字段</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    WORD    Magic;</span><br><span class="line">    BYTE    MajorLinkerVersion;</span><br><span class="line">    BYTE    MinorLinkerVersion;</span><br><span class="line">    DWORD   SizeOfCode;</span><br><span class="line">    DWORD   SizeOfInitializedData;</span><br><span class="line">    DWORD   SizeOfUninitializedData;</span><br><span class="line">    DWORD   AddressOfEntryPoint;</span><br><span class="line">    DWORD   BaseOfCode;</span><br><span class="line">    DWORD   BaseOfData;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// NT additional fields.===NT 附加字段</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    DWORD   ImageBase;</span><br><span class="line">    DWORD   SectionAlignment;</span><br><span class="line">    DWORD   FileAlignment;</span><br><span class="line">    WORD    ajorSubsystemVersion;</span><br><span class="line">    WORD    MMajorOperatingSystemVersion;</span><br><span class="line">    WORD    MinorOperatingSystemVersion;</span><br><span class="line">    WORD    MajorImageVersion;</span><br><span class="line">    WORD    MinorImageVersion;</span><br><span class="line">    WORD    MinorSubsystemVersion;</span><br><span class="line">    DWORD   Win32VersionValue;</span><br><span class="line">    DWORD   SizeOfImage;</span><br><span class="line">    DWORD   SizeOfHeaders;</span><br><span class="line">    DWORD   CheckSum;</span><br><span class="line">    WORD    Subsystem;</span><br><span class="line">    WORD    DllCharacteristics;</span><br><span class="line">    DWORD   SizeOfStackReserve;</span><br><span class="line">    DWORD   SizeOfStackCommit;</span><br><span class="line">    DWORD   SizeOfHeapReserve;</span><br><span class="line">    DWORD   SizeOfHeapCommit;</span><br><span class="line">    DWORD   LoaderFlags;</span><br><span class="line">    DWORD   NumberOfRvaAndSizes;</span><br><span class="line">    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];</span><br><span class="line">&#125; IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;</span><br></pre></td></tr></table></figure>
+
+<p>上述结构体可以分为<strong>两个部分</strong>：<code>基础字段</code>与<code>NT附加字段</code>，下面我们会一一介绍。</p>
+<h4 id="基础字段–Standard-fields"><a href="#基础字段–Standard-fields" class="headerlink" title="基础字段–Standard fields"></a>基础字段–Standard fields</h4><ul>
+<li><code>Magic</code>：该成员指定了<strong>文件的标识</strong>。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665039705441.png"></li>
+<li><code>MajorLinkerVersion</code>：<strong>主连接</strong>版本号。</li>
+<li><code>MinorLinkerVersion</code>：<strong>次连接</strong>版本号。</li>
+<li><code>SizeOfCode</code>：<strong>代码节的大小</strong>，如果有多个代码节的话，该值是所有代码节大小的总和（通常只有一个代码节），该处是指所有包含<strong>可执行属性</strong>的节点大小。</li>
+<li><code>SizeOfInitializedData</code>：<strong>已初始化数据块</strong>的大小。</li>
+<li><code>SizeOfUninitializedData</code>：<strong>未初始化数据块</strong>的大小。</li>
+<li><code>AddressOfEntryPointer</code>：程序<strong>执行的入口地址</strong>。该地址是一个<strong>相对虚拟地址</strong>，简称 EP（EntryPoint），这个值指向了程序第一条要执行的代码。程序如果被加壳后会修改该字段的值，成为壳的入口地址，这样壳代码就有机会先进行执行了。在脱壳的过程中找到了加壳前的入口地址，就说明找到了原始入口点，原始入口点称为 OEP。该字段的地址指向的不是 main函数的地址，也不是 WinMain 函数的地址，而是运行库的启动代码的地址。</li>
+<li><code>BaseOfCode</code>：代码节的<strong>起始相对虚拟地址</strong>，也就是RVA。</li>
+<li><code>BaseOfData</code>：数据节的<strong>起始相对虚拟地址</strong>，也就是RVA。</li>
+</ul>
+<h4 id="NT附加字段–NT-additional-fields"><a href="#NT附加字段–NT-additional-fields" class="headerlink" title="NT附加字段–NT additional fields"></a>NT附加字段–NT additional fields</h4><ul>
+<li><p><code>ImageBase</code>：文件被装入内存后的<strong>首选建议装载地址</strong>。也就是内存基址，是一个很重要的地址量，可以用于后面的地址转换。</p>
+<blockquote>
+<p><strong>注解</strong>：打开 OD 后，OD 停留在第一行的反汇编代码处就是 <code>AddressOfEntryPoint+ImageBase</code> 的值，OD 在打开被调试程序后，数据窗口默认显示的位置是<code>BaseOfData+ImageBase</code> 的值。<br>对于 <code>EXE 文件</code>而言，所有的<strong>相对虚拟地址加ImageBase</strong> 后，就得到了<strong>虚拟地址</strong>；对于 <code>DLL</code>而言，在其装入内存后，就需要通过重定位表修正相关的地址信息。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665041263432.png"></p>
+</blockquote>
+</li>
+<li><p><code>SectionAlignment</code>：节表数据被装入内存后的<strong>对齐值</strong>,也就是节表数据被映射到内存中需要<strong>对齐的单位</strong>。在 Win32 下，通常情况下，<strong>内存对齐的该值为 0x1000 字节</strong>，也就是 4KB 大小。Windows 操作系统的内存分页一般为 4KB，这样做的原因是在切换时速度会快。</p>
+</li>
+<li><p><code>FileAlignment</code>：节表数据在<strong>文件中的对齐值</strong>。通常情况下，该值为 <strong>0x1000 字节或 0x200字节</strong>。在文件对齐为 0x1000 字节时，由于与内存对齐值相同，可以加快操作系统对可执行文件装载入内存的速度。而文件对齐值为 0x200 字节时，可以占用相对较少的磁盘空间。<strong>0x200字节是 512 字节，通常磁盘的一个扇区即为 512 字节</strong>。</p>
+<blockquote>
+<p><strong>注解</strong>：<strong>地址对齐</strong>也是一个很重要的知识点。程序无论是在内存中还是磁盘上，都无法恰好满足 SectionAlignment 和 FileAlignment 值的倍数，在不足的情况下编译器会<strong>自动地进行补 0</strong>，这样就导致节数据与节数据之间存在着为了对齐而<strong>存在的大量的 0 空隙</strong>。这些空隙对于病毒之类的程序而言就有了可利用的价值，病毒通过搜索空隙而将<strong>病毒代码进行植入</strong>，从而在不改变文件大小的情况下感染文件。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665043373565.png"></p>
+</blockquote>
+</li>
+<li><p><code>MajorOperatingSystemVersion</code>：要求最低操作系统的<strong>主版本号</strong>。</p>
+</li>
+<li><p><code>MinorOperatingSystemVersion</code>：要求最低操作系统的<strong>次版本号</strong>。</p>
+</li>
+<li><p><code>MajorImageVersion</code>：可执行<strong>文件</strong>的主版本号。</p>
+</li>
+<li><p><code>MinorImageVersion</code>：可执行<strong>文件</strong>的次版本号。</p>
+</li>
+<li><p><code>Win32VersionValue</code>：该成员变量是被保留的。</p>
+</li>
+<li><p><code>SizeOfImage</code>：可执行文件<strong>装入内存后的总大小</strong>。该大小<code>按内存对齐方式</code>对齐。</p>
+</li>
+<li><p><code>SizeOfHeaders</code>：整个 <strong>PE 头部的大小</strong>。这个 PE 头部指 <strong>DOS 头、PE 头、节表</strong>的总和大小。该大小<code>按照文件对齐方式</code>进行对齐。（也可以说是PE文件中<strong>数据结构的大小</strong>）</p>
+</li>
+<li><p><code>CheckSum</code>：<strong>校验和值</strong>。对于 EXE 文件通常为 0；对于 SYS 文件（驱动文件、内核文件），则必须有一个校验和。用于校验文件是否被修改。</p>
+</li>
+<li><p><code>SubSystem</code>：可执行文件的<strong>子系统类型</strong>,具体如下<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665042178617.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665042197812.png"></p>
+</li>
+<li><p><code>DllCharacteristics</code>：指定 <strong>DLL 文件的属性</strong>。<br> <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665042343931.png"></p>
+</li>
+<li><p><code>SizeOfStackReserve</code>：为线程<strong>保留的栈</strong>大小，以<strong>字节为单位</strong>。</p>
+</li>
+<li><p><code>SizeOfStackCommit</code>：为线程已<strong>提交的栈</strong>大小，以<strong>字节为单位</strong>。</p>
+</li>
+<li><p><code>SizeOfHeapReserve</code>：为线程<strong>保留的堆</strong>大小。</p>
+</li>
+<li><p><code>SizeOfHeapCommit</code>：为线程<strong>提交的堆</strong>大小</p>
+</li>
+<li><p><code>LoadFlags</code>：<strong>保留字段</strong>，必须为 0。MSDN 上的原话为“This member is obsolete”，说是一个废弃的字段。但是该值在某些情况下还是会被用到的，比如针对原始的低版本的 OD 来说，修改该值会起到反调试的作用。</p>
+</li>
+<li><p><code>NumberOfRvaAndsize</code>：数据<strong>目录项的个数</strong>。</p>
+</li>
+<li><p><code>DataDirectory</code>：<strong>数据目录表</strong>，由 <code>NumberOfRvaAndSize</code> 个 <code>IMAGE_DATA_DIRECTORY</code>结构体组成的数组。</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>注解</strong>：该数组包含<code>输入表</code>、<code>输出表</code>、<code>资源</code>、<code>重定位</code>等<strong>数据目录项</strong>。每一个数组元素都是一个结构体，其包含：<code>VirtualAddress</code>和<code>Size</code>两个字段，前者为目录项的RVA,后者为目录项大小。<br>对于数据目录中的具体数据，并<strong>不包含在可选头</strong>中，只是可选头提供了<strong>相应数据的相对虚拟地址</strong>，具体数据目录中的内容在后面的内容中将进行介绍。</p>
+<blockquote>
+<p><strong>附表</strong>：数据目录在<strong>数组中的索引</strong>如下图：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665043103626.png"></p>
+</blockquote>
+</blockquote>
+<h2 id="节表详解——IMAGE-SECTION-HEADER"><a href="#节表详解——IMAGE-SECTION-HEADER" class="headerlink" title="节表详解——IMAGE_SECTION_HEADER"></a>节表详解——IMAGE_SECTION_HEADER</h2><blockquote>
+<p><strong>节表</strong>中的每个<code>IMAGE_SECTION_HEADER</code> 中都存放着可执行文件被<strong>映射到内存</strong>中所在位置的信息，节的<br>个数由 <code>IMAGE_FILE_HEADER</code> 中的 <code>NumberOfSections</code> 给出。下面我们具体进行介绍。</p>
+</blockquote>
+<p>首先给出<code>IMAGE_SECTION_HEADER</code>结构体的定义：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665044708729.png"><br>此结构体大小为<strong>40字节</strong>，其<strong>成员变量</strong>的介绍如下：</p>
+<ul>
+<li><code>Name</code>：该成员变量保存着<strong>节表项的名称</strong>，节表项的名称用 ASCII 编码来保存。表项的名称长度是 8 个 ASCII 字符。</li>
+</ul>
+<blockquote>
+<p><strong>注解</strong>：节表项的<strong>名称可以随意地改变</strong>，甚至可以删除掉，因此不能以节表项的名称作为依据判断节中保存的内容，也不能通过节表项的名称判断加壳的种类。</p>
+</blockquote>
+<ul>
+<li><code>VirtualSize</code>：该值为<strong>节数据实际的大小</strong>，该值不一定是对齐后的值，该字段的值在某些情况下可以为 0。这里的大小不是对齐之后的数据。</li>
+<li><code>VirtualAddress</code>：该值为该<strong>节区数据装入内存后的相对虚拟地址（RVA)<strong>，这个地址是</strong>按内存对齐</strong>的。该地址加上 IMAGE_OPTIONAL_HEADER 结构体中的 <code>ImageBase</code> 才是内存中的<strong>虚拟地址(VA）</strong>。</li>
+<li><code>SizeOfRawData</code>：该值为该<strong>节区数据在磁盘上的大小</strong>，该值是<strong>按照文件对齐</strong>进行对齐后的值，但是也有例外。</li>
+<li><code>PointerToRawData</code>：该值为该节区在<strong>磁盘文件上的偏移地址</strong>。</li>
+<li><code>Characteristics</code>：该值为该<strong>节区的属性</strong>。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665045204604.png"></li>
+</ul>
+<h1 id="三种地址及转换"><a href="#三种地址及转换" class="headerlink" title="三种地址及转换"></a>三种地址及转换</h1><h2 id="三种地址详解"><a href="#三种地址详解" class="headerlink" title="三种地址详解"></a>三种地址详解</h2><ul>
+<li><code>VA</code>：<strong>虚拟内存地址</strong>。是在虚拟内存空间的实际地址，也就是PE 文件被 Windows 加载到内存后的地址。</li>
+<li><code>RVA</code>：<strong>相对虚拟内存地址</strong>。PE 文件虚拟地址相对于<strong>映射基地址</strong>（对于 EXE 文件来说，映射基地址是 IMAGE_OPTIONAL_HEADER 的 ImageBase 字段的值）的<strong>偏移地址</strong>。</li>
+<li><code>FOA</code>：<strong>文件偏移地址</strong>，相对于 PE 文件在<strong>磁盘上文件开头</strong>的偏移地址。</li>
+</ul>
+<h2 id="地址转换"><a href="#地址转换" class="headerlink" title="地址转换"></a>地址转换</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>当 <code>FileAlignment</code> 与 <code>SectionAlignment</code> 的<strong>值不相同</strong>时，磁盘文件与内存文件映像的同一节表数据在磁盘和内存中的<strong>偏移也不相同</strong>。当 <code>FileAlignment</code> 与 <code>Section Alignment</code> 的<strong>值相同</strong>时，如果存在类似<code>.data?</code>节的话，磁盘文件与内存映像的同一节表数据在磁盘和内存中的<strong>偏移也不相同</strong>。<br>这样两个偏移就发生了一个需要转换的问题。当知道某数据的 RVA，希望在文件中读取同样的数据的时候，就必须将 RVA 转换为 FOA，反之，也同样的情况。</p>
+<p>我们可以通过<strong>PEditor工具</strong>查看某PE文件的<strong>地址信息</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665046534448.png"></p>
+<h3 id="相同对齐值的地址转换"><a href="#相同对齐值的地址转换" class="headerlink" title="相同对齐值的地址转换"></a>相同对齐值的地址转换</h3><p>对齐值相同的情况下，地址的转换就很简单了，大概分为以下两步。</p>
+<ol>
+<li>将 VA（虚拟地址）转换为 RVA（相对虚拟地址），即 RVA &#x3D; VA – ImageBase。</li>
+<li>将RVA(相对虚拟地址)转换为FOA(文件偏移地址)，即RVA&#x3D;FOA。</li>
+</ol>
+<blockquote>
+<p><strong>注意</strong>：<br>① 上面的例子使用的是 <strong>EXE 文件</strong>进行演示，对于 DLL 的话，DLL 的装载地址并不是 <strong>IMAGE_OPTIONAL_HEADER</strong> 结构体中的 <code>ImageBase</code> 字段。因此不能按照上面的方式转换，需要得到具体的 DLL 文件装载到内存中的起始位置。<br>② SectionAlignment 和 FileAlignment 相同时，也存在 RVA 和 FOA 不同的情况，比如存在data?时，文件本身没有空间但是在内存中有预留空间，这就导致偏移不同。</p>
+</blockquote>
+<h3 id="不同对齐值的地址转换"><a href="#不同对齐值的地址转换" class="headerlink" title="不同对齐值的地址转换"></a>不同对齐值的地址转换</h3><p>如果对齐值不同的话，地址的转换就要复杂一些。在介绍具体的转换公式之前，我们先来说一下对齐值对地址的影响到底是怎么样的。</p>
+<blockquote>
+<p><code>IMAGE_OPTINAL_HEADER</code> 中<strong>FileAlignment</strong> 和 <strong>SectionAlignment</strong> 两个字段的值确定了文件对齐值和内存对齐值。而对齐值则会导致<strong>节的起始位置</strong>不同。前面我们介绍了PE文件的结构，可以将其分为<strong>数据结构</strong>和<strong>节表数据</strong>两部分，其中数据结构又可以分为<strong>DOS头、PE头、节表</strong>，而这些数据加起来一般也不会超过512个字节，也就是<strong>在一个对齐值</strong>之内，之后就要<strong>补0至对齐值或者对齐值的倍数</strong>。而后<strong>不同节表数据</strong>都是占据对齐值倍数的空间，换句话说，<strong>每一个节表数据都是从一个新的对齐值空间开始的</strong>。</p>
+<blockquote>
+<p>实例如下：不同节的起始虚拟偏移都是对齐值的整数倍。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665115198591.png"></p>
+</blockquote>
+</blockquote>
+<p>通过上面的介绍，下面我们给出<strong>FOA与VA的具体转换公式</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">某数据的 <span class="attribute">FOA</span>=该数据所在节的起始 FOA+（某数据的 RVA–该数据所在节的起始 RVA）</span><br></pre></td></tr></table></figure>
+
+<p>这也很好理解，因为<strong>每一个节（区段）都是从一个新的对齐值空间开始</strong>的，就是这个节只有1个字节也会补0至对齐值倍数。所以我们首先需要知道要转换的<strong>RVA所在节的起始FOA</strong>，之后计算<strong>内存偏移</strong>（转换处相对于节头）再<strong>加和</strong>即可得到实际FOA。</p>
+<p>同样的，<strong>FOA转换为RVA的公式</strong>如下：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">某数据的<span class="attribute">RVA</span>=该数据所在节的起始RVA+(某数据的FOA-该数据所在节的起始FOA)</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过工具直接转换"><a href="#通过工具直接转换" class="headerlink" title="通过工具直接转换"></a>通过工具直接转换</h3><p>很多PE编辑工具都带有地址转换的功能，以PEditor为例</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665115438383.png"></p>
+<h1 id="数据目录相关结构详解"><a href="#数据目录相关结构详解" class="headerlink" title="数据目录相关结构详解"></a>数据目录相关结构详解</h1><blockquote>
+<p>前面我们介绍了PE文件中一些基本的数据结构，但是还有一些与PE结构相关的结构体<strong>不在PE的头部</strong>，而是在各个节数据里。它们的位置由 <code>IMAGE_OPTIONAL_HEADER 结构体</code>中的 <strong>DataDirectory 数组</strong>（数据目录）给出相应的<strong>RVA和Size</strong>。</p>
+</blockquote>
+<p>数据目录有很多，<strong>一般是16个</strong>。下面我们会选择其中较为重要的几个进行介绍。</p>
+<h2 id="导入表"><a href="#导入表" class="headerlink" title="导入表"></a>导入表</h2><blockquote>
+<p>导入表是 PE 数据组织中的一个很重要的组成部分，它是为<strong>实现代码重用</strong>而设置的。通过<strong>分析导入表数据</strong>，可以获得诸如 PE 文件的指令中<strong>调用了多少外来的函数</strong>，以及这些外来函数都<strong>存在于哪些动态链接库</strong>里等信息。</p>
+</blockquote>
+<p> Windows 加载器在运行 PE 时会<strong>将导入表中声明的动态链接库DLL一并加裁到进程的地址空间</strong>，并修正指令代码中<strong>调用的函数地址</strong>。</p>
+<h3 id="导入表的查看"><a href="#导入表的查看" class="headerlink" title="导入表的查看"></a>导入表的查看</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665283959691.png"><br>通过PEditor打开hello.exe，而后选取目录按钮就看看到此文件对应的数据目录信息。通过上图可见，hello.exe 文件在执行时需要<strong>装载 2个 DLL 文件</strong>，分别是 <code>user32.dll</code>和 <code>kernel32.dll</code> 两个动态链接。该 EXE 文件在每个 DLL 文件又<strong>使用了若干个函数</strong>。对于 PE 文件而言，调用的其他模块的函数称为“<code>导入函数</code>”。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665284275807.png"></p>
+<p>如上图，<code>MessageBoxA</code>就是一个<strong>导入函数</strong>，被hello.exe调用。但是若是相对于<code>user32.dll</code>来说，此函数就是一个<strong>导出函数</strong>。</p>
+<h3 id="导入表的结构"><a href="#导入表的结构" class="headerlink" title="导入表的结构"></a>导入表的结构</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665916481929.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665918249607.png"></p>
+<p>上图是<code>导入表</code>在磁盘和内存中的<strong>基本框架</strong>，有<strong>3个关键结构体</strong>：</p>
+<ul>
+<li>IMAGE_IMPORT_DESCRIPTOR</li>
+<li>IMAGE_THUNK_DATA</li>
+<li>IMAGE_IMPORT_BY_NAME</li>
+</ul>
+<p><strong>IMAGE_IMPORT_DESCRIPTOR的结构体</strong>定义在 <code>Winnt.h</code> 头文件中，它的<strong>定义如下</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_IMPORT_DESCRIPTOR</span> &#123;</span> </span><br><span class="line"> <span class="class"><span class="keyword">union</span> &#123;</span> </span><br><span class="line"> DWORD Characteristics; </span><br><span class="line"> DWORD OriginalFirstThunk; </span><br><span class="line"> &#125;; </span><br><span class="line"> DWORD TimeDateStamp; </span><br><span class="line"> DWORD ForwarderChain; </span><br><span class="line"> DWORD Name; </span><br><span class="line"> DWORD FirstThunk; </span><br><span class="line">&#125; IMAGE_IMPORT_DESCRIPTOR;</span><br></pre></td></tr></table></figure>
+
+<p>该结构体的名字叫<code>IMAGE_IMPORT_DESCRIPTOR</code>，有<strong>5个字段</strong>组成，其具体含义如下：（20个字节）</p>
+<ul>
+<li>OriginalFirst<strong>Thunk</strong>：该字段保存了指向导入函数名称（序号）的 RVA 表，这个表其实是<br>一个 IMAGE_THUNK_DATA 结构体。</li>
+<li>Name：指向导入模块名称的 RVA</li>
+<li>First<strong>Thunk</strong>：该字段保存了指向导入地址表的 RVA。<blockquote>
+<p><strong>上字段解释</strong>：<code>OriginalFirstThunk字段</code>保存了指向导入函数名称（序号）的 RVA 表，这个表其实是<br>一个 <strong>IMAGE_THUNK_DATA 结构体</strong>。<code>FirstThunk字段</code>在 PE 文件没有被装载前的内容OriginalFirstThunk 指向相同的内容，也就是在 PE 文件没有被装载前它也指向 <strong>IMAGE_THUNK_ DATA 结构体</strong>。当被Windows 操作系统<strong>装入内存后</strong>，它的值则发生了变化，被装载入内存后，这里<strong>保存了导入函数实际地址</strong>。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p><strong>IMAGE_THUNK_DATA 结构体</strong>的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_THUNK_DATA32</span> &#123;</span> </span><br><span class="line"> <span class="class"><span class="keyword">union</span> &#123;</span> </span><br><span class="line"> 	DWORD ForwarderString; <span class="comment">// PBYTE</span></span><br><span class="line">   DWORD Function; <span class="comment">// PDWORD </span></span><br><span class="line"> 	DWORD Ordinal; </span><br><span class="line">	DWORD AddressOfData; <span class="comment">// PIMAGE_IMPORT_BY_NAME </span></span><br><span class="line">      &#125; u1; </span><br><span class="line">&#125; IMAGE_THUNK_DATA32; </span><br><span class="line"><span class="keyword">typedef</span> IMAGE_THUNK_DATA32 * PIMAGE_THUNK_DATA32;</span><br></pre></td></tr></table></figure>
+
+<p><strong>IMAGE_THUNK_DATA 结构体</strong>中关键字段如下：（4个字节，一个地址）</p>
+<ul>
+<li><strong>Oridinal</strong>：导入函数的序号，当 IMAGE_THUNK_DATA 的<strong>最高位为 1</strong> 时，该值有效。</li>
+<li><strong>AddressOfData</strong>：指向 <strong>IMAGE_IMPORT_BY_NAME 结构体</strong>的 RVA，当 IMAGE_THUNK_ DATA 的<strong>最高位不为 1</strong> 时，该值有效。</li>
+</ul>
+<blockquote>
+<p><strong>上结构体解析</strong>：<br><code>Oridinal</code> 和 <code>AddressOfData</code> <strong>本质上是一个值</strong>，但是在使用时取决于 IMAGE_THUNK_DATA 的最高位。当 <strong>IMAGE_THUNK_DATA 的最高位为 1</strong> 时，使用的是<strong>序号进行导入</strong>的函数，导入函数的序号为Oridinal 的低 31 位；当<strong>最高位不为 1</strong> 时，说明导入函数是通过<strong>名称进行导入</strong>的，而 AddressOfData 保存了指向 IMAGE_IMPORT_BY_NAME的 RVA。</p>
+<blockquote>
+<p>通过 IMAGE_THUNK_DATA 结构体，可以<strong>了解导入函数是通过序号还是名称导入</strong>的。<br>如果是通过序号进行导入，那么导入序号可以在 IMAGE_THUNK_DATA 中获得；如果是通过名称导入，那么就需要借助 IMAGE_IMPORT_BY_NAME 来得到导入函数的名称</p>
+</blockquote>
+</blockquote>
+<hr>
+<p><strong>IMAGE_IMPORT_BY_NAME 结构体</strong>的定义如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_IMPORT_BY_NAME</span> &#123;</span> </span><br><span class="line"> 	WORD Hint; </span><br><span class="line">	BYTE Name[<span class="number">1</span>]; </span><br><span class="line">&#125; IMAGE_IMPORT_BY_NAME, *PIMAGE_IMPORT_BY_NAME;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Hint</strong>：该字段表示该函数在导出函数表中<strong>导出函数名称对应的序号</strong>，该值不是必需的；</li>
+<li><strong>Name</strong>：该字段表示<strong>导入函数的函数名称</strong>。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665920279211.png"></p>
+<h3 id="导入表整体概述"><a href="#导入表整体概述" class="headerlink" title="导入表整体概述"></a>导入表整体概述</h3><ol>
+<li><p>在PE扩展头最后有一个数据目录数组，其中每一个元素都是结构体，大小为8个字节，按顺序存储各个数据目录描述表（结构体）的大小和RVA。其中第二个元素就是导入表的地址和大小。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665968236503.png"><br>如图所示，导入表的RVA为00002018H，大小为3CH。一个描述表结构体大小为20个字节，所以3C&#x2F;20&#x3D;3，也就是说导入了3个模块。（实际是2个模块，还有一个是全0，用于表示结束）</p>
+</li>
+<li><p>接下来我们进入一个实际文件来看一下这个描述表<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665969821895.png"><br>如图所示，我使用竖线将其分为了三个部分，分别对应导入表里的三个导入模块。下面我们选择第一个模块(user32.dll)进行跟踪。</p>
+<blockquote>
+<p>注意：这里的一个模块为20个字节，分为5个字段，我们需要关注的是第一个字段和最后一个字段，前者为INT（导入函数名称表），后者为IAT(导入函数地址表)。这里地址分别为00002054h与00002008h，各自指向一个结构体（在静态和动态中指向的地址存储的数据不同）</p>
+</blockquote>
+</li>
+<li><p>静态地址跟踪：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1665970609979.png"><br>如图所示，在静态文件中，第一个字段和第五个字段指向的地址不同，因为是不同的结构体。但是结构体中存储的内容是一致的。</p>
+</li>
+</ol>
+<h2 id="导出表"><a href="#导出表" class="headerlink" title="导出表"></a>导出表</h2><h3 id="导出表概述"><a href="#导出表概述" class="headerlink" title="导出表概述"></a>导出表概述</h3><blockquote>
+<p>一般情况下 ，PE 中的导出表存在于动态链接库文件里 。<br><strong>导出表的主要作用</strong>是将 PE 中存在的函数引出到外部，以便其他人可以使用这些函数，实现代码的重用 。</p>
+</blockquote>
+<p>通过函数名<br>通过索引</p>
+<p>IAT会覆盖为函数VA(不是RVA),覆盖的依据为导出表</p>
+<p>DLL文件加载到内存空间，也是一个PE文件，其结构与前相同。（也有Base,装载基址）</p>
+<p>所以一个很关键的点在于：理清寻址的过程、</p>
+<h3 id="导出表的结构"><a href="#导出表的结构" class="headerlink" title="导出表的结构"></a>导出表的结构</h3><blockquote>
+<p>PE头偏移78H的位置就是导出表的位置</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1666932649511.png"></p>
+<p>上图为<strong>导出表的数据结构</strong>。其中字段的含义也已经给出，这里我们需要<strong>重点了解</strong>的是以下几个字段：</p>
+<ul>
+<li><strong>NumberOfFunctions</strong>：文件中包含的<strong>导出函数的总数</strong>。</li>
+<li><strong>NumberOfNames</strong>：被<strong>定义函数名称</strong>的导出函数的总数。</li>
+</ul>
+<blockquote>
+<p>上二字段解析：只有<code>NumberOfNames</code>数量的函数既可以用<strong>函数名方式导出</strong>，也可以用<strong>序号方式导出</strong>，剩下 的<code>NumberOfFunctions 减去NumberOfNames</code> 数量的函数只能<strong>用序号方式导出</strong>。该字段的值只会小于或者等于 NumberOfFunctions 字段的值，如果这个值是0，表示所有的函数都是以序号方式导出的。</p>
+</blockquote>
+<ul>
+<li><strong>AddressOfFunctions</strong>：一个RVA 值，指向包含<strong>全部导出函数入口地址</strong>的<code>双字数组</code>。数组中的每一项是一个RVA 值，数组的项数等于NumberOfFunctions 字段的值。（这个字段很重要，因为函数的导出最终都要归到这个表里，根据索引查找入口地址）</li>
+<li></li>
+<li><strong>Base</strong>：<strong>导出函数序号的起始值</strong>，将AddressOfFunctions 字段指向的入口地址表的索引号加上这个起始值就是对应函数的导出 序号。假如Base 字段的值为x，那么入口地址表指定的第1个导出函数的序号就是x；第2个导出函数的序号就是x＋1。总之，一个<strong>导出函数的导出序号等于Base 字段的值加上其在入口地址表中的位置索引值</strong>。</li>
+</ul>
+<blockquote>
+<p><strong>上二字段解析</strong>：最终目的是获取到入口地址，而入口地址的获取是根据索引来的，所以我们要先得到一个函数的索引值。对于通过序号导出的函数，其<strong>索引号等于序号-Base.</strong></p>
+</blockquote>
+<ul>
+<li><strong>AddressOfNames 和 AddressOfNameOrdinals</strong>：均为RVA 值。前者指向<strong>函数名字符串地址表</strong>。这个地址表是一个<code>双字数组</code>，数组中的每一项指向一个函数名称字符串的RVA。数组的项数等于<code>NumberOfNames</code> 字段的值，所有有名称的导出函数的名称字符串都定义在这个表中；后者指向另一个<strong>word 类型的数组</strong>（注意<code>不是双字数组</code>）。数组项目与文件名地址表中的项目一一对应，项目值代表函数入口地址表的<strong>索引</strong>，这样<strong>函数名称与函数入口地址关联起来</strong>。</li>
+</ul>
+<p>看一下最终的结构图：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1666933447805.png"></p>
+<h3 id="导出表实训"><a href="#导出表实训" class="headerlink" title="导出表实训"></a>导出表实训</h3><p><strong>实训目的</strong>：找到</p>
+<p><strong>实训步骤</strong>：首先要先理清思路，从<strong>序号和名称</strong>两个角度：</p>
+<blockquote>
+<p><strong>从序号查找函数入口地址</strong>：简单说就是，<strong>序号-base</strong> 对应找到AddressOfFunctions 的第几项</p>
+<blockquote>
+<p>1-定位到<strong>PE文件头</strong><br>2- 从PE 文件头中的 <strong>IMAGE_OPTIONAL_HEADER32 结构</strong>中取出数据目录表，并从第一个数据目录中得到<strong>导出表的RVA</strong><br>3- 从导出表的 <strong>Base 字段</strong>得到起始序号<br>4- 将需要<strong>查找的导出序号减去起始序号</strong>，得到函数在入口地址表中的<strong>索引</strong><br>5- 检测索引值是否大于导出表的 <code>NumberOfFunctions</code> 字段的值，如果大于后者的话，说明<strong>输入的序号是无效的</strong><br>6- 用这个索引值在 <code>AddressOfFunctions</code> 字段指向的导出函数入口地址表中取出相应的项目，这就是<strong>函数入口地址的RVA 值</strong>，当函数被装入内存的时候，这个RVA 值加上模块实际装入的基地址，就得到了函数真正的入口地址 。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>从函数名称查找函数入口地址:</p>
+<blockquote>
+<p>1- 最初的步骤是一样的，那就是首先得到<strong>导出表的地址</strong><br>2- 从导出表的 <code>NumberOfNames</code> 字段得到已<strong>命名函数的总数</strong>，并以这个数字作为循环的次数来构造一个循环 从 <code>AddressOfNames</code> 字段指向得到的函数名称地址表的第一项开始，在循环中将每一项定义的函数名与<strong>要查找的函数名相比较</strong>，如果没有任何一个函数名是符合的，表示文件中没有指定名称的函数 ；如果某一项定义的函数名<strong>与要查找的函数名符合</strong>，那么记下这个函数名在字符串地址表中的<strong>索引值</strong>，然后在 <code>AddressOfNamesOrdinals</code> 指向的数组中以同样的索引值取出数组项的值，我们这里假设这个值是x 最后，以 x 值作为索引值，在 <code>AddressOfFunctions</code> 字段指向的函数入口地址表中获取的 RVA 就是函数的入口地址。<br><strong>简单说是</strong>：查找AddressOfNames ，对应到a项，取AddressOfNamesOrdinals 的第a项的值得到b，取AddressOfFunctions 的第b项</p>
+</blockquote>
+</blockquote>
+<p><strong>注</strong>： 一定要记住导出表中的关键字段的值，比如：各个函数数目、base、各个地址表的数组大小等。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/11/09/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B--PE%20%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3/" title="逆向工程--PE 结构详解">https://danggeovo.github.io/2022/11/09/逆向工程--PE 结构详解/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/" rel="tag"># 逆向工程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/" rel="prev" title="（第六节）操作系统--换入\换出（用空间和时间换虚存）">
+                  <i class="fa fa-angle-left"></i> （第六节）操作系统--换入\换出（用空间和时间换虚存）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/09/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80--%E5%AF%84%E5%AD%98%E5%99%A8%E6%95%B4%E7%90%86/" rel="next" title="汇编语言--寄存器整理">
+                  汇编语言--寄存器整理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

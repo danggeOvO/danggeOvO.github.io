@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：第一节我们介绍了操作系统的启动流程，第二节介绍了操作系统的系统调用与实现。下面我们就要深入操作系统，了解其组成部分与实现原理。  不过在具体学习之前，需要对所学内容有一个清晰的认识，这也是本节内容的目的。这一节会从操作系统的历史出发，一步步总结归纳出操作系统的两大核心图谱。参考资料：哈工大操作系统课程   第一段历史–多进程图谱历史简述下面4张图分别归纳了操作系统的发展历程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="（第2.5节）操作系统--学习内容">
+<meta property="og:url" content="https://danggeovo.github.io/2022/08/08/%EF%BC%88%E7%AC%AC2.5%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：第一节我们介绍了操作系统的启动流程，第二节介绍了操作系统的系统调用与实现。下面我们就要深入操作系统，了解其组成部分与实现原理。  不过在具体学习之前，需要对所学内容有一个清晰的认识，这也是本节内容的目的。这一节会从操作系统的历史出发，一步步总结归纳出操作系统的两大核心图谱。参考资料：哈工大操作系统课程   第一段历史–多进程图谱历史简述下面4张图分别归纳了操作系统的发展历程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922254312.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922269753.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922281080.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922298253.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922311585.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922382433.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922853396.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922865588.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922880013.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922916115.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923622966.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923642122.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923657199.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923674669.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923692683.png">
+<meta property="article:published_time" content="2022-08-08T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:22:02.211Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922254312.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/08/08/%EF%BC%88%E7%AC%AC2.5%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/08/08/%EF%BC%88%E7%AC%AC2.5%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9/","path":"2022/08/08/（第2.5节）操作系统--学习内容/","title":"（第2.5节）操作系统--学习内容"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>（第2.5节）操作系统--学习内容 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AE%B5%E5%8E%86%E5%8F%B2%E2%80%93%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%9B%BE%E8%B0%B1"><span class="nav-number">1.</span> <span class="nav-text">第一段历史–多进程图谱</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2%E7%AE%80%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">历史简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E5%8E%86%E5%8F%B2"><span class="nav-number">1.2.</span> <span class="nav-text">总结历史</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AE%B5%E5%8E%86%E5%8F%B2%E2%80%93%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E5%9B%BE%E8%B0%B1"><span class="nav-number">2.</span> <span class="nav-text">第二段历史–文件操作图谱</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2%E7%AE%80%E8%BF%B0-1"><span class="nav-number">2.1.</span> <span class="nav-text">历史简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E5%8E%86%E5%8F%B2-1"><span class="nav-number">2.2.</span> <span class="nav-text">总结历史</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">我们的任务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%A9%E6%95%85"><span class="nav-number">3.1.</span> <span class="nav-text">温故</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E6%96%B0"><span class="nav-number">3.2.</span> <span class="nav-text">知新</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/08/08/%EF%BC%88%E7%AC%AC2.5%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="（第2.5节）操作系统--学习内容 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          （第2.5节）操作系统--学习内容
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-08 13:48:32" itemprop="dateCreated datePublished" datetime="2022-08-08T13:48:32+08:00">2022-08-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:22:02" itemprop="dateModified" datetime="2023-11-08T18:22:02+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>809</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>写在最前面：第一节我们介绍了操作系统的启动流程，第二节介绍了操作系统的系统调用与实现。下面我们就要深入操作系统，了解其组成部分与实现原理。</p>
+<blockquote>
+<p>不过在具体学习之前，需要对所学内容有一个清晰的认识，这也是本节内容的目的。这一节会从操作系统的历史出发，一步步总结归纳出操作系统的两大核心图谱。<br>参考资料：哈工大操作系统课程</p>
+</blockquote>
+</blockquote>
+<h1 id="第一段历史–多进程图谱"><a href="#第一段历史–多进程图谱" class="headerlink" title="第一段历史–多进程图谱"></a>第一段历史–多进程图谱</h1><h2 id="历史简述"><a href="#历史简述" class="headerlink" title="历史简述"></a>历史简述</h2><p>下面4张图分别归纳了<strong>操作系统的发展历程</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922254312.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922269753.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922281080.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922298253.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922311585.png"></p>
+<p>计算机的发明就是为了实现某些具体的工作，随着计算机在不同行业的普及，其需要实现的工作也越来越多。<br>而操作系统的目的就是为了帮助计算机更加方面、高效、可靠的完成这些功能。</p>
+<h2 id="总结历史"><a href="#总结历史" class="headerlink" title="总结历史"></a>总结历史</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922382433.png"></p>
+<p>随着<strong>社会需求</strong>的不断变化，计算机<strong>核心技术和思想</strong>也在与时俱进，从<strong>冯诺依曼思想</strong>到<strong>进程管理、多进程切换</strong>等，都是为了适应时代的需求。</p>
+<p>思想和技术的发展需要软件来进行具体的实现，针对上述提到的众多思想，都有对应的<strong>操作系统软件</strong>来实现。</p>
+<p>而从这一段历史可以得出：<code>多进程图谱是操作系统的核心部分！！</code></p>
+<h1 id="第二段历史–文件操作图谱"><a href="#第二段历史–文件操作图谱" class="headerlink" title="第二段历史–文件操作图谱"></a>第二段历史–文件操作图谱</h1><h2 id="历史简述-1"><a href="#历史简述-1" class="headerlink" title="历史简述"></a>历史简述</h2><p>下面几张图归纳了操作系统的一段发展历程：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922853396.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922865588.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922880013.png"></p>
+<p>随着技术的不断发展和人民生活水平的提高，PC机开始普及，同时人们对于计算机使用感受更加重视，所以在前文计算机的基本结构上进行发展，图形化界面开始出现并逐渐成为主流。</p>
+<h2 id="总结历史-1"><a href="#总结历史-1" class="headerlink" title="总结历史"></a>总结历史</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659922916115.png"></p>
+<p><code>文件操作系统图谱也是操作系统的核心部分！！</code></p>
+<h1 id="我们的任务"><a href="#我们的任务" class="headerlink" title="我们的任务"></a>我们的任务</h1><h2 id="温故"><a href="#温故" class="headerlink" title="温故"></a>温故</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923622966.png"></p>
+<p>在第一节我们就提过：<strong>操作系统是一个用于操作硬件的软件</strong>。</p>
+<blockquote>
+<p>那么这些硬件都有哪些呢？<br>如图所示，有<code>CPU、内存、IO设备和磁盘</code>等。而操作系统要做的就是实现对这些设备的操作。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923642122.png"></p>
+<p>在前面我同样介绍了<strong>操作系统的启动流程</strong>：<code>载入内存和系统建立</code>。</p>
+<blockquote>
+<p>其中系统建立的主要工作就是<strong>数据结构的初始化</strong>。就像我们要管理学生可以通过建立<strong>学生档案</strong>进行一样，管理硬件可以通过<strong>数据结构</strong>来进行，</p>
+</blockquote>
+<h2 id="知新"><a href="#知新" class="headerlink" title="知新"></a>知新</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923657199.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923674669.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1659923692683.png"></p>
+<p>上图已经较为明确的介绍了我们需要学习的内容：<code>多进程视图和文件操作视图</code>。</p>
+<blockquote>
+<p>多进程视图：<strong>CPU管理</strong>和<strong>内存管理</strong></p>
+</blockquote>
+<blockquote>
+<p>文件操作视图：<strong>IO管理</strong>、<strong>磁盘及文件管理</strong></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/08/08/%EF%BC%88%E7%AC%AC2.5%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9/" title="（第2.5节）操作系统--学习内容">https://danggeovo.github.io/2022/08/08/（第2.5节）操作系统--学习内容/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/06/%EF%BC%88%E7%AC%AC%E4%BA%8C%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8E%A5%E5%8F%A3%E4%B8%8E%E8%B0%83%E7%94%A8/" rel="prev" title="（第二节）操作系统--接口与调用">
+                  <i class="fa fa-angle-left"></i> （第二节）操作系统--接口与调用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/08/09/%EF%BC%88%E7%AC%AC%E4%B8%89%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%9B%BE%E8%B0%B1%E6%A6%82%E8%BF%B0/" rel="next" title="（第三节）操作系统--多进程图谱概述">
+                  （第三节）操作系统--多进程图谱概述 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

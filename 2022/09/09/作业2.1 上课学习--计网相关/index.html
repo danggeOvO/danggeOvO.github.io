@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="计算机网络层次划分层次划分的巧妙之处说到网络的层次划分，不得不说一句，在整个计算机的基本知识框架里，层次划分的思想体现在很多方面。比如前面看过的计算机的软件系统的结构，在硬件与应用程序之间也是采用中间层的方式进行划分，从最上方的应用程序等到最下方的硬件，层层递进，有着运行库，操作系统内核等多个中间层，不同层次之间有着不同的分工，而后通过各自的接口进行连接。最终实现应用程序对硬件的控制。 相应的，在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初入计网">
+<meta property="og:url" content="https://danggeovo.github.io/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="计算机网络层次划分层次划分的巧妙之处说到网络的层次划分，不得不说一句，在整个计算机的基本知识框架里，层次划分的思想体现在很多方面。比如前面看过的计算机的软件系统的结构，在硬件与应用程序之间也是采用中间层的方式进行划分，从最上方的应用程序等到最下方的硬件，层层递进，有着运行库，操作系统内核等多个中间层，不同层次之间有着不同的分工，而后通过各自的接口进行连接。最终实现应用程序对硬件的控制。 相应的，在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629180.jpg">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629181.gif">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629225.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629414.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629416.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629419.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629420.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629421.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629422.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629423.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629424.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629425.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629426.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629427.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629428.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629429.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629430.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629432.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629439.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629431.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629556.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629566.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629567.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629568.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629569.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629576.png">
+<meta property="article:published_time" content="2022-09-09T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:25:01.243Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629180.jpg">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/","path":"2022/09/09/作业2.1 上课学习--计网相关/","title":"初入计网"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>初入计网 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%B1%82%E6%AC%A1%E5%88%92%E5%88%86"><span class="nav-number">1.</span> <span class="nav-text">计算机网络层次划分</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E5%88%92%E5%88%86%E7%9A%84%E5%B7%A7%E5%A6%99%E4%B9%8B%E5%A4%84"><span class="nav-number">1.1.</span> <span class="nav-text">层次划分的巧妙之处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E5%88%92%E5%88%86%E7%9A%84%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%88%AB"><span class="nav-number">1.2.</span> <span class="nav-text">层次划分的不同类别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OSI%E5%B1%82%E6%AC%A1%E5%88%92%E5%88%86%E7%9A%84%E5%85%B7%E4%BD%93"><span class="nav-number">1.3.</span> <span class="nav-text">OSI层次划分的具体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82%EF%BC%88Physical-Layer%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">物理层（Physical Layer）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%EF%BC%88Data-Link-Layer%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据链路层（Data Link Layer）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88Network-Layer%EF%BC%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">网络层（Network Layer）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88Transport-Layer%EF%BC%89"><span class="nav-number">1.3.4.</span> <span class="nav-text">传输层（Transport Layer）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E5%B1%82"><span class="nav-number">1.3.5.</span> <span class="nav-text">会话层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%A4%BA%E5%B1%82"><span class="nav-number">1.3.6.</span> <span class="nav-text">表示层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">1.3.7.</span> <span class="nav-text">应用层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP%E5%9C%B0%E5%9D%80"><span class="nav-number">1.4.</span> <span class="nav-text">IP地址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">IP的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E4%B8%8EMAC%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-number">1.4.2.</span> <span class="nav-text">IP与MAC的联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E5%9C%B0%E5%9D%80%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">IP地址的基本知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E5%8D%8F%E8%AE%AE%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF"><span class="nav-number">1.4.4.</span> <span class="nav-text">IP协议相关技术</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E6%97%85%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">数据包的旅程~</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">2.1.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90URL"><span class="nav-number">2.1.1.</span> <span class="nav-text">解析URL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90HTTP%E8%AF%B7%E6%B1%82%E4%BF%A1%E6%81%AF"><span class="nav-number">2.1.2.</span> <span class="nav-text">生成HTTP请求信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS"><span class="nav-number">2.2.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E6%A0%88"><span class="nav-number">2.3.</span> <span class="nav-text">协议栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E2%80%93%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93"><span class="nav-number">2.4.</span> <span class="nav-text">TCP–可靠传输</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E6%8A%A5%E5%A4%B4%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.4.1.</span> <span class="nav-text">TCP报头的格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcp%E6%8A%A5%E6%96%87%E7%9A%84%E5%BD%A2%E6%88%90"><span class="nav-number">2.4.2.</span> <span class="nav-text">tcp报文的形成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-%E2%80%93%E8%BF%9C%E7%A8%8B%E5%AE%9A%E4%BD%8D"><span class="nav-number">2.5.</span> <span class="nav-text">IP –远程定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E6%8A%A5%E5%A4%B4%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.5.1.</span> <span class="nav-text">IP报头格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E6%8A%A5%E6%96%87%E7%94%9F%E6%88%90"><span class="nav-number">2.5.2.</span> <span class="nav-text">IP报文生成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAC-%E2%80%93-%E4%B8%A4%E7%82%B9%E4%BC%A0%E8%BE%93"><span class="nav-number">2.6.</span> <span class="nav-text">MAC – 两点传输</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mac%E6%8A%A5%E6%96%87"><span class="nav-number">2.6.1.</span> <span class="nav-text">mac报文</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%8D%A1-%E2%80%93-%E5%87%BA%E5%8F%A3"><span class="nav-number">2.7.</span> <span class="nav-text">网卡 – 出口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA-%E2%80%93-%E9%80%81%E5%88%AB%E8%80%85"><span class="nav-number">2.8.</span> <span class="nav-text">交换机 – 送别者</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA%E7%9A%84%E5%8C%85%E6%8E%A5%E6%94%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">2.8.1.</span> <span class="nav-text">交换机的包接收操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8-%E2%80%93-%E5%87%BA%E5%A2%83%E5%A4%A7%E9%97%A8"><span class="nav-number">2.9.</span> <span class="nav-text">路由器 – 出境大门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B8%8E%E4%BA%A4%E6%8D%A2%E6%9C%BA%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.9.1.</span> <span class="nav-text">路由器与交换机的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%8C%85%E6%8E%A5%E6%94%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">2.9.2.</span> <span class="nav-text">路由器的包接收操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF-%E2%80%93-%E4%BA%92%E7%9B%B8%E6%89%92%E7%9A%AE"><span class="nav-number">2.10.</span> <span class="nav-text">服务器与客户端 – 互相扒皮</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="初入计网 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          初入计网
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-09 13:48:32" itemprop="dateCreated datePublished" datetime="2022-09-09T13:48:32+08:00">2022-09-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:25:01" itemprop="dateModified" datetime="2023-11-08T18:25:01+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="计算机网络层次划分"><a href="#计算机网络层次划分" class="headerlink" title="计算机网络层次划分"></a>计算机网络层次划分</h1><h2 id="层次划分的巧妙之处"><a href="#层次划分的巧妙之处" class="headerlink" title="层次划分的巧妙之处"></a>层次划分的巧妙之处</h2><p>说到网络的层次划分，不得不说一句，在整个计算机的基本知识框架里，层次划分的思想体现在很多方面。比如前面看过的计算机的软件系统的结构，在硬件与应用程序之间也是采用中间层的方式进行划分，从最上方的应用程序等到最下方的硬件，层层递进，有着运行库，操作系统内核等多个中间层，不同层次之间有着不同的分工，而后通过各自的接口进行连接。最终实现应用程序对硬件的控制。</p>
+<p>相应的，在计算机网络的知识框架里也有着类似的划分，我们将计算机网络体系结构的通信协议进行分层划分，形成一个简洁、易于理解的模型。</p>
+<h2 id="层次划分的不同类别"><a href="#层次划分的不同类别" class="headerlink" title="层次划分的不同类别"></a>层次划分的不同类别</h2><p>常见的网络层次划分有TCP&#x2F;IP四层协议以及TCP&#x2F;IP五层协议和OSI七层模型。虽然有着不同的类别，但是在这三种划分的本质都是一样的，只是在划分的细致程度上有所不同。这三种模型的对应关系如下图：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629180.jpg" alt="对应关系"></p>
+<h2 id="OSI层次划分的具体"><a href="#OSI层次划分的具体" class="headerlink" title="OSI层次划分的具体"></a>OSI层次划分的具体</h2><p><em>因为 不管是OSI七层模型还是TCP&#x2F;IP的四层、五层模型，每一层中都要自己的专属协议，完成自己相应的工作以及与上下层级之间进行沟通。由于OSI七层模型为网络的标准层次划分，所以我们以OSI七层模型为例从下向上进行一一介绍。</em></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629181.gif" alt="OSI层次划分"></p>
+<h3 id="物理层（Physical-Layer）"><a href="#物理层（Physical-Layer）" class="headerlink" title="物理层（Physical Layer）"></a>物理层（Physical Layer）</h3><p>激活、维持、关闭通信端点之间的机械特性、电气特性、功能特性以及过程特性。该层为上层协议提供了一个传输数据的可靠的物理媒体。简单的说，物理层确保原始的数据可在各种物理媒体上传输。物理层记住两个重要的设备名称，<strong>中继器</strong>（Repeater，也叫放大器）和<strong>集线器</strong>。</p>
+<h3 id="数据链路层（Data-Link-Layer）"><a href="#数据链路层（Data-Link-Layer）" class="headerlink" title="数据链路层（Data Link Layer）"></a>数据链路层（Data Link Layer）</h3><p>数据链路层在物理层提供的服务的基础上向网络层提供服务，其最基本的服务是<strong>将源自网络层来的数据可靠地传输到相邻节点的目标机网络层</strong>。为达到这一目的，数据链路必须具备一系列相应的功能，主要有：如何将数据组合成数据块，在数据链路层中称这种数据块为帧（frame），帧是数据链路层的传送单位；如何控制帧在物理信道上的传输，包括如何处理传输差错，如何调节发送速率以使与接收方相匹配；以及在两个网络实体之间提供数据链路通路的建立、维持和释放的管理。<br>数据链路层在不可靠的物理介质上提供可靠的传输。该层的作用包括：<code>物理地址寻址、数据的成帧、流量控制、数据的检错、重发 </code>等。</p>
+<blockquote>
+<p>有关数据链路层的重要知识点：</p>
+<blockquote>
+<p>1&gt; 数据链路层为网络层提供可靠的数据传输；<br>2&gt; 基本数据单位为帧；<br>3&gt; 主要的协议：以太网协议；<br>4&gt; 两个重要设备名称：<strong>网桥和交换机</strong>。</p>
+</blockquote>
+</blockquote>
+<h3 id="网络层（Network-Layer）"><a href="#网络层（Network-Layer）" class="headerlink" title="网络层（Network Layer）"></a>网络层（Network Layer）</h3><p>网络层的目的是<strong>实现两个端系统之间的数据透明传送</strong>，具体功能包括寻址和路由选择、连接的建立、保持和终止等。它提供的服务使传输层不需要了解网络中的数据传输和交换技术。如果您想用尽量少的词来记住网络层，<code>那就是&quot;路径选择、路由及逻辑寻址&quot;。</code></p>
+<p>网络层中涉及众多的协议，其中包括最重要的协议，也是TCP&#x2F;IP的核心协议——P协议 。IP协议非常简单，仅仅提供不可靠、无连接的传送服务。IP协议的主要功能有：无连接数据报传输、数据报路由选择和差错控制 。与IP协议配套使用实现其功能的还有地址解析协议ARP、逆地址解析协议RARP、因特网报文协议ICMP、因特网组管理协议IGMP。具体的协议我们会在接下来的部分进行总结。</p>
+<blockquote>
+<p>有关网络层的重点为：</p>
+<blockquote>
+<p>1&gt; 网络层负责对子网间的数据包进行路由选择。此外，网络层还可以实现拥塞控制、网际互连等功能；<br>2&gt; 基本数据单位为IP数据报；<br>3&gt; 包含的主要协议：<br>　IP协议（Internet Protocol，因特网互联协议）;<br>　ICMP协议（Internet Control Message Protocol，因特网控制报文协议）;<br>　ARP协议（Address Resolution Protocol，地址解析协议）;<br>　RARP协议（Reverse Address Resolution Protocol，逆地址解析协议）。<br>4&gt; 重要的设备：<strong>路由器。</strong></p>
+</blockquote>
+</blockquote>
+<h3 id="传输层（Transport-Layer）"><a href="#传输层（Transport-Layer）" class="headerlink" title="传输层（Transport Layer）"></a>传输层（Transport Layer）</h3><p>第一个端到端，即主机到主机的层次。传输层负责将上层数据分段并提供端到端的、可靠的或不可靠的传输。此外，传输层还要处理端到端的差错控制和流量控制问题。 传输层的任务是根据通信子网的特性，最佳的利用网络资源，为两个端系统的会话层之间，提供建立、维护和取消传输连接的功能，负责端到端的可靠数据传输。在这一层，信息传送的协议数据单元称为段或报文。 网络层只是根据网络地址将源结点发出的数据包传送到目的结点，而传输层则负责将数据可靠地传送到相应的端口。 有关网络层的重点：</p>
+<p>1&gt; 传输层负责将上层数据分段并提供端到端的、可靠的或不可靠的传输以及端到端的差错控制和流量控制问题；<br>2&gt; 包含的主要协议：TCP协议（Transmission Control Protocol，传输控制协议）、UDP协议（User Datagram Protocol，用户数据报协议）；<br>3&gt; 重要设备：<strong>网关。</strong></p>
+<h3 id="会话层"><a href="#会话层" class="headerlink" title="会话层"></a>会话层</h3><p>会话层管理主机之间的会话进程，即负责建立、管理、终止进程之间的会话。会话层还利用在数据中插入校验点来实现数据的同步。</p>
+<h3 id="表示层"><a href="#表示层" class="headerlink" title="表示层"></a>表示层</h3><p>表示层对上层数据或信息进行变换以保证一个主机应用层信息可以被另一个主机的应用程序理解。表示层的数据转换包括数据的加密、压缩、格式转换等。</p>
+<h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><p>为操作系统或网络应用程序提供访问网络服务的接口。</p>
+<blockquote>
+<p>会话层、表示层和应用层重点</p>
+<blockquote>
+<p>1&gt; 数据传输基本单位为报文；<br>2&gt; 包含的主要协议：FTP（文件传送协议）、Telnet（远程登录协议）、DNS（域名解析协议）、SMTP（邮件传送协议），POP3协议（邮局协议），HTTP协议（Hyper Text Transfer Protocol）。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>已经写完计算机体系结构的大体架构，下面我们来具体讲一下每一层的相关知识：</p>
+</blockquote>
+<h2 id="IP地址"><a href="#IP地址" class="headerlink" title="IP地址"></a>IP地址</h2><blockquote>
+<p> 以下内容部分引用： 《图解网络》、菜鸟教程</p>
+</blockquote>
+<p>先放一张图：(内容较多，选取一部分进行讲解)</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629225.png" alt="ip全家桶"></p>
+<h3 id="IP的作用"><a href="#IP的作用" class="headerlink" title="IP的作用"></a>IP的作用</h3><blockquote>
+<p>IP 在 TCP&#x2F;IP 参考模型中处于第三层，也就是网络层。<br>网络层的主要作用是：实现主机与主机之间的通信，也叫点对点（end to end）通信</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629414.png" alt="ip的作用"></p>
+<h3 id="IP与MAC的联系"><a href="#IP与MAC的联系" class="headerlink" title="IP与MAC的联系"></a>IP与MAC的联系</h3><blockquote>
+<p>MAC 的作用则是实现「直连」的两个设备之间通信，而 IP 则负责在「没有直连」的两个网络之间进行通信传输。</p>
+</blockquote>
+<p><strong>引用一个例子：</strong><br>小黎要去一个很远的地方旅行，制定了一个行程表，其间需先后乘坐飞机、地铁、公交车才能抵达目的地，为此小林需要买飞机票，地铁票等。<br>飞机票和地铁票都是去往特定的地点的，每张票只能够在某一限定区间内移动，此处的「区间内」就如同通信网络中数据链路。<br>在区间内移动相当于数据链路层，充当区间内两个节点传输的功能，区间内的出发点好比源 MAC 地址，目标地点好比目的 MAC 地址。<br>整个旅游行程表就相当于网络层，充当远程定位的功能，行程的开始好比源 IP，行程的终点好比目的IP 地址。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629416.png" alt="配图"></p>
+<p><code>正如上图所述，数据包在传输的过程中，源IP地址和目标IP地址在传输过程中是不会变化的，只有源 MAC 地址和目标 MAC 一直在变化。</code></p>
+<h3 id="IP地址的基本知识"><a href="#IP地址的基本知识" class="headerlink" title="IP地址的基本知识"></a>IP地址的基本知识</h3><blockquote>
+<p>在 TCP&#x2F;IP 网络通信时，为了保证能正常通信，每个设备都需要配置正确的 IP 地址，否则无法实现正常的通信。</p>
+</blockquote>
+<p>IP 地址（IPv4 地址）由 32 位正整数来表示，IP 地址在计算机是以二进制的方式处理的。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629419.png" alt="表示方法"></p>
+<p><strong>IP地址的组成：</strong><br>一般我们把IP地址分为网络号和主机号。但是其实在网络号前面还有一个分类号，把IP地址分为ABC等类别。</p>
+<blockquote>
+<p>当主机号都为0时，此IP地址指定某个网络。<br>当主机号都为1时，此IP地址指定某个网络下的所有主机。</p>
+<blockquote>
+<p>通过主机号为1的IP地址用于广播，即在同一个链路中相互连接的主机之间发送数据包。</p>
+</blockquote>
+</blockquote>
+<p><strong>无分类地址CIDR</strong></p>
+<blockquote>
+<p>由于IP的分类有许多缺点，所以后面提出来无分类地址，即CIDR.</p>
+</blockquote>
+<p>表示形式 <code>a.b.c.d/x</code> ，其中 <code>/x </code>表示前 x 位属于网络号， x 的范围是 0 ~ 32 ，这就使得 IP 地址更加具有灵活性。<br>比如<code> 10.100.122.2/24</code>，这种地址表示形式就是 CIDR，<code>/24 </code>表示前 24 位是网络号，剩余的 8 位是主机号。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629420.png" alt="一个例子"></p>
+<p><strong>子网掩码</strong></p>
+<blockquote>
+<p>另一种划分网络号与主机号形式，那就是子网掩码，掩码的意思就是掩盖掉主机号，剩余的就是网络号。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629421.png" alt="直接看图"></p>
+<p><code>前面很多划分IP地址的方法，但是你知道为什么要把IP地址划分为网络号和主机号吗？</code><br>因为两台计算机要通讯，首先要判断是否处于同一个广播域内，即网络地址是否相同。如果网络地址相同，表明接受方在本网络上，那么可以把数据包直接发送到目标主机。</p>
+<p>路由器寻址工作中，也就是通过这样的方式来找到对应的网络号的，进而把数据包转发给对应的网络内。</p>
+<p><strong>子网的划分</strong></p>
+<blockquote>
+<p>对于无须再划分成子网的IP地址来说，其子网掩码非常简单，即按照其定义即可写出：如某B类IP地址为 10.12.3.0，无须再分割子网，则该IP地址的子网掩码255.255.0.0。如果它是一个C类地址，则其子网掩码为 255.255.255.0。</p>
+</blockquote>
+<p>如果需要进行子网的划分，就要结合子网掩码与分类别IP地址。其实质就是通过按位与运算，把原IP地址的主机号的前几位归为一个子网的网络号，其余剩下的为子网的主机号。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629422.png" alt="子网划分"></p>
+<p><strong>公有地址与私有地址</strong></p>
+<blockquote>
+<p>在 A、B、C 分类地址，实际上有分公有 IP 地址和私有 IP 地址。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629423.png" alt="地址的分类"></p>
+<p>平时我们办公室、家里、学校用的 IP 地址，一般都是私有 IP 地址。因为这些地址允许组织内部的 IT人员自己管理、自己分配，而且可以重复。因此，你学校的某个私有 IP 地址和我学校的可以是一样的。<br>就像每个小区都有自己的楼编号和门牌号，你小区家可以叫 1 栋 101 号，我小区家也可以叫 1 栋101，没有任何问题。但一旦出了小区，就需要带上中山路 666 号（公网 IP 地址），是国家统一分配的，不能两个小区都叫中山路 666。<br>所以，公有 IP 地址是有个组织统一分配的，假设你要开一个博客网站，那么你就需要去申请购买一个公有 IP，这样全世界的人才能访问。并且公有 IP 地址基本上要在整个互联网范围内保持唯一。</p>
+<p><strong>IP地址与路由控制</strong></p>
+<blockquote>
+<p>IP地址的网络地址这一部分是用于进行路由控制。<br>路由控制表中记录着网络地址与下一步应该发送至路由器的地址。在主机和路由器上都会有各自的路由器控制表。</p>
+</blockquote>
+<p>在发送 IP 包时，首先要确定 IP 包首部中的目标地址，再从路由控制表中找到与该地址具有相同网络地址的记录，根据该记录将 IP 包转发给相应的下一个路由器。如果路由控制表中存在多条相同网络地址的记录，就选择相同位数最多的网络地址，也就是最长匹配。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629424.png" alt="一个例子"></p>
+<p>注:一个路由两个网卡，两张网卡的IP地址对应的网络号不同，所以就连接起了两个不同的网络。在数据包的ip地址匹配中，路由会先比对网络号，即路由表里的前号是否有对应的网络号。</p>
+<p><strong>环回地址</strong></p>
+<blockquote>
+<p>环回地址是在同一台计算机上的程序之间进行网络通信时所使用的一个默认地址。</p>
+</blockquote>
+<p>计算机使用一个特殊的 IP 地址 127.0.0.1 作为环回地址。与该地址具有相同意义的是一个叫做localhost 的主机名。使用这个 IP 或主机名时，数据包不会流向网络。(我们在使用hexo布置博客的时候，可以使用hexo s 命令先在本机部署查看)</p>
+<h3 id="IP协议相关技术"><a href="#IP协议相关技术" class="headerlink" title="IP协议相关技术"></a>IP协议相关技术</h3><p><strong>DNS</strong></p>
+<blockquote>
+<p>我们在上网的时候，通常使用的方式是域名，而不是 IP 地址，因为域名方便人类记忆。<br>那么实现这一技术的就是 DNS 域名解析，DNS 可以将域名网址自动转换为具体的 IP 地址。</p>
+</blockquote>
+<p><strong>ARP</strong></p>
+<blockquote>
+<p>在传输一个 IP 数据报的时候，确定了源 IP 地址和目标 IP 地址后，就会通过主机「路由表」确定 IP 数据包下一跳。然而，网络层的下一层是数据链路层，所以我们还要知道「下一跳」的 MAC 地址。<br>由于主机的路由表中可以找到下一跳的 IP 地址，所以可以通过 ARP 协议，求得下一跳的 MAC 地址。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629425.png" alt="形象例子"></p>
+<p><strong>RARP</strong></p>
+<blockquote>
+<p>ARP 协议是已知 IP 地址求 MAC 地址，那 RARP 协议正好相反，它是已知 MAC 地址求 IP 地址。例如将打印机服务器等小型嵌入式设备接入到网络时就经常会用得到。</p>
+</blockquote>
+<p><strong>DHCP</strong></p>
+<blockquote>
+<p>DHCP 在生活中我们是很常见的了，我们的电脑通常都是通过 DHCP 动态获取 IP 地址，大大省去了配<br>IP 信息繁琐的过程。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* 客户端首先发起 DHCP 发现报文（DHCP DISCOVER） 的 IP 数据报，由于客户端没有 IP 地址，也不知道 DHCP 服务器的地址，所以使用的是 UDP 广播通信，其使用的广播目的地址是255.255.255.255（端口 67） 并且使用 0.0.0.0（端口 68） 作为源 IP 地址。DHCP 客户端将该IP 数据报传递给链路层，链路层然后将帧广播到所有的网络中设备。</span><br><span class="line">* DHCP 服务器收到 DHCP 发现报文时，用 DHCP 提供报文（DHCP OFFER） 向客户端做出响应。该报文仍然使用 IP 广播地址 255.255.255.255，该报文信息携带服务器提供可租约的 IP 地址、子网掩码、默认网关、DNS 服务器以及 IP 地址租用期。</span><br><span class="line">* 客户端收到一个或多个服务器的 DHCP 提供报文后，从中选择一个服务器，并向选中的服务器发送 DHCP 请求报文（DHCP REQUEST进行响应，回显配置的参数。</span><br><span class="line">* 最后，服务端用 DHCP ACK 报文对 DHCP 请求报文进行响应，应答所要求的参数。</span><br></pre></td></tr></table></figure>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629426.png" alt="exp"></p>
+<p><strong>NAT</strong></p>
+<blockquote>
+<p>IPv4 的地址是非常紧缺的，在前面我们也提到可以通过无分类地址来减缓 IPv4 地址耗尽的速度，但是互联网的用户增速是非常惊人的，所以 IPv4 地址依然有被耗尽的危险。<br>于是，提出了一种网络地址转换 NAT 的方法，再次缓解了 IPv4 地址耗尽的问题。</p>
+</blockquote>
+<p>简单的来说 NAT 就是同个公司、家庭、教室内的主机对外部通信时，把私有 IP 地址转换成公有 IP 地址.</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629427.png" alt="转换过程"></p>
+<hr>
+<blockquote>
+<p>ok ,ip的相关知识到此为止，这里知识简单介绍一下，以后会详细记录</p>
+</blockquote>
+<hr>
+<h1 id="数据包的旅程"><a href="#数据包的旅程" class="headerlink" title="数据包的旅程~"></a>数据包的旅程~</h1><blockquote>
+<p>当我们键入一个网址后，会获取到以网页显示，但是期间发生了什么呢?<br>下面我会结合《图解网络》与我自己的理解进行讲解。</p>
+</blockquote>
+<p>老样子，我们现放一个图，来大体了解一下这个过程吧。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629428.png"></p>
+<p>下面具体分析：（会循序渐进，层层深入）</p>
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><h3 id="解析URL"><a href="#解析URL" class="headerlink" title="解析URL"></a>解析URL</h3><blockquote>
+<p>当我们键入网址后，浏览器的第一步工作是解析URL(统一资源定位符)<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629429.png" alt="URL的组成"></p>
+</blockquote>
+<p>当没有路径名时，就代表访问根目录下事先设置的默认文件，也就是 <code>/index.html</code> 或者<code> /default.html</code>这些文件，这样就不会发生混乱了。</p>
+<h3 id="生成HTTP请求信息"><a href="#生成HTTP请求信息" class="headerlink" title="生成HTTP请求信息"></a>生成HTTP请求信息</h3><blockquote>
+<p>对 URL 进行解析之后，浏览器确定了 Web 服务器和文件名，接下来就是根据这些信息来生成 HTTP请求消息了</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629430.png" alt="http请求信息"></p>
+<p><code>但是一个http请求信息在浩瀚的网络里，如何到达目的地？这个问题就在下面给出答案</code></p>
+<h2 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h2><blockquote>
+<p>通过浏览器解析 URL 并生成 HTTP 消息后，需要委托操作系统将消息发送给 Web 服务器。但在发送之前，还有一项工作需要完成，那就是查询服务器域名对应的 IP 地址，因为委托操作系统发送消息时，必须提供通信对象的 IP 地址</p>
+</blockquote>
+<p>这个过程通过DNS服务器进行完成，这里不再详细说~</p>
+<h2 id="协议栈"><a href="#协议栈" class="headerlink" title="协议栈"></a>协议栈</h2><blockquote>
+<p>通过 DNS 获取到 IP 后，就可以把 HTTP 的传输工作交给操作系统中的<code>协议栈</code>。<br>协议栈的内部分为几个部分，分别承担不同的工作。上下关系是有一定的规则的，上面的部分会向下面的部分委托工作，下面的部分收到委托的工作并执行。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629432.png" alt="一个模型"></p>
+<p><code>应用程序（浏览器）</code>通过调用 <code>Socket 库</code>，来委托协议栈工作。协议栈的上半部分有两块，分别是负责<code>收发数据</code>的 TCP 和 UDP 协议，它们两会接受应用层的委托执行收发数据的操作。</p>
+<p>协议栈的下面一半是用 IP 协议<code>控制网络包收发操作</code>，在互联网上传数据时，数据会被切分成一块块的网络包，而将网络包发送给对方的操作就是由 IP 负责的。</p>
+<p>IP 下面的网卡驱动程序负责控制网卡硬件，而最下面的网卡则负责完成实际的收发操作，也就是对网线中的信号执行发送和接收操作。</p>
+<h2 id="TCP–可靠传输"><a href="#TCP–可靠传输" class="headerlink" title="TCP–可靠传输"></a>TCP–可靠传输</h2><h3 id="TCP报头的格式"><a href="#TCP报头的格式" class="headerlink" title="TCP报头的格式"></a>TCP报头的格式</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629439.png" alt="报头格式"></p>
+<p>现在可以先不看其他，只需要关注：<code>源端口</code>与<code>目标端口</code><br>只有知道这个端口，我们才知道应该发个哪一个应用。</p>
+<blockquote>
+<p>TCP 协议里面会有两个端口，一个是浏览器监听的端口（通常是随机生成的），一个是 Web 服务器监听的端口（HTTP 默认端口号是 80 ， HTTPS 默认端口号是 443 ）。</p>
+</blockquote>
+<h3 id="tcp报文的形成"><a href="#tcp报文的形成" class="headerlink" title="tcp报文的形成"></a>tcp报文的形成</h3><blockquote>
+<p>在双方建立了连接后，TCP 报文中的数据部分就是存放 HTTP 头部 + 数据，组装好 TCP 报文之后，就需交给下面的网络层处理。</p>
+</blockquote>
+<p>经过传输层后，数据包的报文如下：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629431.png" alt="报文"></p>
+<h2 id="IP-–远程定位"><a href="#IP-–远程定位" class="headerlink" title="IP –远程定位"></a>IP –远程定位</h2><blockquote>
+<p>TCP 模块在执行连接、收发、断开等各阶段操作时，都需要委托 IP 模块将数据封装成网络包发送给通信对象。<br>这一操作位于网络层</p>
+</blockquote>
+<h3 id="IP报头格式"><a href="#IP报头格式" class="headerlink" title="IP报头格式"></a>IP报头格式</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629556.png" alt="ip报头格式"></p>
+<p>与上面的TCP报头一样，内容很多。这里我们记住：<code>源IP地址</code>与<code>目标IP地址</code></p>
+<h3 id="IP报文生成"><a href="#IP报文生成" class="headerlink" title="IP报文生成"></a>IP报文生成</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629566.png" alt="IP报文"></p>
+<h2 id="MAC-–-两点传输"><a href="#MAC-–-两点传输" class="headerlink" title="MAC – 两点传输"></a>MAC – 两点传输</h2><blockquote>
+<p>生成了 IP 头部之后，接下来网络包还需要在 IP 头部的前面加上 MAC 头部。<br>MAC 头部是以太网使用的头部，它包含了接收方和发送方的 MAC 地址等信息。</p>
+</blockquote>
+<p>MAC地址写写入网卡的，但是目标MAC要经过一个匹配的过程，这一点我们在介绍IP时说到过，即通过ARP协议帮我们找到这个地址。</p>
+<h3 id="mac报文"><a href="#mac报文" class="headerlink" title="mac报文"></a>mac报文</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629567.png" alt="mac报文"><br>内容接着上 IP报文，即在其基础上加上了MAC头，进行同一个链路的信息传输。</p>
+<h2 id="网卡-–-出口"><a href="#网卡-–-出口" class="headerlink" title="网卡 – 出口"></a>网卡 – 出口</h2><blockquote>
+<p>IP 生成的网络包只是存放在内存中的一串二进制数字信息，没有办法直接发送给对方。因此，我们需要将数字信息转换为电信号，才能在网线上传输，也就是说，这才是真正的数据发送过程。<br>负责执行这一操作的是网卡，要控制网卡还需要靠网卡驱动程序。</p>
+</blockquote>
+<p>网卡驱动从 IP 模块获取到包之后，会将其复制到网卡内的缓存区中，接着会在其开头加上报头和起始<br>帧分界符，在末尾加上用于检测错误的帧校验序列。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629568.png"></p>
+<p>最后网卡会将包转为电信号，通过网线发送出去。</p>
+<h2 id="交换机-–-送别者"><a href="#交换机-–-送别者" class="headerlink" title="交换机 – 送别者"></a>交换机 – 送别者</h2><blockquote>
+<p>交换机的设计是将网络包原样转发到目的地。交换机工作在MAC 层，也称为二层网络设备。</p>
+</blockquote>
+<h3 id="交换机的包接收操作"><a href="#交换机的包接收操作" class="headerlink" title="交换机的包接收操作"></a>交换机的包接收操作</h3><blockquote>
+<p>电信号到达网线接口，交换机里的模块进行接收，接下来交换机里的模块将电信号转换为数字信号。<br>通过包末尾的 FCS 校验错误，如果没问题则放到缓冲区。</p>
+<blockquote>
+<p>这部分操作基本和计算机的网卡相同，但交换机的工作方式和网卡不同。<br>计算机的网卡本身具有 MAC 地址，并通过核对收到的包的接收方 MAC 地址判断是不是发给自己的，如果不是发给自己的则丢弃；相对地，交换机的端口不核对接收方 MAC 地址，而是直接接收所有的包并存放到缓冲区中。因此，和网卡不同，交换机的端口<code>不具有 MAC 地址</code>。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>将包存入缓冲区后，接下来需要查询一下这个包的接收方 MAC 地址是否已经在 MAC 地址表中有记录了。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629569.png" alt="交换机的mac地址表"></p>
+</blockquote>
+<p>交换机根据 MAC 地址表查找 MAC 地址，然后将信号发送到相应的端口。<br>找不到指定的 MAC 地址,就将包转发到除了源端口之外的所有端口上，无论该设备连接在哪个端口上都能收到这个包。</p>
+<blockquote>
+<p>也就是说，交换机的作用就是把数据包送到子网的出口，也就是路由器。其本身没有MAC地址，只会被动的进行包的转移。</p>
+</blockquote>
+<h2 id="路由器-–-出境大门"><a href="#路由器-–-出境大门" class="headerlink" title="路由器 – 出境大门"></a>路由器 – 出境大门</h2><h3 id="路由器与交换机的区别"><a href="#路由器与交换机的区别" class="headerlink" title="路由器与交换机的区别"></a>路由器与交换机的区别</h3><blockquote>
+<p>网络包经过交换机之后，现在到达了路由器，并在此被转发到下一个路由器或目标设备。<br>这一步转发的工作原理和交换机类似，也是通过查表判断包转发的目标。<br>不过在具体的操作过程上，路由器和交换机是有区别的。</p>
+<ul>
+<li>因为路由器是基于 IP 设计的，俗称三层网络设备，路由器的各个端口都具有 MAC 地址和 IP 地址；</li>
+<li>而交换机是基于以太网设计的，俗称二层网络设备，交换机的端口不具有 MAC 地址。</li>
+</ul>
+</blockquote>
+<p>换句话说，路由器的端口具有 MAC 地址，因此它就能够成为以太网的发送方和接收方；同时还具有 IP 地址，从这个意义上来说，它和计算机的网卡是一样的。当转发包时，首先路由器端口会接收发给自己的以太网包，然后路由表查询转发目标，再由相应的端口作为发送方将以太网包发送出去。</p>
+<h3 id="路由器的包接收操作"><a href="#路由器的包接收操作" class="headerlink" title="路由器的包接收操作"></a>路由器的包接收操作</h3><blockquote>
+<p>首先，电信号到达网线接口部分，路由器中的模块会将电信号转成数字信号，然后通过包末尾的 FCS进行错误校验。<br>这一步操作与交换机大致相同</p>
+</blockquote>
+<p>但是，不同的是，路由器会检查 MAC 头部中的接收方 MAC 地址，看看是不是发给自己的包，如果是就放到接收缓冲区中，否则就丢弃这个包。（这也是为什么交换机被允许把数据包发送给所有端口的原因）<br><code>完成包接收操作之后，路由器就会去掉包开头的 MAC 头部。</code></p>
+<p>在确认包后，路由器会查询路由表，确定下一步发送的地址。这个过程以后会详细介绍，这里只需要知道在经过路由器的查询后，会出现两个结果：</p>
+<ul>
+<li>如果网关是一个 <strong>IP 地址</strong>，则这个IP 地址就是我们要转发到的目标地址，还未抵达终点，还需继续需要路由器转发。</li>
+<li>如果<strong>网关为空</strong>，则 IP 头部中的接收方 IP 地址就是要转发到的目标地址，也是就终于找到 IP 包头里的目标地址了，说明已抵达终点。</li>
+</ul>
+<p>无论是什么结果，最终都会达到第二个结果，只不过是中间的过程不同。</p>
+<blockquote>
+<p>知道对方的 IP 地址之后，接下来需要通过 ARP 协议根据 IP 地址查询 MAC 地址，并将查询的结果作为接收方 MAC 地址。<br>接下来是发送方 MAC 地址字段，这里填写输出端口的 MAC 地址。还有一个以太类型字段，填写0080 （十六进制）表示 IP 协议。</p>
+<blockquote>
+<p>也就是这个时候会重新给数据包加上MAC头，以确保其到达目标IP地址。</p>
+</blockquote>
+</blockquote>
+<p><code>在网络包传输的过程中，源 IP 和目标 IP 始终是不会变的，一直变化的是 MAC 地址，因为需要 MAC 地址在以太网内进行两个设备之间的包传输。</code></p>
+<p><strong>至此，借用书上写的一段话：数据包通过多个路由器道友的帮助，在网络世界途经了很多路程，最终抵达了目的地的城门！城门值守的路由器，发现了这个小兄弟数据包原来是找城内的人，于是它就将数据包送进了城内，再经由城内的交换机帮助下，最终转发到了目的地了。</strong></p>
+<h2 id="服务器与客户端-–-互相扒皮"><a href="#服务器与客户端-–-互相扒皮" class="headerlink" title="服务器与客户端 – 互相扒皮"></a>服务器与客户端 – 互相扒皮</h2><blockquote>
+<p>服务器在接收到数据包后，会对它进行扒皮处理。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581629576.png" alt="扒皮操作"></p>
+</blockquote>
+<blockquote>
+<p>还是借用书上的一段描述，感觉特别详细：</p>
+</blockquote>
+<p>数据包抵达服务器后，服务器会先扒开数据包的 MAC 头部，查看是否和服务器自己的 MAC 地址符合，符合就将包收起来。</p>
+<p>接着继续扒开数据包的 IP 头，发现 IP 地址符合，根据 IP 头中协议项，知道自己上层是 TCP 协议。</p>
+<p>于是，扒开 TCP 的头，里面有序列号，需要看一看这个序列包是不是我想要的，如果是就放入缓存中然后返回一个 ACK，如果不是就丢弃。TCP头部里面还有端口号， HTTP 的服务器正在监听这个端口号。</p>
+<p>于是，服务器自然就知道是 HTTP 进程想要这个包，于是就将包发给 HTTP 进程。</p>
+<p>服务器的 HTTP 进程看到，原来这个请求是要访问一个页面，于是就把这个网页封装在 HTTP 响应报文里。</p>
+<p>HTTP 响应报文也需要穿上 TCP、IP、MAC 头部，不过这次是源地址是服务器 IP 地址，目的地址是客户端 IP 地址。</p>
+<p>穿好头部衣服后，从网卡出去，交由交换机转发到出城的路由器，路由器就把响应数据包发到了下一个路由器，就这样跳啊跳。</p>
+<p>最后跳到了客户端的城门把手的路由器，路由器扒开 IP 头部发现是要找城内的人，于是又把包发给了城内的交换机，再由交换机转发到客户端。</p>
+<p>客户端收到了服务器的响应数据包后，同样也非常的高兴，客户能拆快递了！</p>
+<p>于是，客户端开始扒皮，把收到的数据包的皮扒剩 HTTP 响应报文后，交给浏览器去渲染页面，一份特别的数据包快递，就这样显示出来了！</p>
+<p>最后，客户端要离开了，向服务器发起了 TCP 四次挥手，至此双方的连接就断开了。</p>
+<blockquote>
+<p>tcp的三次握手与四次挥手以后会学习</p>
+</blockquote>
+<blockquote>
+<p>第一次计网知识记录到此为止。这一篇博客我们简要介绍了什么是ip，ip地址的划分，还涉及到了一个数据包的发送过程以及这个过程中各个层次的作用。<br>但是，计网的知识很多，上面的内容有很多疏漏，以后会单开一个专题进行记录计网学习过程中的知识点。<br>目前想到的一些知识点包括：ping的原理、http的相关、TCP的握手与挥手等，我们新专题见.</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/" title="初入计网">https://danggeovo.github.io/2022/09/09/作业2.1 上课学习--计网相关/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/24/%EF%BC%88%E7%AC%AC%E5%85%AB%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="prev" title="（第八节）操作系统--磁盘管理和文件系统">
+                  <i class="fa fa-angle-left"></i> （第八节）操作系统--磁盘管理和文件系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/12/%EF%BC%88%E7%AC%AC%E5%85%AD%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%8D%A2%E5%85%A5_%E6%8D%A2%E5%87%BA%EF%BC%88%E7%94%A8%E7%A9%BA%E9%97%B4%E5%92%8C%E6%97%B6%E9%97%B4%E6%8D%A2%E8%99%9A%E5%AD%98%EF%BC%89/" rel="next" title="（第六节）操作系统--换入\换出（用空间和时间换虚存）">
+                  （第六节）操作系统--换入\换出（用空间和时间换虚存） <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

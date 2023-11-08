@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="读写文本文件 思维导图如下   本节需要掌握的方法： 常见的操作模式： 读取文件 使用open()函数用于文件的读取。  语法格式：&lt; 变量名&gt; &#x3D; open(&lt;文件名&gt;,&lt;打开模式&gt;,&lt;编码方式&gt;) 文件处理的步骤：打开文件 –&gt; 文件操作 —&gt; 关闭文件 代码实例： 123fp &#x3D; open(&quot;student.txt&amp;quo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python学习 -- ch6 文件与异常">
+<meta property="og:url" content="https://danggeovo.github.io/2023/04/10/python%E5%AD%A6%E4%B9%A0%20--%20ch6%20%E6%96%87%E4%BB%B6%E4%B8%8E%E5%BC%82%E5%B8%B8/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="读写文本文件 思维导图如下   本节需要掌握的方法： 常见的操作模式： 读取文件 使用open()函数用于文件的读取。  语法格式：&lt; 变量名&gt; &#x3D; open(&lt;文件名&gt;,&lt;打开模式&gt;,&lt;编码方式&gt;) 文件处理的步骤：打开文件 –&gt; 文件操作 —&gt; 关闭文件 代码实例： 123fp &#x3D; open(&quot;student.txt&amp;quo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806109.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806567.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806115.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1647941379508.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806558.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806566.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806118.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806152.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806165.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806166.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806585.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806562.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806168.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806192.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806215.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806238.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806565.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806563.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806369.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806382.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806560.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806732.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806733.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806734.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806735.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806744.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806745.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806746.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806747.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806748.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806749.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806789.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806804.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806826.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806844.png">
+<meta property="article:published_time" content="2023-04-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:16:32.305Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806109.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/04/10/python%E5%AD%A6%E4%B9%A0%20--%20ch6%20%E6%96%87%E4%BB%B6%E4%B8%8E%E5%BC%82%E5%B8%B8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/04/10/python%E5%AD%A6%E4%B9%A0%20--%20ch6%20%E6%96%87%E4%BB%B6%E4%B8%8E%E5%BC%82%E5%B8%B8/","path":"2023/04/10/python学习 -- ch6 文件与异常/","title":"python学习 -- ch6 文件与异常"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>python学习 -- ch6 文件与异常 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">读写文本文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">读取文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">写入文本文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">读写二进制文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%BC%E5%90%88%E5%AE%9E%E4%BE%8B%EF%BC%9A%E5%AD%97%E6%AF%8D%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">综合实例：字母出现次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E4%BA%8C-%EF%BC%9A%E7%BB%9F%E8%AE%A1%E5%8D%95%E8%AF%8D%E6%AC%A1%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">实例二 ：统计单词次数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%EF%BC%9A%E5%8D%95%E8%AF%8D%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">第三方库：单词处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#jieba%E5%BA%93"><span class="nav-number">2.1.</span> <span class="nav-text">jieba库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#worldcloud%E5%BA%93"><span class="nav-number">2.2.</span> <span class="nav-text">worldcloud库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%AE%AD%EF%BC%9A%E4%B8%89%E5%9B%BD%E6%BC%94%E4%B9%89%E8%AF%8D%E4%BA%91"><span class="nav-number">2.3.</span> <span class="nav-text">实训：三国演义词云</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96csv%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">读取csv文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%A8%A1%E5%9D%97"><span class="nav-number">4.</span> <span class="nav-text">序列化模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%EF%BC%9Apickle"><span class="nav-number">4.1.</span> <span class="nav-text">模块：pickle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%EF%BC%9Ajson"><span class="nav-number">4.2.</span> <span class="nav-text">模块：json</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">文件目录操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#os%E6%A8%A1%E5%9D%97%E5%92%8Cos-path"><span class="nav-number">5.1.</span> <span class="nav-text">os模块和os.path</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#os%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%AE%AD"><span class="nav-number">5.2.</span> <span class="nav-text">os模块实训</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E7%9B%AE%E5%BD%95%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">5.3.</span> <span class="nav-text">遍历目录的三种方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Python%E4%B8%AD%E7%9A%84%E5%BC%82%E5%B8%B8%E7%B1%BB"><span class="nav-number">6.1.</span> <span class="nav-text">Python中的异常类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%95%E8%8E%B7%E5%92%8C%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8"><span class="nav-number">6.2.</span> <span class="nav-text">捕获和处理异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#raise%E8%AF%AD%E5%8F%A5"><span class="nav-number">6.3.</span> <span class="nav-text">raise语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E5%BC%82%E5%B8%B8%E5%92%8C%E8%AE%B0%E5%BD%95%E5%BC%82%E5%B8%B8"><span class="nav-number">6.4.</span> <span class="nav-text">排查异常和记录异常</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E7%A7%AF%E7%B4%AF"><span class="nav-number">7.</span> <span class="nav-text">扩展积累</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%AE%AD%E4%BD%9C%E4%B8%9A"><span class="nav-number">7.1.</span> <span class="nav-text">实训作业</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">7.2.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/10/python%E5%AD%A6%E4%B9%A0%20--%20ch6%20%E6%96%87%E4%BB%B6%E4%B8%8E%E5%BC%82%E5%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="python学习 -- ch6 文件与异常 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python学习 -- ch6 文件与异常
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-10T13:48:32+08:00">2023-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:16:32" itemprop="dateModified" datetime="2023-11-08T18:16:32+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】编程语言学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/python%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">python学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>23k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>41 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="读写文本文件"><a href="#读写文本文件" class="headerlink" title="读写文本文件"></a>读写文本文件</h1><blockquote>
+<p>思维导图如下</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806109.png"></p>
+<p>本节需要<strong>掌握的方法</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806567.png"></p>
+<p>常见的<strong>操作模式</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806115.png"></p>
+<h2 id="读取文件"><a href="#读取文件" class="headerlink" title="读取文件"></a>读取文件</h2><blockquote>
+<p>使用open()函数用于文件的读取。</p>
+</blockquote>
+<p><strong>语法格式</strong>：<code>&lt; 变量名&gt; = open(&lt;文件名&gt;,&lt;打开模式&gt;,&lt;编码方式&gt;)</code></p>
+<p><strong>文件处理的步骤</strong>：打开文件 –&gt; 文件操作 —&gt; 关闭文件</p>
+<p><strong>代码实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;student.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)  <span class="comment"># 打开文件（以读取的方式）</span></span><br><span class="line"><span class="built_in">print</span>(fp.read())          <span class="comment"># 进行文件的查看</span></span><br><span class="line">fp.close()					  <span class="comment"># 关闭文件</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注1</strong>：对于<strong>中文文件</strong>，在读入是需要给出<strong>编码格式</strong><br><code>fp = open(&quot;file&quot;,&quot;r&quot;,encoding = &#39;utf-8)</code></p>
+<p><strong>注2</strong>：如果需要给出<strong>文件路径</strong>，有以下几个方法：</p>
+<ul>
+<li>fp &#x3D; open(‘c:\test\student.txt’,’r’)    — 是绝对路径，使用两个\，前面的\为转义字符。</li>
+<li>fp &#x3D; open(‘c:&#x2F;test&#x2F;student.txt’,’r’)      —是绝对路径</li>
+<li>fp &#x3D; open(‘.&#x2F;student.txt’,’r’)               —是相对路径（.代表当前文件夹）</li>
+</ul>
+<p><strong>读取文件的几个方法</strong>：</p>
+<ol>
+<li>使用fp.read()直接输出全部内容。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;student.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)  <span class="comment"># 打开文件（以读取的方式）</span></span><br><span class="line"><span class="built_in">print</span>(fp.read())          <span class="comment"># 进行文件的查看</span></span><br><span class="line">fp.close()					  <span class="comment"># 关闭文件</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用for-in 逐行读取文件内容</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;student.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)  <span class="comment"># 打开文件（以读取的方式）</span></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> fp:</span><br><span class="line">	<span class="built_in">print</span>(line,end = <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">fp.close()					  <span class="comment"># 关闭文件</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>使用readlines按行读取文件内容。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;student.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)  <span class="comment"># 打开文件（以读取的方式）</span></span><br><span class="line">line = fp.readlines()</span><br><span class="line"><span class="built_in">print</span>(line)</span><br><span class="line">fp.close()					  <span class="comment"># 关闭文件</span></span><br></pre></td></tr></table></figure>
+<p>注：这种方法是把文本封装为一个<strong>列表形式</strong>。（包括换行符)</p>
+<p>使用<code>strip()方法</code>把列表结尾的<strong>换行符去掉</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;student.txt&quot;</span>,<span class="string">&quot;r&quot;</span>)  <span class="comment"># 打开文件（以读取的方式）</span></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> fp.readlines:</span><br><span class="line">	line = line.strip()</span><br><span class="line">	<span class="built_in">print</span>(line,end = <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">fp.close()					  <span class="comment"># 关闭文件</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="写入文本文件"><a href="#写入文本文件" class="headerlink" title="写入文本文件"></a>写入文本文件</h2><blockquote>
+<p>在使用open函数打开时<strong>指定模式为“w”</strong></p>
+</blockquote>
+<p>直接看一个例子；</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">file = [<span class="string">&#x27;a.txt&#x27;</span>, <span class="string">&#x27;b.txt&#x27;</span>, <span class="string">&#x27;c.txt&#x27;</span>]</span><br><span class="line"></span><br><span class="line">fp1 = []</span><br><span class="line"><span class="keyword">for</span> fp <span class="keyword">in</span> file:</span><br><span class="line">    fp1.append(<span class="built_in">open</span>(fp,<span class="string">&#x27;w&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">if</span> i&lt;<span class="number">50</span>:</span><br><span class="line">        fp1[<span class="number">0</span>].write(<span class="built_in">str</span>(i))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        fp1[<span class="number">2</span>].write(<span class="built_in">str</span>(i))</span><br><span class="line">	<span class="keyword">for</span> fp <span class="keyword">in</span> fp1:</span><br><span class="line">		fp.close()</span><br></pre></td></tr></table></figure>
+
+
+<p>可以使用<strong>列表</strong>利用<code>append()方法</code>进行文件的读取。使用时利用<strong>下标索引</strong>即可。结束后<strong>注意关闭</strong>。</p>
+<p><strong>注意</strong>：<code>write()</code>只可以接收<strong>字符串参数</strong>，要使用<code>str()</code>进行转换。</p>
+<h2 id="读写二进制文件"><a href="#读写二进制文件" class="headerlink" title="读写二进制文件"></a>读写二进制文件</h2><blockquote>
+<p>使用<code>open()函数</code>时指定模式为<code>’rb&#39;</code>，即<strong>可读+二进制</strong>模式。</p>
+</blockquote>
+<p><strong>一个例子</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">is_gif</span>(<span class="params">file</span>):</span><br><span class="line">    fp = <span class="built_in">open</span>(file,<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">    first4 = fp.read(<span class="number">4</span>)</span><br><span class="line">    fp.close()</span><br><span class="line">    <span class="keyword">return</span> first4 == <span class="string">b&#x27;GIF8&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(is_gif(<span class="string">&quot;./a.gif&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>上下文管理语句：<code>with</code>(会在执行结束后<strong>自动关闭</strong>，不需要再使用fp.close())</p>
+</blockquote>
+<p><strong>语法格式</strong>：<code>with open(file,&#39;r&#39;) as fp:</code></p>
+<p><strong>一个例子</strong>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">is_gif</span>(<span class="params">file</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file,<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">        first4 = fp.read(<span class="number">4</span>)</span><br><span class="line">        <span class="keyword">return</span> first4 == <span class="string">b&#x27;GIF8&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(is_gif(<span class="string">&quot;./a.gif&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>bytearray()方法</p>
+<blockquote>
+<p>将二进制文件保存为字节数组。</p>
+</blockquote>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;./a.gif&#x27;,&#x27;rn&#x27;) as fp:</span></span><br><span class="line"><span class="string">	byt = bytearray(fp.read())</span></span><br><span class="line"><span class="string">	size = len(byt)</span></span><br><span class="line"><span class="string">	for i in range(0,size):</span></span><br><span class="line"><span class="string">		char = chr(byt[i])</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="综合实例：字母出现次数"><a href="#综合实例：字母出现次数" class="headerlink" title="综合实例：字母出现次数"></a>综合实例：字母出现次数</h2><ol>
+<li>方法1：使用字符串与列表一一对应</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;a.txt&quot;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">    num = [<span class="number">0</span>]*<span class="number">26</span>   <span class="comment"># 用于保存字母出现次数</span></span><br><span class="line">    str1 = fp.read()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> str1:</span><br><span class="line">        <span class="keyword">if</span> i.isalpha(): <span class="comment"># 用于判断是否为字母</span></span><br><span class="line">            i = i.lower()</span><br><span class="line">            num[<span class="built_in">ord</span>(i)-<span class="number">97</span>]+=<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(num）</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>方法2：使用字典</li>
+</ol>
+<p><strong>改进方法</strong>：字母与次数一一对应，并且降序排序。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;a.txt&quot;</span>, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">str1 = fp.read()</span><br><span class="line">dict1 = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> str1:</span><br><span class="line">    <span class="keyword">if</span> i.isalpha(): <span class="comment"># 用于判断是否为字母</span></span><br><span class="line">        i = i.lower()</span><br><span class="line">        <span class="keyword">if</span> i <span class="keyword">in</span> dict1:</span><br><span class="line">            dict1[i]+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            dict1[i]=<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">sorted</span>(dict1.items(), reverse=<span class="literal">True</span>, key = <span class="keyword">lambda</span> e:e[<span class="number">1</span>]))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：使用sorted()进行排序时，可以通过<code>key参数</code>指定比较的对象。字典是使用<strong>key</strong>进行比较，所以要先<strong>转换为元组</strong>再排序。</p>
+<h2 id="实例二-：统计单词次数"><a href="#实例二-：统计单词次数" class="headerlink" title="实例二 ：统计单词次数"></a>实例二 ：统计单词次数</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;a.txt&quot;</span>, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">wordfre = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> fp:</span><br><span class="line">    sword = i.strip().split()</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> sword:</span><br><span class="line">        <span class="keyword">if</span> word <span class="keyword">in</span> wordfre:</span><br><span class="line">            wordfre[word]+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            wordfre[word]=<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;文档里共出现了%d个不同的单词&quot;</span>%<span class="built_in">len</span>(wordfre),<span class="string">&quot;统计如下：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(wordfre)</span><br><span class="line">fp.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>与字母不同的是，这里要使用<code>sword = i.strip().split()</code>把原字符串以空格为分隔符号组成一个列表，其元素是一个个单词字符串。<br>其中<code>strip()</code>方法是消除<strong>头尾两边</strong>指定的字符，<strong>默认为空格和换行</strong>。</p>
+<hr>
+<blockquote>
+<p>扩展：输出次数最多的三个单词</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;a.txt&quot;</span>, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">wordfre = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> fp:</span><br><span class="line">    sword = i.strip().split()</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> sword:</span><br><span class="line">        <span class="keyword">if</span> word <span class="keyword">in</span> wordfre:</span><br><span class="line">            wordfre[word]+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            wordfre[word]=<span class="number">1</span></span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;文档里共出现了%d个不同的单词&quot;</span>%<span class="built_in">len</span>(wordfre),<span class="string">&quot;统计如下：&quot;</span>)</span><br><span class="line">	<span class="built_in">print</span>(wordfre)</span><br><span class="line">	<span class="built_in">print</span>(<span class="built_in">sorted</span>(wordfre.items(), key=<span class="keyword">lambda</span> e:e[<span class="number">1</span>], reverse=<span class="literal">True</span>))</span><br><span class="line"></span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;出现次数最多的三个单词为：&quot;</span>)</span><br><span class="line">	wordl = []</span><br><span class="line">	<span class="keyword">for</span> wd, num <span class="keyword">in</span> wordfre.items():</span><br><span class="line">		wordl.append((num, wd))</span><br><span class="line">	wordl.sort(reverse=<span class="literal">True</span>)</span><br><span class="line">	<span class="keyword">for</span> wd <span class="keyword">in</span> wordl[:<span class="number">3</span>]:</span><br><span class="line">		<span class="built_in">print</span>(wd)</span><br><span class="line">	fp.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上代码是使用字典存储字母次数。<br>一个关键点是：<code>dict.items()</code>会返回一个<strong>列表</strong>，列表里的元素是<strong>一个个元组</strong>。<br>所以我们如果要排序，可以直接使用<code>sorted(dict.items,key=lambda e:e[1])</code>以<strong>值为依据</strong>进行排序。结果返回一个新的列表。</p>
+<h1 id="第三方库：单词处理"><a href="#第三方库：单词处理" class="headerlink" title="第三方库：单词处理"></a>第三方库：单词处理</h1><h2 id="jieba库"><a href="#jieba库" class="headerlink" title="jieba库"></a>jieba库</h2><blockquote>
+<p>jieba是优秀的中文分词第三方库</p>
+</blockquote>
+<p>三种<strong>不同的模式</strong>：</p>
+<ul>
+<li>精确模式：把文本精确的切分开，不存在冗余单词</li>
+<li>全模式：把文本中所有可能的词语都扫描出来，有冗余</li>
+<li>搜索引擎模式：在精确模式基础上，对长词再次切分</li>
+</ul>
+<p><strong>常用的函数</strong>：</p>
+<ul>
+<li><code>jieba.cut(s)</code>:精确模式，返回一个可迭代的数据类型。</li>
+<li><code>jieba.cut(s,cut_all=True)</code>:全模式，输出文本s中所有的可能单词</li>
+<li><code>jieba.cut_for_search(s)</code>:搜索引擎模式，适合搜索引擎建立索引的分词结果</li>
+<li><code>jieba.lcut(s)</code>:精确模式，返回一个列表，<strong>建议使用</strong></li>
+<li><code>jieba.lcut(s,cut_all=True)</code>:全模式，返回一个列表，<strong>建议使用</strong></li>
+<li><code>jieba.lcut_for_search(s)</code>:搜索引擎模式，返回一个列表，<strong>建议使用</strong></li>
+<li><code>jieba.add_word(w)</code>:向分词词典中<strong>增加新词w</strong></li>
+</ul>
+<p>代码实例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jieba <span class="keyword">as</span> j</span><br><span class="line"><span class="built_in">print</span>(j.lcut(<span class="string">&quot;中国是一个伟大的祖国&quot;</span>))</span><br><span class="line"><span class="built_in">print</span>(j.lcut(<span class="string">&quot;中国是一个伟大的祖国&quot;</span>, cut_all=<span class="literal">True</span>))</span><br><span class="line"><span class="built_in">print</span>(j.lcut_for_search(<span class="string">&quot;中国是一个伟大的祖国&quot;</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>看结果</strong>：<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1647941379508.png"></p>
+<h2 id="worldcloud库"><a href="#worldcloud库" class="headerlink" title="worldcloud库"></a>worldcloud库</h2><blockquote>
+<p>wordcloud 库把词云当作一个WordCloud对象</p>
+</blockquote>
+<ul>
+<li>wordcloud.WordCloud()代表一个文本对应的词云</li>
+<li>可以根据文本中词语出现的频率等参数绘制词云</li>
+<li>绘制词云的形状、尺寸和颜色均可设定</li>
+<li>以WordCloud对象为基础，配置参数、加载文本、输出文件</li>
+</ul>
+<p><strong>具体参数如下</strong>：（配置对象参数）</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806558.png"></p>
+<p><strong>输入方法</strong>：<br><code>w.generate(file)</code>:向词云对象里加载文本</p>
+<p><strong>输出方法</strong>：<br><code>w.to_file(filename)</code>:将词云输出为文件</p>
+<p><strong>一个实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> jieba <span class="keyword">as</span> j</span><br><span class="line"><span class="keyword">import</span> wordcloud <span class="keyword">as</span> w</span><br><span class="line"></span><br><span class="line">txt = <span class="built_in">open</span>(<span class="string">&quot;./2022政府工作报告.txt&quot;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">txt1 = txt.read()</span><br><span class="line"></span><br><span class="line">list1 = j.lcut(txt1)</span><br><span class="line">txt2 =<span class="string">&quot; &quot;</span>.join(list1)</span><br><span class="line">w = w.WordCloud(font_path=<span class="string">&#x27;msyhbd.ttc&#x27;</span>)</span><br><span class="line">w.generate(txt2)</span><br><span class="line">w.to_file(<span class="string">&quot;2022.jpg&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806566.png"></p>
+<p>使用<code>jieba库</code>分好词语后可以通过<code>join</code>进行连接,在进行词云。</p>
+<h2 id="实训：三国演义词云"><a href="#实训：三国演义词云" class="headerlink" title="实训：三国演义词云"></a>实训：三国演义词云</h2><h1 id="读取csv文件"><a href="#读取csv文件" class="headerlink" title="读取csv文件"></a>读取csv文件</h1><p><strong>csv文件的格式</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806118.png"></p>
+<ol>
+<li>使用open函数进行csv文件的读取<br><strong>看代码</strong>：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;a.csv&quot;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">    ls = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> fb:</span><br><span class="line">        i = i.replace(<span class="string">&quot;\n&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">        ls.append(i.split(<span class="string">&quot;,&quot;</span>))</span><br><span class="line">    <span class="built_in">print</span>(ls)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806152.png"></p>
+<p><strong>注意点</strong>：<br>1、通过<code>for in</code> 一行行读取字符串，并<strong>去除换行符</strong>。<br>2、通过<code>split(&quot;,&quot;)</code>以逗号为分隔符进行字符串的分割，<strong>返回一个列表</strong>。</p>
+<hr>
+<ol start="2">
+<li>使用csv模块进行：</li>
+</ol>
+<p><strong>看例子</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;a.csv&quot;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">    csver = csv.reader(fb)</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> csver:</span><br><span class="line">        <span class="built_in">print</span>(row)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806165.png"></p>
+<ol start="3">
+<li>使用csv模块进行写入：<br> <strong>看代码</strong>：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;a.csv&quot;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> csver:</span><br><span class="line">    <span class="comment"># 创建writer对象用于写入</span></span><br><span class="line">    csver_w = csv.writer(csver)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;b.txt&quot;</span>, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> fb.readlines():</span><br><span class="line">            line_list = line.strip(<span class="string">&quot;\n&quot;</span>).split(<span class="string">&quot; &quot;</span>)</span><br><span class="line">            csver_w.writerow(line_list)</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;a.csv&quot;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> csver:</span><br><span class="line">    csver_r = csv.reader(csver)</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> csver_r:</span><br><span class="line">        <span class="built_in">print</span>(row)</span><br></pre></td></tr></table></figure>
+<p>在使用<strong>open</strong>打开文件后再使用<strong>csv模块</strong>选择写入还是读取模式。</p>
+<h1 id="序列化模块"><a href="#序列化模块" class="headerlink" title="序列化模块"></a>序列化模块</h1><blockquote>
+<p>定义引入：</p>
+</blockquote>
+<ul>
+<li><strong>序列化</strong>：把变量从内存变成可存储、可传输的过程。</li>
+<li>序列化后的内容可以写入磁盘或者传输。</li>
+<li><strong>反序列化</strong>：把序列化内容重新读入内存的过程。</li>
+</ul>
+<h2 id="模块：pickle"><a href="#模块：pickle" class="headerlink" title="模块：pickle"></a>模块：pickle</h2><blockquote>
+<p>实现变量的序列化</p>
+</blockquote>
+<p><strong>基本操作：</strong></p>
+<ul>
+<li><code>p.dumps()</code>把任意对象序列化为一个bytes,然后可以把这个bytes写入文件夹。</li>
+<li><code>p.dump()</code>把对象序列化后写入一个file-like Object。</li>
+<li><code>p.loads()</code>将bytes反序列化出对象。</li>
+<li><code>p.load()</code>将file-like Object 反序列化出对象</li>
+</ul>
+<p><strong>例子</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> pickle <span class="keyword">as</span> p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将字典序列化为一个bytes</span></span><br><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;a.txt&quot;</span>,<span class="string">&quot;rb&quot;</span>)</span><br><span class="line">mydict = <span class="built_in">dict</span>(name=<span class="string">&quot;xyq&quot;</span>, age=<span class="number">21</span>)</span><br><span class="line">pickle_1 = p.dumps(mydict,fp)</span><br><span class="line"><span class="built_in">print</span>(pickle_1)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>结果如下</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806166.png"></p>
+<hr>
+<p><strong>反序列化实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle <span class="keyword">as</span> p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将字典序列化并存储在c.txt</span></span><br><span class="line">fp = <span class="built_in">open</span>(<span class="string">&quot;a.txt&quot;</span>,<span class="string">&quot;wb&quot;</span>)</span><br><span class="line">mydict = <span class="built_in">dict</span>(name=<span class="string">&quot;xyq&quot;</span>, age=<span class="number">21</span>)</span><br><span class="line">p.dump(mydict,fp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开c.txt，读取其中文件并反序列化为data</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;c.txt&#x27;</span>,<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">    data = p.load(fp)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br></pre></td></tr></table></figure>
+
+<h2 id="模块：json"><a href="#模块：json" class="headerlink" title="模块：json"></a>模块：json</h2><blockquote>
+<p>定义介绍：</p>
+</blockquote>
+<p>json是现在流行的跨平台的<strong>数据交换格式</strong>。</p>
+<p><strong>例如</strong>：jupyter配置文件就是json文件。</p>
+<p>现在已经成为<strong>异构系统之间</strong>交换数据的<strong>事实标准</strong>。</p>
+<p><strong>python数据类型和json类型对应关系</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806585.png"></p>
+<blockquote>
+<p>json模块介绍：</p>
+</blockquote>
+<p><strong>模式方法</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806562.png"></p>
+<p><strong>注意</strong>：dumps是编码字符串，而dump是写入文件。前者有接收值，后者直接操作。&#x2F;&#x2F;字典或者列表可以转换。</p>
+<hr>
+<p><strong>代码实例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">dict1 = &#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;xyq&quot;</span>, <span class="string">&quot;age&quot;</span>:<span class="number">12</span>&#125;</span><br><span class="line">json_str = json.dumps(dict1)</span><br><span class="line"><span class="built_in">print</span>(json_str)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_str))</span><br><span class="line"></span><br><span class="line">dict2 = json.loads(json_str)</span><br><span class="line"><span class="built_in">print</span>(dict2)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(dict2))</span><br></pre></td></tr></table></figure>
+<p><strong>看结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806168.png"></p>
+<p>也就是说，<code>json.dumps</code>将一个python的<strong>字典</strong>转换为了一个<strong>字符串</strong>，但是还是<strong>字典的样式</strong>。而后<code>json.loads</code>将json<strong>字符串</strong>转为了python<strong>字典</strong>。具体的转换原理<strong>见下实训</strong>。</p>
+<h1 id="文件目录操作"><a href="#文件目录操作" class="headerlink" title="文件目录操作"></a>文件目录操作</h1><blockquote>
+<p>思维导图：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806192.png"></p>
+<h2 id="os模块和os-path"><a href="#os模块和os-path" class="headerlink" title="os模块和os.path"></a>os模块和os.path</h2><blockquote>
+<p>这个模块是主要访问操作系统功能的模块</p>
+</blockquote>
+<blockquote>
+<p>几个基本功能：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="built_in">print</span>(os.name)  <span class="comment"># 操作系统名称</span></span><br><span class="line"><span class="built_in">print</span>(os.stat(<span class="string">&quot;./b.txt&quot;</span>))  <span class="comment"># 返回文件属性</span></span><br><span class="line">os.rename(<span class="string">&quot;b.txt&quot;</span>, <span class="string">&quot;os2.txt&quot;</span>)  <span class="comment"># 对文件进行重命名</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(os.path.exists(<span class="string">&quot;./a.txt&quot;</span>))  <span class="comment"># 查看文件是否存在</span></span><br><span class="line"><span class="built_in">print</span>(os.path.isfile(<span class="string">&quot;os.txt&quot;</span>))   <span class="comment"># 查看是否为文件</span></span><br><span class="line"><span class="built_in">print</span>(os.path.split(<span class="string">&quot;os.txt&quot;</span>))    <span class="comment"># 分开文件和路径</span></span><br><span class="line"><span class="built_in">print</span>(os.path.splitext(<span class="string">&quot;os.txt&quot;</span>)) <span class="comment"># 分割文件名与扩展名</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806215.png"></p>
+<blockquote>
+<p>与操作目录有关的功能：</p>
+</blockquote>
+<p><strong>创建目录</strong>：</p>
+<ul>
+<li><code>os.listdir(&quot;目录&quot;)</code>：列出当前目录的内容</li>
+<li><code>os.makedir(&quot;./xyq&quot;)</code>：在指定位置创建一个目录</li>
+<li><code>os.makedirs(&quot;./xyq/name&quot;)</code>：在指定位置创建多级目录</li>
+</ul>
+<p><strong>删除目录</strong>：</p>
+<ul>
+<li><code>os.rmdir(&quot;./xyq&quot;)</code>:删除目录，要求此目录为空</li>
+<li><code>os.removedirs(&quot;./xyq/xyz&quot;)</code>:删除多级目录</li>
+</ul>
+<p><strong>判断目录</strong>：</p>
+<ul>
+<li><code>os.pathisdir(&quot;./a.txt&quot;)</code>:判断是否为目录</li>
+</ul>
+<h2 id="os模块实训"><a href="#os模块实训" class="headerlink" title="os模块实训"></a>os模块实训</h2><p>将一个文件file1重命名为file2（考虑健壮性）</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os, os.path</span><br><span class="line">file1 = <span class="built_in">input</span>(<span class="string">&quot;输入要重命名的文件：&quot;</span>)</span><br><span class="line">file2 = <span class="built_in">input</span>(<span class="string">&quot;输入重命名后的文件：&quot;</span>)</span><br><span class="line"></span><br><span class="line">file_list = os.listdir(<span class="string">&quot;.&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> file1 <span class="keyword">in</span> file_list:</span><br><span class="line">    <span class="keyword">while</span>(file2 <span class="keyword">in</span> file_list):</span><br><span class="line">        choice = <span class="built_in">input</span>(<span class="string">&quot;有重名，是否继续(Y/N):&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> choice == <span class="string">&quot;Y&quot;</span> <span class="keyword">or</span> choice == <span class="string">&quot;y&quot;</span>:</span><br><span class="line">            file2 = <span class="built_in">input</span>(<span class="string">&quot;输入新的名字：&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        os.rename(file1, file2)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;命名成功！&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;文件不存在。&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806238.png"></p>
+<p><strong>几个注意点</strong>：<br>1、使用<code>os.listdir</code>获取当前目录的文件，返回一个<strong>列表</strong>。用于<strong>判断是否有重命名文件</strong>。<br>2、使用<code>while else </code>进行重复输入。else语句是当<strong>while语句顺利执行后</strong>执行。</p>
+<h2 id="遍历目录的三种方式"><a href="#遍历目录的三种方式" class="headerlink" title="遍历目录的三种方式"></a>遍历目录的三种方式</h2><blockquote>
+<p>输出目录下的所有文件和目录</p>
+</blockquote>
+<blockquote>
+<p><strong>第一种方法</strong>：<code>os.walk()函数</code></p>
+<blockquote>
+<p>返回值是一个<strong>生成器</strong>。返回值是一个<strong>三元组</strong>。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806565.png"></p>
+<p><strong>看一个例子</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806563.png"></p>
+<p>可见，使用walk函数返回一个<strong>生成器</strong>，需要通过<code>next()</code>进行输出。<br>输出的格式为<strong>三元组</strong>：<code>当前目录，目录下的目录，目录下的文件</code>。</p>
+<hr>
+<p><strong>看一个例子：输出目录</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visit</span>(<span class="params">path</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.isdir(path):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;目录不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    list_dir = os.walk(path)</span><br><span class="line">    <span class="keyword">for</span> root, dir1 , file1 <span class="keyword">in</span> list_dir:</span><br><span class="line">        <span class="keyword">for</span> d <span class="keyword">in</span> dir1:</span><br><span class="line">            <span class="built_in">print</span>(os.path.join(root,d))</span><br><span class="line">        <span class="keyword">for</span> f <span class="keyword">in</span> file1:</span><br><span class="line">            <span class="built_in">print</span>(os.path.join(root, f))</span><br><span class="line"></span><br><span class="line">visit(<span class="string">&quot;c:\\demo&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806369.png"><br><strong>注意点</strong>：<br>1、使用<code>os.path.join()</code>输出根目录。<br>2、注意<code>walk</code>返回的元组的元素，其中第二、三个是<strong>列表</strong>，可以进行for in 。</p>
+<hr>
+<p><strong>一个例子：计算指定路径下文件字节数，除去指定的路径</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join, getsize</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visit</span>(<span class="params">path</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.isdir(path):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;目录不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    list_dir = os.walk(path)</span><br><span class="line">    <span class="keyword">for</span> root, dir1 , file1 <span class="keyword">in</span> list_dir:</span><br><span class="line">        <span class="built_in">print</span>(root, <span class="string">&quot;consumes&quot;</span>, end=<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">sum</span>([getsize(join(root, name)) <span class="keyword">for</span> name <span class="keyword">in</span> file1]), end = <span class="string">&quot; &quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;bytes in&quot;</span>, <span class="built_in">len</span>(file1), <span class="string">&quot;non-dir files&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;B&quot;</span> <span class="keyword">in</span> dir1:</span><br><span class="line">            dir1.remove(<span class="string">&quot;B&quot;</span>)</span><br><span class="line">visit(<span class="string">&quot;c:\\demo&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806382.png"><br><strong>注意</strong>：<br>1、使用<code>os.path.getsize</code>获取文件的字节数。<br>2、使用到了<strong>列表生成器</strong>将多个文件的字节数放到列表。</p>
+<hr>
+<blockquote>
+<p>第二个方法：深度遍历策略</p>
+</blockquote>
+<p><strong>看代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join, isdir, isfile</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visit</span>(<span class="params">path</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.isdir(path):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;目录不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    list_dir = os.listdir(path)</span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> list_dir:</span><br><span class="line">	   <span class="comment"># 必须先连接，才可以使用is方法判断类型</span></span><br><span class="line">        path1 = join(path, name)</span><br><span class="line">        <span class="keyword">if</span> isfile(path1):</span><br><span class="line">            <span class="built_in">print</span>(path1)</span><br><span class="line">        <span class="keyword">elif</span> isdir(path1):</span><br><span class="line">            <span class="built_in">print</span>(path1)</span><br><span class="line">            visit(path1)</span><br><span class="line"></span><br><span class="line">visit(<span class="string">&quot;c:\\demo&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>看结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806560.png"></p>
+<p>深度优先遍历的关键在于<strong>如果发现目录就会直接进入</strong>，而不是输出别的文件。</p>
+<blockquote>
+<p>广度遍历策略：</p>
+</blockquote>
+<p><strong>看代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join, isdir, isfile</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visit</span>(<span class="params">path</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.isdir(path):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;目录不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    dirs = [path]</span><br><span class="line">    <span class="keyword">while</span> dirs:</span><br><span class="line">        current = dirs.pop(<span class="number">0</span>)</span><br><span class="line">        list_dir = os.listdir(current)</span><br><span class="line">        <span class="keyword">for</span> name <span class="keyword">in</span> <span class="built_in">sorted</span>(list_dir):</span><br><span class="line">			<span class="comment"># 必须先连接，才可以使用is方法判断类型</span></span><br><span class="line">            path1 = join(current, name)</span><br><span class="line">            <span class="keyword">if</span> isfile(path1):</span><br><span class="line">                <span class="built_in">print</span>(path1)</span><br><span class="line">            <span class="keyword">elif</span> isdir(path1):</span><br><span class="line">                <span class="built_in">print</span>(path1)</span><br><span class="line">                dirs.append(path1)</span><br><span class="line"></span><br><span class="line">visit(<span class="string">&quot;c:\\demo&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>看结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806732.png"></p>
+<p>广度优先的关键在于<strong>使用了队列</strong>（利用列表的方法进行模拟）。</p>
+<h1 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h1><blockquote>
+<p>思维导图：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806733.png"></p>
+<h2 id="Python中的异常类"><a href="#Python中的异常类" class="headerlink" title="Python中的异常类"></a>Python中的异常类</h2><blockquote>
+<p>定义引入：</p>
+</blockquote>
+<ul>
+<li><strong>语法错误</strong>：在解析代码时出现的错误。当代码不符合Python的语法规则是，会报错<code>SyntaxError</code>。</li>
+<li><strong>运行时错误</strong>：语法正常，但是在运行时出现错误,但是是非致命的，即为异常。</li>
+</ul>
+<p><strong>什么是异常</strong>？异常是因为程序出错而在正常控制流以外采取的行为，当Python检测到一个错误时，解释器就会指出流无法进行。</p>
+<blockquote>
+<p>具体介绍：Python中的异常类</p>
+</blockquote>
+<p>python所有的错误都是从<code>BaseException类</code>派生的。常见的错误类型和继承关系如下：<br><a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.8/library/exceptions.html">https://docs.python.org/zh-cn/3.8/library/exceptions.html</a></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806734.png"></p>
+<h2 id="捕获和处理异常"><a href="#捕获和处理异常" class="headerlink" title="捕获和处理异常"></a>捕获和处理异常</h2><blockquote>
+<p>为了提高程序的健壮性和人机交互的友好性，需要对异常进行捕获和处理。</p>
+</blockquote>
+<ol>
+<li>在Python中，我们可以将那些在运行时可能会出现状况的代码放在<code>try代码块</code>中，在try代码块的后面可以跟上一个或多个<code>except</code>来捕获可能出现的异常状况。<br>例如在上面读取文件的过程中，文件找不到会引发<code>FileNotFoundError </code>,指定了未知的编码会引发<code>LookupError</code> ,而如果读取文件时无法按指定方式解码会引发<code>UnicodeDecodeErIor</code>，我们在<strong>try后面</strong>跟上了<strong>三个except</strong>分别处理这三种不同的异常状况。最后我们使用<code>finally代码块</code>来关闭打开的文件，释放掉程序中获取的外部资源，由于<code>finally块</code>的代码不论程序正常还是异常都会执行到(甚至是调用了sys模块的exit函数退出Python环境，finally块都会被执行，因为<code>exit函数</code>实质上是引发了SystemExit异常) ,因此我们通常把f inally块称为“<code>总是执行代码块</code>”，它最适合用来做释放外部资源的操作。</li>
+<li>如果不愿意在finally代码块中关闭文件对象释放资源，也可以使用上下文语法，通过<code>with关键字</code>指定文件对象的上下文环境并在离开上下文环境时自动释放文件资源。</li>
+</ol>
+<hr>
+<p><strong>语法格式</strong>：<code>try ...except [as ... ]...语句</code></p>
+<ul>
+<li><strong>try代码</strong>块放置可能出现异常的语句，<strong>except代码块</strong>中放置处理异常的语句。</li>
+<li>通过<strong>as语句</strong>把异常对象保存在一个变量中。</li>
+</ul>
+<hr>
+<blockquote>
+<p>一个例子：（文件open)</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">try</span>: <span class="comment"># 下写被监控的语句</span></span><br><span class="line">    f = <span class="built_in">open</span>(<span class="string">&quot;d.txt&quot;</span>, <span class="string">&quot;r&quot;</span>)</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="keyword">except</span> FileNotFoundError:  <span class="comment"># 异常处理语句</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;无法打开指定文件！&quot;</span>)</span><br><span class="line"><span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806735.png"></p>
+<p><strong>注意</strong>：没有报错，而是输出我们的提示语句。</p>
+<hr>
+<blockquote>
+<p>一个例子：else的使用</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        a = <span class="built_in">float</span>(<span class="built_in">input</span>(<span class="string">&quot;输入被除数：&quot;</span>))</span><br><span class="line">        b = <span class="built_in">float</span>(<span class="built_in">input</span>(<span class="string">&quot;输入除数：&quot;</span>))</span><br><span class="line">        c = a/b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError <span class="keyword">as</span> e1:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;除数不为0!&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(e1)</span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;输入正确格式的数！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806744.png"></p>
+<p>else 的代码块是在未捕获到异常后执行的。</p>
+<hr>
+<blockquote>
+<p>一个例子：含有<strong>finally语句</strong></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    infile = <span class="built_in">input</span>()</span><br><span class="line">    fb = <span class="built_in">open</span>(infile, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">    line = fb.readlines()</span><br><span class="line">    <span class="built_in">print</span>(line)</span><br><span class="line"><span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;未找到文件&quot;</span>)</span><br><span class="line"><span class="keyword">except</span> UnicodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;解码错误&quot;</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>不论前面是否执行，最后都会执行finally代码块。</p>
+<hr>
+<blockquote>
+<p>提醒：各个语句的执行顺序</p>
+</blockquote>
+<p>try except else finally <strong>混合使用的规则</strong>：</p>
+<ul>
+<li><strong>先后次序</strong>：<code>try &gt; except &gt; else &gt; finally</code></li>
+<li><strong>try语句</strong>至少需要配对<strong>一个except 或者 finall</strong></li>
+<li>如果有<strong>else</strong>必须要一个<strong>except</strong></li>
+</ul>
+<h2 id="raise语句"><a href="#raise语句" class="headerlink" title="raise语句"></a>raise语句</h2><blockquote>
+<p>通过这个关键字可以引发抛出异常。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RaiseError</span>(<span class="title class_ inherited__">ValueError</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun</span>(<span class="params">a,b</span>):</span><br><span class="line">    <span class="keyword">if</span> b == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> RaiseError(<span class="string">&quot;分母不可为零&quot;</span>)</span><br><span class="line"></span><br><span class="line">fun(<span class="number">3</span>,<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806745.png"></p>
+<p>在使用前需要先定义一个<strong>RaiseError类。</strong></p>
+<h2 id="排查异常和记录异常"><a href="#排查异常和记录异常" class="headerlink" title="排查异常和记录异常"></a>排查异常和记录异常</h2><blockquote>
+<p>程序员不可能捕获所有的异常，一旦这些异常被解释器捕获，就会使得程序结束。<br>所以我们要学会使用<code>sys模块</code>和<code>logging模块</code>帮助我们记录排查异常。</p>
+</blockquote>
+<blockquote>
+<p>sys模块的使用</p>
+</blockquote>
+<p>使用<code>sys.exc_info</code>获取最近引发的异常。特别适用于except代码块。<br>返回一个<strong>三元组</strong>：<code>(type,value/message,traceback)</code></p>
+<p><strong>一个例子</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    a = <span class="number">3</span>/<span class="number">0</span></span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    <span class="built_in">tuple</span> = sys.exc_info()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">tuple</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806746.png"></p>
+<hr>
+<blockquote>
+<p>logging模块的使用</p>
+</blockquote>
+<p>帮助我们记录错误信息，还可以把错误信息记录到日志文件。（日志级别为ERROR)</p>
+<p><strong>一个例子</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">3</span>/<span class="built_in">int</span>(s)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        fun(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e1:</span><br><span class="line">        logging.exception(e1)</span><br><span class="line"></span><br><span class="line">logging.error(<span class="string">&quot;下面是异常：&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806747.png"></p>
+<h1 id="扩展积累"><a href="#扩展积累" class="headerlink" title="扩展积累"></a>扩展积累</h1><h2 id="实训作业"><a href="#实训作业" class="headerlink" title="实训作业"></a>实训作业</h2><ol>
+<li>使用csv模块进行一列的读取</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">readcsv</span>():</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;book.csv&quot;</span>,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">        data = csv.reader(fb)</span><br><span class="line">        list1 = [row[<span class="number">0</span>] <span class="keyword">for</span> row <span class="keyword">in</span> data]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> list1:</span><br><span class="line">            <span class="built_in">print</span>(i)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    readcsv()</span><br></pre></td></tr></table></figure>
+<p>使用列表生成式进行列的获取。每一次for in都是<strong>返回一个列表</strong>。</p>
+<ol start="2">
+<li>使用csv模块读取一行</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">readcsv</span>():</span><br><span class="line"></span><br><span class="line">	<span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;book.csv&quot;</span>,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">		data = csv.reader(fb)</span><br><span class="line">		<span class="keyword">for</span> i,row <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">			<span class="keyword">if</span> i != <span class="number">0</span>:</span><br><span class="line">				<span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	readcsv()</span><br></pre></td></tr></table></figure>
+<p>使用<code>emumerate方法</code>获取索引。</p>
+<ol start="3">
+<li>将csv文件导入字典</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">readcsv</span>():</span><br><span class="line"> <span class="comment">#        请在此处添加代码         #</span></span><br><span class="line"> <span class="comment"># *************begin************#</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;book.csv&quot;</span>,<span class="string">&#x27;r&#x27;</span>,encoding = <span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">        list1 = []</span><br><span class="line">        list2 = []</span><br><span class="line">        data = csv.reader(fb)</span><br><span class="line">        <span class="keyword">for</span> i,low <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                list1 = low</span><br><span class="line"></span><br><span class="line">                x = low[<span class="number">0</span>]</span><br><span class="line">                y = low[<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dict1 = &#123;x:low[<span class="number">0</span>],y:low[<span class="number">1</span>]&#125;</span><br><span class="line">                list2.append(dict1)</span><br><span class="line">   </span><br><span class="line">        <span class="built_in">print</span>(list2)</span><br><span class="line"> <span class="comment"># **************end*************#</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    readcsv()</span><br></pre></td></tr></table></figure>
+
+<p>有一个非常非常需要注意的地方：使用<code>dict1[xx] = xx</code>进行赋值时，这个值是存储在一个位置的，也就是说<strong>就算你在前面将这字典导入了列表，后面赋予新的值后原来列表里的值也会随之改变</strong>。所以只能新建字典。</p>
+<ol start="4">
+<li>素数导入文件</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_prime</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;判断素数的函数&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">assert</span> n &gt; <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> factor <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, <span class="built_in">int</span>(sqrt(n)) + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> n % factor == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span> <span class="keyword">if</span> n != <span class="number">1</span> <span class="keyword">else</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">store</span>():</span><br><span class="line">    files = [<span class="string">&quot;a.txt&quot;</span>,<span class="string">&quot;b.txt&quot;</span>,<span class="string">&quot;c.txt&quot;</span>]</span><br><span class="line">    fp = []</span><br><span class="line">    <span class="keyword">for</span> file1 <span class="keyword">in</span> files:</span><br><span class="line">        fp.append(<span class="built_in">open</span>(file1,<span class="string">&quot;w&quot;</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">10000</span>):</span><br><span class="line">        <span class="keyword">if</span> i &lt;= <span class="number">99</span> <span class="keyword">and</span> is_prime(i):</span><br><span class="line">            i = <span class="built_in">str</span>(i)</span><br><span class="line">            fp[<span class="number">0</span>].write(i)</span><br><span class="line">            fp[<span class="number">0</span>].write(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line">        <span class="keyword">elif</span> <span class="number">100</span>&lt;=i&lt;=<span class="number">999</span> <span class="keyword">and</span> is_prime(i):</span><br><span class="line">            i = <span class="built_in">str</span>(i)</span><br><span class="line">            fp[<span class="number">1</span>].write(i)</span><br><span class="line">            fp[<span class="number">1</span>].write(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line">        <span class="keyword">elif</span> is_prime(i):</span><br><span class="line">            i = <span class="built_in">str</span>(i)             </span><br><span class="line">            fp[<span class="number">2</span>].write(i)</span><br><span class="line">            fp[<span class="number">2</span>].write(<span class="string">&quot;\n&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>注意点</strong>：<br>在写入文件时，需要保证<strong>写入内容为字符串</strong>，所以要使用<code>str()</code>进行转换。<br>可以使用<code>write(&quot;\n&quot;)</code>写入<strong>换行符</strong>。</p>
+<ol start="5">
+<li>将字符串转换为字典（与前面的csv文件变成字典类似）</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">name</span>):</span><br><span class="line"></span><br><span class="line">    fb = <span class="built_in">open</span>(name,<span class="string">&quot;r&quot;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    list1 = []</span><br><span class="line">    list2 = []</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> fb:</span><br><span class="line">        list1.append(line.strip().split(<span class="string">&quot; &quot;</span>))</span><br><span class="line">    <span class="keyword">for</span> i,low <span class="keyword">in</span> <span class="built_in">enumerate</span>(list1):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">            x = low[<span class="number">0</span>]</span><br><span class="line">            y = low[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            dict1 = &#123;x:low[<span class="number">0</span>],y:low[<span class="number">1</span>]&#125;</span><br><span class="line">            list2.append(dict1)</span><br><span class="line">    <span class="built_in">print</span>(list2)</span><br><span class="line">    fb.close()</span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    name = <span class="built_in">input</span>()</span><br><span class="line">    main(name)</span><br></pre></td></tr></table></figure>
+<p><strong>注意点</strong>：<br>1、使用<code>for i,low in enumerate(list1)</code>可以对列表中的元素进行索引后选择需要的行。<br>2、使用<code>line.strip().split(&quot; &quot;)</code>可以将每一行字符串变成一个列表。</p>
+<ol start="6">
+<li>json字符串的转换</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> enum <span class="keyword">import</span> Enum</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">全局标量定义来表示符合 JSON 所规定的数据类型</span></span><br><span class="line"><span class="string">（学生可以使用字典结构表示此结构）</span></span><br><span class="line"><span class="string">其中：</span></span><br><span class="line"><span class="string">BEGIN_OBJECT（&#123;）</span></span><br><span class="line"><span class="string">END_OBJECT（&#125;）</span></span><br><span class="line"><span class="string">BEGIN_ARRAY（[）</span></span><br><span class="line"><span class="string">END_ARRAY（]）</span></span><br><span class="line"><span class="string">NULL（null）</span></span><br><span class="line"><span class="string">NUMBER（数字）</span></span><br><span class="line"><span class="string">STRING（字符串）</span></span><br><span class="line"><span class="string">BOOLEAN（true/false）</span></span><br><span class="line"><span class="string">SEP_COLON（:）</span></span><br><span class="line"><span class="string">SEP_COMMA（,）</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Signal token</span></span><br><span class="line">BEGIN_OBJECT = <span class="number">1</span></span><br><span class="line">BEGIN_ARRAY = <span class="number">2</span></span><br><span class="line">END_OBJECT = <span class="number">4</span></span><br><span class="line">END_ARRAY = <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># variable token</span></span><br><span class="line">NULL_TOKEN = <span class="number">16</span></span><br><span class="line">NUMBER_TOKEN = <span class="number">32</span></span><br><span class="line">STRING_TOKEN = <span class="number">64</span></span><br><span class="line">BOOL_TOKEN = <span class="number">128</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># separator token</span></span><br><span class="line">COLON_TOKEN = <span class="number">256</span></span><br><span class="line">COMMA_TOKEN = <span class="number">512</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># end signal</span></span><br><span class="line">END_JSON = <span class="number">65536</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># json index</span></span><br><span class="line">json_index = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">token_parse</span>(<span class="params">json_str: <span class="built_in">str</span>, json_index: <span class="built_in">int</span></span>) -&gt; (<span class="built_in">tuple</span>, <span class="built_in">int</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    完成词法解析，返回token</span></span><br><span class="line"><span class="string">    :param json_str: 输入的json字符串</span></span><br><span class="line"><span class="string">    :param json_index: json字符串的位置</span></span><br><span class="line"><span class="string">    :return: 返回已处理好的token和json字符串的位置</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_num</span>(<span class="params">json_index: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        处理数字</span></span><br><span class="line"><span class="string">        :param json_index: json字符串的位置</span></span><br><span class="line"><span class="string">        :return: 返回处理数字后的token序列</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">##你的代码在这里##</span></span><br><span class="line">        rem = json_str[json_index: json_index + <span class="number">2</span>]</span><br><span class="line">        <span class="keyword">return</span>(NUMBER_TOKEN, rem), json_index + <span class="number">2</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_str</span>(<span class="params">json_index: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        处理字符串</span></span><br><span class="line"><span class="string">        :param json_index: json字符串的位置</span></span><br><span class="line"><span class="string">        :return: 返回处理字符串后的token序列</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment">##你的代码在这里##</span></span><br><span class="line">        k = <span class="number">0</span></span><br><span class="line">        num = json_index</span><br><span class="line">        <span class="keyword">while</span> json_str[num+<span class="number">1</span>] != <span class="string">&#x27;&quot;&#x27;</span>:</span><br><span class="line">            num += <span class="number">1</span></span><br><span class="line">            k += <span class="number">1</span></span><br><span class="line">        rem = json_str[json_index+<span class="number">1</span>: json_index + <span class="number">1</span> + k]</span><br><span class="line">        <span class="keyword">return</span>(STRING_TOKEN, rem), json_index + <span class="number">2</span> + k</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_null</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        处理null</span></span><br><span class="line"><span class="string">        :return: 返回处理null后的token序列</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">        rem = json_str[json_index: json_index + <span class="number">4</span>]</span><br><span class="line">        <span class="keyword">return</span> (NULL_TOKEN, rem), json_index + <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_bool</span>(<span class="params">s: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        处理true，false</span></span><br><span class="line"><span class="string">        :param s: json字符串</span></span><br><span class="line"><span class="string">        :return: 返回处理true，false后的token序列</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> s == <span class="string">&#x27;t&#x27;</span>:</span><br><span class="line">            rem = json_str[json_index: json_index + <span class="number">4</span>]</span><br><span class="line">            <span class="keyword">return</span> (BOOL_TOKEN, rem), json_index + <span class="number">4</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            rem = json_str[json_index: json_index + <span class="number">5</span>]</span><br><span class="line">            <span class="keyword">return</span> (BOOL_TOKEN, rem), json_index + <span class="number">5</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> json_index == <span class="built_in">len</span>(json_str):</span><br><span class="line">        <span class="keyword">return</span> (END_JSON, <span class="literal">None</span>), json_index</span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;&#123;&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (BEGIN_OBJECT, json_str[json_index]), json_index + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;&#125;&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (END_OBJECT, json_str[json_index]), json_index + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;[&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (BEGIN_ARRAY, json_str[json_index]), json_index + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;]&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (END_ARRAY, json_str[json_index]), json_index + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;,&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (COMMA_TOKEN, json_str[json_index]), json_index + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;:&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (COLON_TOKEN, json_str[json_index]), json_index + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;n&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> read_null()</span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;t&#x27;</span> <span class="keyword">or</span> json_str[json_index] == <span class="string">&#x27;f&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> read_bool(json_str[json_index])</span><br><span class="line">    <span class="keyword">elif</span> json_str[json_index] == <span class="string">&#x27;&quot;&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> read_str(json_index)</span><br><span class="line">    <span class="keyword">if</span> json_str[json_index].isdigit():</span><br><span class="line">        <span class="keyword">return</span> read_num(json_index)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tokenizer</span>(<span class="params">json_str: <span class="built_in">str</span></span>) -&gt; <span class="built_in">list</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    生成token序列</span></span><br><span class="line"><span class="string">    :param json_str:</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    json_index = <span class="number">0</span></span><br><span class="line">    tk, cur_index = token_parse(json_str, json_index)</span><br><span class="line">    token_list = []</span><br><span class="line">    generate_tokenlist(token_list, tk)</span><br><span class="line">    <span class="keyword">while</span> tk[<span class="number">0</span>] != END_JSON:</span><br><span class="line">        tk, cur_index = token_parse(json_str, cur_index)</span><br><span class="line">        generate_tokenlist(token_list, tk)</span><br><span class="line">    <span class="keyword">return</span> token_list</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_token</span>(<span class="params">tokentype: <span class="built_in">int</span>, tokenvalue: <span class="built_in">str</span></span>) -&gt; <span class="built_in">tuple</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    生成token结构</span></span><br><span class="line"><span class="string">    :param tokentype: token的类型</span></span><br><span class="line"><span class="string">    :param tokenvalue: token的值</span></span><br><span class="line"><span class="string">    :return: 返回token</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    token = (tokentype, tokenvalue)</span><br><span class="line">    <span class="keyword">return</span> token</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_tokenlist</span>(<span class="params">tokenlist: <span class="built_in">list</span>, token: <span class="built_in">tuple</span></span>) -&gt; <span class="built_in">list</span>:</span><br><span class="line">    tokenlist.append(token)</span><br><span class="line">    <span class="keyword">return</span> tokenlist</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">parse_json</span>(<span class="params">tokenlist: <span class="built_in">list</span></span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">check_token</span>(<span class="params">expected: <span class="built_in">int</span>, actual: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="keyword">if</span> expected &amp; actual == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> Exception(<span class="string">&#x27;Unexpected Token at position %d&#x27;</span> % json_index)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse_json_array</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        处理array对象</span></span><br><span class="line"><span class="string">        :return: 处理json中的array对象</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">global</span> json_index</span><br><span class="line">        expected = BEGIN_ARRAY | END_ARRAY | BEGIN_OBJECT | END_OBJECT | NULL_TOKEN | NUMBER_TOKEN | BOOL_TOKEN | STRING_TOKEN</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> json_index != <span class="built_in">len</span>(tokenlist):</span><br><span class="line">            json_index += <span class="number">1</span></span><br><span class="line">            token = tokenlist[json_index]</span><br><span class="line">            <span class="comment"># token_type -&gt; TokenEnum</span></span><br><span class="line">            token_type = token[<span class="number">0</span>]</span><br><span class="line">            token_value = token[<span class="number">1</span>]</span><br><span class="line">            check_token(expected, token_type)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># check through each condition</span></span><br><span class="line">            <span class="keyword">if</span> token_type == BEGIN_OBJECT:</span><br><span class="line">                array.append(parse_json_object())</span><br><span class="line">                expected = COMMA_TOKEN | END_ARRAY</span><br><span class="line">            <span class="keyword">elif</span> token_type == BEGIN_ARRAY:</span><br><span class="line">                array.append(parse_json_array())</span><br><span class="line">                expected = COMMA_TOKEN | END_ARRAY</span><br><span class="line">            <span class="keyword">elif</span> token_type == END_ARRAY:</span><br><span class="line">                <span class="keyword">return</span> array</span><br><span class="line">            <span class="keyword">elif</span> token_type == NULL_TOKEN:</span><br><span class="line">                array.append(<span class="literal">None</span>)</span><br><span class="line">                expected = COMMA_TOKEN | END_ARRAY</span><br><span class="line">            <span class="keyword">elif</span> token_type == NUMBER_TOKEN:</span><br><span class="line">                array.append(<span class="built_in">int</span>(token_value))</span><br><span class="line">                expected = COMMA_TOKEN | END_ARRAY</span><br><span class="line">            <span class="keyword">elif</span> token_type == STRING_TOKEN:</span><br><span class="line">                <span class="comment"># print(&quot;array-------------array&quot;)</span></span><br><span class="line">                array.append(token_value)</span><br><span class="line">                expected = COMMA_TOKEN | END_ARRAY</span><br><span class="line">            <span class="keyword">elif</span> token_type == BOOL_TOKEN:</span><br><span class="line">                token_value = token_value.lower().capitalize()</span><br><span class="line">                array.append(&#123;<span class="string">&#x27;True&#x27;</span>: <span class="literal">True</span>, <span class="string">&#x27;False&#x27;</span>: <span class="literal">False</span>&#125;[token_value])</span><br><span class="line">                expected = COMMA_TOKEN | END_ARRAY</span><br><span class="line">            <span class="keyword">elif</span> COMMA_TOKEN:</span><br><span class="line">                expected = BEGIN_ARRAY | BEGIN_OBJECT | STRING_TOKEN | BOOL_TOKEN | NULL_TOKEN | NUMBER_TOKEN</span><br><span class="line">            <span class="keyword">elif</span> END_JSON:</span><br><span class="line">                <span class="keyword">return</span> array</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">raise</span> Exception(<span class="string">&#x27;Unexpected Token at position %d&#x27;</span> % json_index)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse_json_object</span>():</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        处理json对象</span></span><br><span class="line"><span class="string">        :return:处理json中的json对象</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">global</span> json_index</span><br><span class="line">        expected = STRING_TOKEN | END_OBJECT</span><br><span class="line">        key = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">while</span> json_index != <span class="built_in">len</span>(tokenlist):</span><br><span class="line">            json_index += <span class="number">1</span></span><br><span class="line">            token = tokenlist[json_index]</span><br><span class="line">            token_type = token[<span class="number">0</span>]</span><br><span class="line">            token_value = token[<span class="number">1</span>]</span><br><span class="line">            <span class="comment"># print(&quot;expected: &quot;, expected, &quot;token_type: &quot;, token_type, &quot;token_value: &quot;, token_value)</span></span><br><span class="line">            check_token(expected, token_type)</span><br><span class="line">            <span class="keyword">if</span> token_type == BEGIN_OBJECT:</span><br><span class="line">                obj.update(&#123;key: parse_json_object()&#125;)</span><br><span class="line">                expected = COMMA_TOKEN | END_OBJECT</span><br><span class="line">            <span class="keyword">elif</span> token_type == END_OBJECT:</span><br><span class="line">                <span class="keyword">return</span> obj</span><br><span class="line">            <span class="keyword">elif</span> token_type == BEGIN_ARRAY:</span><br><span class="line">                <span class="comment"># print(&quot;join array&quot;)</span></span><br><span class="line">                obj.update(&#123;key: parse_json_array()&#125;)</span><br><span class="line">                expected = COMMA_TOKEN | END_OBJECT | STRING_TOKEN</span><br><span class="line">            <span class="keyword">elif</span> token_type == NULL_TOKEN:</span><br><span class="line">                obj.update(&#123;key: <span class="literal">None</span>&#125;)</span><br><span class="line">                expected = COMMA_TOKEN | END_OBJECT</span><br><span class="line">            <span class="keyword">elif</span> token_type == STRING_TOKEN:</span><br><span class="line">                pre_token = tokenlist[json_index - <span class="number">1</span>]</span><br><span class="line">                pre_token_value = pre_token[<span class="number">0</span>]</span><br><span class="line">                <span class="comment"># print(pre_token_value)</span></span><br><span class="line">                <span class="keyword">if</span> pre_token_value == COLON_TOKEN:</span><br><span class="line">                    value = token[<span class="number">1</span>]</span><br><span class="line">                    obj.update(&#123;key: value&#125;)</span><br><span class="line">                    <span class="comment">#      print(&quot;----------&quot;)</span></span><br><span class="line">                    expected = COMMA_TOKEN | END_OBJECT</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    key = token[<span class="number">1</span>]</span><br><span class="line">                    expected = COLON_TOKEN</span><br><span class="line">            <span class="comment">#     print(&quot;+++++++++&quot;)</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> token_type == NUMBER_TOKEN:</span><br><span class="line">                obj.update(&#123;key: <span class="built_in">int</span>(token_value)&#125;)</span><br><span class="line">                expected = COMMA_TOKEN | END_OBJECT</span><br><span class="line">            <span class="keyword">elif</span> token_type == BOOL_TOKEN:</span><br><span class="line">                token_value = token_value.lower().capitalize()</span><br><span class="line">                obj.update(&#123;key: &#123;<span class="string">&#x27;True&#x27;</span>: <span class="literal">True</span>, <span class="string">&#x27;False&#x27;</span>: <span class="literal">False</span>&#125;[token_value]&#125;)</span><br><span class="line">                expected = COMMA_TOKEN | END_OBJECT</span><br><span class="line">            <span class="keyword">elif</span> token_type == COLON_TOKEN:</span><br><span class="line">                expected = NULL_TOKEN | NUMBER_TOKEN | BOOL_TOKEN | STRING_TOKEN | BEGIN_ARRAY | BEGIN_OBJECT</span><br><span class="line">            <span class="keyword">elif</span> token_type == COMMA_TOKEN:</span><br><span class="line">                expected = STRING_TOKEN</span><br><span class="line">            <span class="keyword">elif</span> token_type == END_JSON:</span><br><span class="line">                <span class="keyword">return</span> obj</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">raise</span> Exception(<span class="string">&#x27;Unexpected Token at position %d&#x27;</span> % json_index)</span><br><span class="line"></span><br><span class="line">    array = []</span><br><span class="line">    obj = &#123;&#125;</span><br><span class="line">    <span class="keyword">global</span> json_index</span><br><span class="line">    <span class="keyword">if</span> tokenlist[<span class="number">0</span>][<span class="number">0</span>] == BEGIN_OBJECT:</span><br><span class="line">        <span class="keyword">return</span> parse_json_object()</span><br><span class="line">    <span class="keyword">elif</span> tokenlist[<span class="number">0</span>][<span class="number">0</span>] == BEGIN_ARRAY:</span><br><span class="line">        <span class="keyword">return</span> parse_json_array()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">&#x27;Illegal Token at position %d&#x27;</span> % json_index)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    raw_data = <span class="built_in">input</span>()</span><br><span class="line">    jlist = tokenizer(raw_data)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        jdict = parse_json(jlist)</span><br><span class="line">        <span class="built_in">print</span>(jdict)</span><br><span class="line">    <span class="keyword">except</span> BaseException <span class="keyword">as</span> result:</span><br><span class="line">        <span class="built_in">print</span>(result)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>具体解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">JSON 解析器从本质上来说就是根据 JSON 文法规则创建的状态机，输入是一个 JSON 字符串，输出是一个包含JSON各个部分的字典。一般来说，解析过程包括词法分析和语法分析两个阶段。词法分析阶段的目标是按照构词规则将 JSON 字符串解析成 Token 流，举个例子：</span><br><span class="line"></span><br><span class="line">比如有如下的 JSON 字符串：&#123;&quot;name&quot;:&quot;小明&quot;,&quot;age&quot;:14&#125;</span><br><span class="line">生成Token流为：</span><br><span class="line">[(1, &#x27;&#123;&#x27;)，(64, &#x27;name&#x27;)，(256, &#x27;:&#x27;)，(64, &#x27;小明&#x27;)，(512, &#x27;,&#x27;)，(64, &#x27;age&#x27;)，(256, &#x27;:&#x27;)，(32, 14)，(4, &#x27;&#125;&#x27;)，(65536, None)]</span><br><span class="line">可以看出字符串中的每一个部分，都用一个数字进行表示，其中这些数字分别代表不同含义，用来标识JSON字符串中不同的部分，例如：(1, &#x27;&#123;&#x27;)中‘1’表示JSON对象开始的部分，在程序中用BEGIN_OBJECT代表。</span><br><span class="line"></span><br><span class="line">通过词法分析阶段得到Token 流后，需要对Token 流进行语法分析。语法分析的目的是根据 JSON 文法检查上面 Token 序列所构成的 JSON 结构是否合法。比如 JSON 文法要求非空 JSON 对象以键值对的形式出现，不能是一些非法形式。比如：‘&#123;&quot;name&quot;:&quot;小明&quot;,&quot;age&quot;:14,’，（由于大括号没有封闭，所以结构非法）。这时候我们采用递归下降的方法逐一处理每一个Token，判断他们的结构是否合法，并组成字典结构。</span><br><span class="line"></span><br><span class="line">上文的TOKEN流最终成为如下的字典结构：</span><br><span class="line">&#123;&#x27;name&#x27;: &#x27;小明&#x27;, &#x27;age&#x27;: 14&#125;</span><br><span class="line"></span><br><span class="line">注意：输入的是JSON字符串，类型为str，输出为字典结构，类型为dict，看起来很像但并不一样</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：<br>输入的是一个字符串，而<strong>不是字典</strong>。我们要做的就是将这个字符串转换为对于的python格式。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><ol>
+<li>写入文件</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806748.png"></p>
+<ol start="2">
+<li>读入文件</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806749.png"></p>
+<ol start="3">
+<li>文件指针：</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806789.png"></p>
+<ol start="4">
+<li>os模块</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806804.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806826.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648542806844.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/04/10/python%E5%AD%A6%E4%B9%A0%20--%20ch6%20%E6%96%87%E4%BB%B6%E4%B8%8E%E5%BC%82%E5%B8%B8/" title="python学习 -- ch6 文件与异常">https://danggeovo.github.io/2023/04/10/python学习 -- ch6 文件与异常/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/10/python%E5%BA%94%E7%94%A8--excel/" rel="prev" title="python应用--excel">
+                  <i class="fa fa-angle-left"></i> python应用--excel
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch5%20%E5%87%BD%E6%95%B0%E5%92%8C%E6%A8%A1%E5%9D%97/" rel="next" title="Python学习-ch5 函数和模块">
+                  Python学习-ch5 函数和模块 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

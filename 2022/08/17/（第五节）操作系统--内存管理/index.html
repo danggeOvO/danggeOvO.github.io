@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面  本篇文章主要用于记录操作系统学习过程中内存管理的部分内容，学习资料为哈工大李治军老师的课程。本文中使用的图片大多来自课程视频和配套图书，只为个人学习所用。   内存使用与分段内存是如果使用的 程序是存储在内存中的，取指-执行是计算机工作的基本原理,CPU工作的同时内存也就跟着使用了。   如图所示，使用内存的步骤就两点：将程序放入内存、设置PC指针使得程序执行   下面就具体介绍一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="（第五节）操作系统--内存管理">
+<meta property="og:url" content="https://danggeovo.github.io/2022/08/17/%EF%BC%88%E7%AC%AC%E4%BA%94%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面  本篇文章主要用于记录操作系统学习过程中内存管理的部分内容，学习资料为哈工大李治军老师的课程。本文中使用的图片大多来自课程视频和配套图书，只为个人学习所用。   内存使用与分段内存是如果使用的 程序是存储在内存中的，取指-执行是计算机工作的基本原理,CPU工作的同时内存也就跟着使用了。   如图所示，使用内存的步骤就两点：将程序放入内存、设置PC指针使得程序执行   下面就具体介绍一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613413391.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613424086.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613435569.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613449621.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613461265.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613485904.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613499869.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613520125.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613531660.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613544873.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613556495.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613568915.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613583550.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613592900.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613603013.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617764611.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617772703.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617791361.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617801763.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617812272.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617822455.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617832869.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660618882476.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705676828.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705687633.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705700829.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705710690.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699006080.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699333975.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699625420.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699867034.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660702640359.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660703383405.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705083067.png">
+<meta property="article:published_time" content="2022-08-17T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:58:03.971Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613413391.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/08/17/%EF%BC%88%E7%AC%AC%E4%BA%94%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/08/17/%EF%BC%88%E7%AC%AC%E4%BA%94%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/","path":"2022/08/17/（第五节）操作系统--内存管理/","title":"（第五节）操作系统--内存管理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>（第五节）操作系统--内存管理 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%88%86%E6%AE%B5"><span class="nav-number">1.</span> <span class="nav-text">内存使用与分段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%98%AF%E5%A6%82%E6%9E%9C%E4%BD%BF%E7%94%A8%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">内存是如果使用的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%AE%B5%E6%80%9D%E6%83%B3"><span class="nav-number">1.2.</span> <span class="nav-text">分段思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E4%B8%8E%E5%88%86%E9%A1%B5"><span class="nav-number">2.</span> <span class="nav-text">内存分区与分页</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA"><span class="nav-number">2.1.</span> <span class="nav-text">内存分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%A1%B5-%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">内存分页(物理内存）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8%E5%92%8C%E5%BF%AB%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">多级页表和快表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8"><span class="nav-number">3.1.</span> <span class="nav-text">多级页表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E8%A1%A8"><span class="nav-number">3.2.</span> <span class="nav-text">快表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AE%B5%E3%80%81%E9%A1%B5%E7%BB%93%E5%90%88%E7%9A%84%E5%AE%9E%E9%99%85%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">段、页结合的实际内存管理机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AE%B5%E3%80%81%E9%A1%B5%E5%A6%82%E4%BD%95%E7%BB%93%E5%90%88"><span class="nav-number">4.1.</span> <span class="nav-text">段、页如何结合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">4.2.</span> <span class="nav-text">内存管理的流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.3.</span> <span class="nav-text">内存管理的代码实现</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/08/17/%EF%BC%88%E7%AC%AC%E4%BA%94%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="（第五节）操作系统--内存管理 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          （第五节）操作系统--内存管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-17 13:48:32" itemprop="dateCreated datePublished" datetime="2022-08-17T13:48:32+08:00">2022-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:58:03" itemprop="dateModified" datetime="2023-11-08T17:58:03+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong></p>
+<blockquote>
+<p>本篇文章主要用于记录操作系统学习过程中<strong>内存管理的部分内容</strong>，学习资料为<strong>哈工大李治军老师</strong>的课程。<br>本文中使用的图片大多来自课程视频和配套图书，<strong>只为个人学习所用</strong>。</p>
+</blockquote>
+</blockquote>
+<h1 id="内存使用与分段"><a href="#内存使用与分段" class="headerlink" title="内存使用与分段"></a>内存使用与分段</h1><h2 id="内存是如果使用的"><a href="#内存是如果使用的" class="headerlink" title="内存是如果使用的"></a>内存是如果使用的</h2><blockquote>
+<p><code>程序</code>是存储在<strong>内存</strong>中的，<code>取指-执行</code>是计算机工作的基本原理,CPU工作的同时<strong>内存也就跟着使用</strong>了。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613413391.png"></p>
+<p>如图所示，<strong>使用内存</strong>的步骤就<strong>两点</strong>：<code>将程序放入内存</code>、<code>设置PC指针使得程序执行</code></p>
+<hr>
+<blockquote>
+<p>下面就具体介绍一下如何将查询放到内存并进行执行的</p>
+</blockquote>
+<p>程序放到内存只需要将<strong>磁盘</strong>中的编译完毕的文件<strong>读入内存</strong>即可。<br>如下图所示，程序放到<strong>内存中</strong>即可使用<strong>call指令</strong>进行调用。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613424086.png"></p>
+<blockquote>
+<p>需要关注的是要将程序放到<strong>内存中的什么位置</strong>呢？</p>
+</blockquote>
+<p>上图中给了两个例子，显然下面的例子是对的，即从内存中取出一段空闲的空间来存放程序。</p>
+<p>不过即便是下面的例子也有错误，因为其中的指令：<code>call 40</code>所跳转的位置是错误的，需要进行<code>重定位操作</code>。</p>
+<blockquote>
+<p><code>重定位</code>：保证对内存地址的正确访问，要进行地址翻译。</p>
+</blockquote>
+<p>前面的例子中提到的<code>call 40</code> 中的<strong>40</strong>是<code>逻辑地址</code>，在实际使用时需要进行修改，变为<code>物理地址</code>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613435569.png"></p>
+<p>在程序<code>载入时</code>进行<code>重定位操作</code>，因为我们在<code>编译时</code>往往<strong>不知道哪一段内存是空闲</strong>的。</p>
+<p><strong>注</strong>：在<strong>一些嵌入式系统</strong>中可以在<strong>编译时</strong>进行重定位，因为某些程序载入的位置是固定的。</p>
+<hr>
+<blockquote>
+<p>程序载入后还<strong>需要移动</strong>：<code>交换（swap)</code></p>
+</blockquote>
+<p>如下图所示，进程在使用的过程中可能因为<strong>阻塞</strong>等原因需要进行移动，这时其重定位地址就会出现问题。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613449621.png"> </p>
+<hr>
+<blockquote>
+<p>所以：<strong>重定位最合适的时机</strong>–<code>运行时重定位</code>（也是我们主要要介绍的）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613461265.png"></p>
+<p><code>call 40</code> 在内存中是<strong>不变</strong>的，在<strong>运行时</strong>根据<code>base地址+offset</code>获得新的<strong>物理地址</strong>。</p>
+<p>而进行<strong>地址翻译</strong>时最关键的点在于<strong>获得base基址</strong>。这个基址是<code>存储在PCB</code>中的，在<strong>创建进程</strong>时就要将申请到的地址基址放到PCB中，并在之后的<strong>切换时</strong>不断<strong>更新</strong>基址的值。</p>
+<p>而在进行程序的执行时，当涉及到<strong>内存地址</strong>就要先进行<code>地址翻译</code>，即<code>基地址+offset=物理地址</code></p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong>：</p>
+<blockquote>
+<p>上文介绍了内存使用的一个<strong>直观想法</strong>：<strong>将程序载入内存并进行地址翻译以执行相关程序</strong>。<br>下面就要在这个直观想法的基础上<strong>进行推进</strong>，第一个要推进的点：<code>引入分段--将程序一起载入内存吗？</code></p>
+</blockquote>
+</blockquote>
+<h2 id="分段思想"><a href="#分段思想" class="headerlink" title="分段思想"></a>分段思想</h2><p>如下图所示，<strong>程序员眼中的程序</strong>是可以<strong>分为若干段</strong>的。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613485904.png"></p>
+<p>将程序<strong>按段分配</strong>可以<strong>独立考虑</strong>每个段的内容，并且每一个段<strong>有其各自的特点</strong>，如：<strong>代码段可读、堆栈段可以动态增长等</strong>，需要分开处理。</p>
+<p>所以，程序在载入内存时也是<strong>分段进行载入</strong>的。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613499869.png"></p>
+<p>所以在进行寻址时也就不是用单纯的基址了，而是使用<strong>段基址</strong>。在<code>PCB</code>中就要存放<strong>所有段的基址</strong>。<br><strong>strong text</strong><br>这个用于<strong>存储段地址</strong>的表叫做<strong>LDT表</strong>，是每一个进程都要有的。</p>
+<blockquote>
+<p>GDT和LDT</p>
+</blockquote>
+<p><strong>操作系统层面</strong>的段地址表叫做<code>GDT</code>，每一个<strong>进程独有</strong>的段地址表叫做<code>LDT</code>,也就是我们前面讲CPU管理时的<strong>映射表</strong>.</p>
+<p>所以在进程创建时，将程序分段载入内存，并将每一个段的基址存放在PCB中的LDT表，并通过这个表进行寻址。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong>：</p>
+<blockquote>
+<p>前面我们介绍了操作系统使用内存的原理。还介绍了程序的<strong>分段机制</strong>，通过段基址和偏移获取物理地址。<br>下面我们接着进行介绍：在经过编译后程序被分为多个段，但是要写入内存还要<strong>在内存空间中找到一个空闲的区域</strong>。如何去找呢？这就是我们下面的内容。</p>
+</blockquote>
+</blockquote>
+<h1 id="内存分区与分页"><a href="#内存分区与分页" class="headerlink" title="内存分区与分页"></a>内存分区与分页</h1><h2 id="内存分区"><a href="#内存分区" class="headerlink" title="内存分区"></a>内存分区</h2><blockquote>
+<p>操作系统初始化时将内存进行分区，采取的分区策略是可变分区。在实际中，通过一些核心数据结构来管理可变分区。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613520125.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613531660.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613544873.png"></p>
+<p>通过<strong>空闲分区表</strong>和<strong>已分配分区表</strong>来记录内存区域信息。</p>
+<blockquote>
+<p>通过一些算法来适配区域申请。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613556495.png"></p>
+<p>不同的<strong>适配算法</strong>都有各自的优缺点，比如：<strong>首先适配的复杂度较低，而最佳适配的复杂度高且分割后剩余的区域较小</strong>等，但是他们<strong>没有对错</strong>，都是对的，只是要根据<strong>具体情况</strong>来进行选择。（<code>操作系统中的很多算法都无对错之分</code>）</p>
+<p>例如下面<strong>这个例子</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613568915.png"></p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong>：</p>
+<blockquote>
+<p>上文我们介绍了操作系统对于内存的<strong>分区处理以及适配算法</strong>。<br>但是内存的<strong>分区机制</strong>导致内存<strong>效率较低</strong>，所以我们引入<code>分页机制</code>来解决这个问题。<br>注：<strong>分页机制</strong>是对于<code>物理内存</code>来说的，而<strong>分区机制</strong>是对于<code>虚拟内存</code>来说的，二者各有用处，而将<code>段页合并</code>是下一节的基本内容。</p>
+</blockquote>
+</blockquote>
+<h2 id="内存分页-物理内存）"><a href="#内存分页-物理内存）" class="headerlink" title="内存分页(物理内存）"></a>内存分页(物理内存）</h2><blockquote>
+<p>可变分区的问题：<code>内存碎片</code></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613583550.png"></p>
+<p>由于采取<strong>可变分区机制</strong>以及多次的<strong>段请求</strong>，导致内存中的<strong>碎片区域</strong>越来越多，最终导致即使剩余的<strong>空闲区域大于申请区域</strong>也无法完成分配，因为申请的空间必须是<strong>连续的</strong>。</p>
+<p>为了解决这个问题，引入<code>内存紧缩</code>的概念，即<strong>将已分配区域连接在一起，将碎片区域合并</strong>。但是这种方法也无法从根本上解决问题，因为内存紧缩对<strong>资源的消耗很大</strong>，往往在紧缩过程中涉及到的<strong>进程无法执行</strong>，表现用户眼里就是<strong>死机</strong>。</p>
+<hr>
+<blockquote>
+<p><strong>问题的解决</strong>：<code>申请区域离散</code></p>
+</blockquote>
+<p>既然无法将碎片合并，那就将申请的区域打散为多个<code>基本单元</code>，并在内存中取这些<strong>内存单元</strong>去分配，这就是<strong>内存的分页机制</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613592900.png"></p>
+<p>将内存平均分割为多个<strong>基本单元</strong>，也就是<code>页</code>，一般将<strong>4k大小</strong>区域为一个页。这种方法可以很好解决<strong>碎片区域问题</strong>，因为即便是这些碎片区域也是<strong>由页构成</strong>。</p>
+<hr>
+<blockquote>
+<p>页已经载入内存，接下来就要进行寻址</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660613603013.png"></p>
+<p>如图所示，通过<strong>页表</strong>对地址进行重定位。页表中存储着页号以及其对应的页框号。</p>
+<p>在重定位的过程中，地址<strong>除以4k</strong>也就是<strong>右移12位</strong>即可得到页号，而后<strong>查询页表</strong>获取页框号最终得到<strong>物理地址</strong>。<br>页表与PCB关联且通过<code>MMU</code>自动进行运算。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong>：</p>
+<blockquote>
+<p>前面介绍了内存的<code>分页机制</code>，可以有效<strong>解决内存碎片</strong>的问题。<br>但是分页机制<strong>也有弊端</strong>：对于现在以<strong>GB为单位</strong>的内存空间来说，以<strong>4k为基本单元</strong>进行划分，所得到的<strong>页表就会很大</strong>。而下面要介绍的<code>多级页表和快表</code>就是在面对<strong>大页表问题</strong>是提出的解决方法。多级页表和块表加上前面讲到的内容就可以构成一个可以较为高效工作的分页机制。</p>
+</blockquote>
+</blockquote>
+<h1 id="多级页表和快表"><a href="#多级页表和快表" class="headerlink" title="多级页表和快表"></a>多级页表和快表</h1><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617764611.png"></p>
+<p>如图所示，<strong>页小空间大导致页表太大</strong>。 具体有多大呢？看下面的例子。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617772703.png"></p>
+<p>如图所示，<strong>每一个进程都要有对应的页表</strong>。根据<code>32位地址和4k单元</code>计算，一个页表的含有<code>2^20</code>个页表项，也就是<strong>4M</strong>（一个页表项大小为<strong>4B</strong>）。<br>如果<strong>运行多个进程</strong>，单单是页表存储空间就要占据很大一部分，造成<strong>空间的极大浪费</strong>。</p>
+<p>但是在实际情况下，<strong>很多逻辑地址都是使用不到</strong>的。因为一般程序的<strong>代码段、数据段等都不会太大</strong>，很难达到4G的上限.<br>那么该如何进行改进呢？</p>
+<blockquote>
+<p>第一种尝试：<strong>只存放用到的页</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617791361.png"></p>
+<p>如图所示，我们将页表中<strong>不使用的页表项删除</strong>，得到一个较小的页表。但是尽管这种方法可以<strong>减少页表对于内存的浪费</strong>，却会造成程序执行的<strong>速度大幅度降低</strong>。</p>
+<p><code>为什么会降低呢？</code>因我们需要<strong>根据页号查询页框号</strong>以获取物理地址，这时如果页表中的<strong>页号不连续</strong>，就要依次对这些内存进行比较，而<strong>多次的内存访问会降低速度</strong>。</p>
+<p>所以<strong>得出结论</strong>：第一种尝试<strong>失败</strong>，必须<strong>保证页表中页号的连续</strong>，这样只需要一次即可获取到页框号。</p>
+<blockquote>
+<p><strong>那么怎么样可以即连续有占用内存少呢</strong>？<code>多级页表</code>就可以。这也是我们的第二种尝试。</p>
+</blockquote>
+<h2 id="多级页表"><a href="#多级页表" class="headerlink" title="多级页表"></a>多级页表</h2><blockquote>
+<p><strong>多级页表</strong>可以用书的<code>章目录和节目录</code>来类别思考。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617801763.png"></p>
+<p>如图所示，<strong>32位地址</strong>分为<code>页目录号、页号、偏移</code>三部分，通过<strong>页目录号找到目标区域</strong>、通过页号在此区域得到正确的页框号，最终与偏移一起得到物理地址。</p>
+<p>这种方法既可以<strong>保证页表的大小</strong>，又可以<strong>保证查询的速度</strong>。xxxxxxxx xxxxxxxxxxxx</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong>：</p>
+<blockquote>
+<p>又有问题：多级页表的<strong>多次跳转</strong>，会造成<strong>访问次数的增加</strong>，<strong>时间效率</strong>会变低。当然即便如此也要比前面提到的不连续存储要快很多。<br>为了解决这个问题：<strong>引入快表</strong>。</p>
+</blockquote>
+</blockquote>
+<h2 id="快表"><a href="#快表" class="headerlink" title="快表"></a>快表</h2><blockquote>
+<p>也可以<strong>类比我们看书</strong>，当目录很多很复杂时，我们可以<strong>记住某个章节的页数</strong>，下次直接查看即可。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617812272.png"></p>
+<p>如图所示，使用<code>TLB寄存器</code>保存一些<strong>常用的地址页数</strong>，并借助硬件实现一步得出查询结果（多个数据一起比较）。</p>
+<blockquote>
+<p>TLB的实现与优化</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617822455.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660617832869.png"></p>
+<p>如图所示，通过<strong>设置合适的TLB条目数</strong>以保证其命中率。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong>：</p>
+<blockquote>
+<p>前面我们介绍了内存的<strong>分页机制和分段机制</strong>，二者各有优缺点。<br>下面我们要介绍的就是<strong>如何将这两种机制结合</strong>，取其精华用于<strong>实际的内存管理</strong>。</p>
+</blockquote>
+</blockquote>
+<h1 id="段、页结合的实际内存管理机制"><a href="#段、页结合的实际内存管理机制" class="headerlink" title="段、页结合的实际内存管理机制"></a>段、页结合的实际内存管理机制</h1><blockquote>
+<p><strong>程序员</strong>希望用<strong>段</strong>（便于管理），<strong>物理内存</strong>希望用<strong>页</strong>（保证内存的空间使用效率）</p>
+</blockquote>
+<h2 id="段、页如何结合"><a href="#段、页如何结合" class="headerlink" title="段、页如何结合"></a>段、页如何结合</h2><blockquote>
+<p>段页结合的<strong>中转点</strong>：<code>虚拟内存</code></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660618882476.png"></p>
+<p>如图所示，通过<strong>虚拟内存作为中转</strong>，实现<strong>段页的结合</strong>。</p>
+<blockquote>
+<p>段面向用户、页面向硬件:将<strong>程序放到内存</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705676828.png"></p>
+<p>如图所示，使用虚拟内存进行<strong>段划分</strong>并<strong>面向用户</strong>使用；而后将虚拟内存中的各个区域<strong>映射到物理地址</strong>的各个页上。</p>
+<blockquote>
+<p> 段页同时存在的<strong>重定位操作</strong>：保证<strong>程序的正确执行</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705687633.png"></p>
+<p>如图所示，重定位操作的大体流程：通过查询<code>段表</code>将<code>逻辑地址</code>转换为<code>虚拟地址</code>；而后通过<code>页表</code>将<code>虚拟地址</code>转换为实际<code>物理地址</code>。</p>
+<h2 id="内存管理的流程"><a href="#内存管理的流程" class="headerlink" title="内存管理的流程"></a>内存管理的流程</h2><blockquote>
+<p><strong>流程框架</strong>建立：</p>
+<blockquote>
+<p>先通过<strong>拓扑</strong>建立内存管理的流程，包括：<strong>程序载入和程序执行(地址翻译）</strong>，而后通过<strong>代码进行实现</strong>。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705700829.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705710690.png"></p>
+<p>如图所示，<strong>内存管理的流程</strong>：</p>
+<ol>
+<li>先对虚拟地址进行<strong>分区操作</strong>，而后通过<strong>适配算法</strong>得到<strong>空闲区域</strong>分配给进程</li>
+<li><strong>建立段表（LDT）</strong>完成虚拟内存与程序段之间的映射</li>
+<li>将<strong>虚拟内存</strong>中的各个分区均分成多个页，并与物理内存中的空闲页框绑定。</li>
+<li><strong>建立页表</strong>来记录<strong>虚拟内存页和物理内存页框</strong>之间的映射关系</li>
+<li>前面4步已经完成了程序的载入，这一步要完成<strong>程序的执行</strong>。</li>
+</ol>
+<blockquote>
+<p>在介绍<strong>代码实现</strong>之前，我们先来看一下<strong>如何执行</strong>载入内存中的程序</p>
+</blockquote>
+<p>要想执行程序，就只需要将<strong>程序放到CPU中</strong>即可，这一点在<strong>CPU管理</strong>时已经讲过。所以，这里我们提到程序执行更加需要关注的是：<code>地址翻译</code>。（代码中涉及到地址的地方都要进行地址翻译才可以得到实际物理地址，也<strong>只有物理地址才可以被实际操作</strong>）</p>
+<p>在<strong>段页结合的内存管理机制</strong>下，<strong>地址翻译</strong>也就是重定位需要<strong>分两步进行</strong>：</p>
+<ol>
+<li>首先完成<code>逻辑地址到虚拟地址的转换</code>。这个例子中逻辑地址为：<code>CS:40</code>，通过<strong>查询LDT表</strong>获取到<strong>代码段的基址</strong>，而后<strong>与偏移相加</strong>得到虚拟地址。</li>
+<li>将<code>虚拟地址与物理地址进行转换</code>。虚拟地址已经知道，将其除以页大小即可<strong>得到页号</strong>，而后<strong>查询页表</strong>即可得到<strong>页框号</strong>，将其与偏移加和得到实际物理地址。</li>
+</ol>
+<p><strong>注</strong>：在实际的计算机中，我们只需要给<code>LDTR</code>和<code>CR3</code>寄存器分别赋值为<code>LDT表初始地址</code>和<code>页表初始地址</code>，<code>MMU</code>就会在遇到地址时<strong>自动完成地址翻译</strong>。</p>
+<hr>
+<h2 id="内存管理的代码实现"><a href="#内存管理的代码实现" class="headerlink" title="内存管理的代码实现"></a>内存管理的代码实现</h2><blockquote>
+<p>具体代码实现：<strong>从fork()开始</strong></p>
+<blockquote>
+<p>这里主要关注与<strong>内存管理</strong>相关的代码，其他有关<strong>CPU管理</strong>的部分不涉及。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699006080.png"></p>
+<p>上图所示代码就是<code>fork()</code>创建进程时的<strong>核心函数</strong>，通过<code>copy_process()</code>完成<strong>PCB的创建</strong>、<strong>内核栈的分配和初始化</strong>、<strong>内核栈与PCB的关联</strong>等。同时，通过<strong>copy_mem()<strong>完成</strong>进程空间的分配</strong>。</p>
+<p>我们来<strong>分析一下代码</strong>，主要是<code>copy_mem()</code>函数：</p>
+<p>先来看一下这个<code>copy_mem函数</code>的<strong>具体代码</strong>：</p>
+<blockquote>
+<p>代码部分1：<strong>虚存分割与段表建立</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699333975.png"></p>
+<p>分析上图代码：<strong>先定义一个变量</strong>、而后为这个<strong>变量赋值</strong>、之后通过<code>set_base()</code>函数为<strong>LDT表写入内容</strong>。所以不难看出，这个函数就是为了<code>申请段空间而后建立段表</code>。</p>
+<p>代码中<code>nr</code>指的是<strong>进程号</strong>，即为每一个进程分配64M大小空间，并根据进程号依次分配。分配后可以得到如下图的<strong>虚拟内存视图</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699625420.png"></p>
+<p>当然，上图所示是<strong>最简单的虚拟内存分割方法</strong>，在实际中往往采取<strong>很多算法</strong>进行内存分配，不过这不是我们现在要考虑的，我们只需要知道<strong>此函数完成了虚拟内存的分配与段表的建立</strong>。</p>
+<blockquote>
+<p>代码部分2：<strong>内存分页与页表映射</strong></p>
+</blockquote>
+<p>先来<strong>看一下代码</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660699867034.png"></p>
+<p>通过代码不难看出为什么这个函数叫做<code>copy_mem()</code>，因为子进程创建时其内存空间是<strong>复制父进程的</strong>。代码中的<code>get_base(current-&gt;led[2])</code>就是为了<strong>获取父进程虚存空间与内存页框的映射关系</strong>，而后通过<code>copy_page_tables()</code>函数将其复制给<code>new_data_base</code>也就是<strong>子进程的页表</strong>。</p>
+<p>至于<strong>如何复制</strong>的，这个过程也很简单，有<strong>代码如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660702640359.png"></p>
+<p>上图代码将父进程页表复制给子进程，主要通过<strong>两个for循环</strong>实现，<strong>外层循环</strong>实现<strong>页目录的复制</strong>、<strong>内层循环</strong>实现<strong>页表项的复制</strong>。</p>
+<p><strong>具体的流程</strong>如下：</p>
+<ol>
+<li>先获取<strong>父进程页目录表的基址</strong>。（在操作系统启动时<code>head.s</code>中有初始化页目录表的代码，其中将页目录表放在<strong>内存的0地址</strong>处）</li>
+<li>而后要<strong>获取页目录号</strong>。这一点是通过查询父进程的<strong>ldt表</strong>获得的，ldt表中存储着32位地址，其中前10位为页目录号，所以代码中使用<code>from&gt;&gt;20x4</code>得到所需页目录在页目录表的位置，并将其<strong>复制给子进程</strong>。</li>
+<li>通过页目录表中存储的地址也就是<strong>页表基址</strong>与<strong>页号</strong>即可获取<strong>物理内存的页框号</strong>，将其填写到子进程页表项中即可。</li>
+</ol>
+<p>经过上述过程即可完成子进程<strong>内存空间的分配</strong>，得到以下<strong>内存视图</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660703383405.png"></p>
+<blockquote>
+<p>代码部分3：父子进程<strong>程序的执行</strong></p>
+</blockquote>
+<p>上述代码实现了<strong>子进程内存空间的分配与LDT表和页目录、页表的建立</strong>。下面我们就要<strong>在此基础上执行代码</strong>：</p>
+<blockquote>
+<blockquote>
+<p>我们以<code>*p= 7</code> 为例</p>
+</blockquote>
+</blockquote>
+<p>假设p的<strong>逻辑地址为300h</strong>，要完成上述代码，需要<strong>以下两步</strong>：</p>
+<ol>
+<li>首先根据逻辑地址完成<strong>地址翻译</strong>。具体为：查<strong>询LDT[2]<strong>获取到</strong>数据段基址</strong>，假设为0x1000000,所以可以得到<strong>虚拟地址</strong>为0x100300；然后根据这个虚拟地址<strong>获取物理地址</strong>，具体为：通过前10位得到页目录号，通过中间10位得到页号，通过偏移得到物理地址，当然这个过程<code>由MMU自动执行获取</code>。</li>
+<li>获取到物理地址后，即可由<strong>数据总线</strong>将7发送到此地址处，完成程序.</li>
+</ol>
+<blockquote>
+<blockquote>
+<p>我们在上述<strong>代码基础</strong>上继续执行：<code>父子进程都要执行prinf(p)</code></p>
+</blockquote>
+</blockquote>
+<p>程序执行的流程：根据p的逻辑地址翻译后得到物理地址，而后通过地址总线和数据总线完成数据传输，最后进行打印，并且打印的结果都是7.</p>
+<p>为什么打印的结果一样呢?因为父子进程定位到的物理地址是一样的，本质还是我们上面介绍的代码实现：通过复制的方式实现子进程内存空间的分配。</p>
+<blockquote>
+<blockquote>
+<p>继续扩展：<code>子进程执行*p=8,而后print(p)</code></p>
+</blockquote>
+</blockquote>
+<p>这一步<strong>有所不同</strong>，当然程序执行流程还是那样：先通过p获取到其<strong>物理地址</strong>，这一步和上一个代码一样，但是在获取后<strong>不会直接进行赋值</strong>。因为<strong>子进程对p的物理页框的权限为只读</strong>，所以无法进行赋值。这时就会出现<code>异常中断</code>，此中断会为子进程<strong>分配一个新的内存页框并修改页表完成映射</strong>。这样程序就会将8赋值为这个新的页框了。</p>
+<p>程序执行的<strong>内存视图</strong>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1660705083067.png"></p>
+<hr>
+<hr>
+<blockquote>
+<p><strong>写在最后</strong></p>
+<blockquote>
+<p><strong>总结</strong>：这一篇博客完成了操作系统中<strong>内存管理</strong>的学习。通过回顾整理的内容，发现内存管理部分就<strong>两个部分</strong>：<code>内存空间的分配</code>、<code>内存中程序的执行</code>。其中内存空间的分配为了兼顾用户和计算机需求，采取<strong>段页结合的机制</strong>，通过<strong>虚拟内存</strong>作为中转实现逻辑地址和物理地址的转换。而<strong>程序执行</strong>的关键在于<strong>地址翻译也就是重定位</strong>，这一步是由<strong>MMU自动实现</strong>的，但是具体到底层还是<strong>LDT表和页目录、页表的查询</strong>，因此理解这两个表尤为重要。<br><strong>下一步计划</strong>：进行<strong>磁盘、文件系统</strong>的学习，如何将磁盘文件放到内存中；同时<strong>完成内存管理的实验</strong>，通过实际修改代码实现对内存管理的深入理解。</p>
+</blockquote>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/08/17/%EF%BC%88%E7%AC%AC%E4%BA%94%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="（第五节）操作系统--内存管理">https://danggeovo.github.io/2022/08/17/（第五节）操作系统--内存管理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/13/%EF%BC%88%E7%AC%AC%E5%9B%9B%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%87%E6%8D%A2/" rel="prev" title="（第四节）操作系统--多进程之线程切换（3部分）">
+                  <i class="fa fa-angle-left"></i> （第四节）操作系统--多进程之线程切换（3部分）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/08/19/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E6%89%A9%E5%B1%95%E7%9F%A5%E8%AF%86/" rel="next" title="操作系统--扩展知识">
+                  操作系统--扩展知识 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

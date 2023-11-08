@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="导学 在正课开始之前对所要学习的内容进行梳理。  主要内容–7个部分 变量    数字类型    字符串    基本输入输出    编程规范    编码格式    两个实例   目标和要求 在本节，要求完成第一个实训作业：turtle作品，会阅读官方文档。   下面我们就按照上面的规划进行深入的学习——&gt;   2.1 变量 下面给出本小节思维导图   变量的定义 在编程语言的学习中，变量是最">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python学习-ch2基本数据类型">
+<meta property="og:url" content="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="导学 在正课开始之前对所要学习的内容进行梳理。  主要内容–7个部分 变量    数字类型    字符串    基本输入输出    编程规范    编码格式    两个实例   目标和要求 在本节，要求完成第一个实训作业：turtle作品，会阅读官方文档。   下面我们就按照上面的规划进行深入的学习——&gt;   2.1 变量 下面给出本小节思维导图   变量的定义 在编程语言的学习中，变量是最">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185429.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185432.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185434.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185436.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185439.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185440.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185441.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185444.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185442.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185445.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185446.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185448.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185468.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185471.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185473.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185474.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185476.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185479.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185480.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185482.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185639.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185640.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185642.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185646.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185647.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185648.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185649.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185650.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185651.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185652.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185653.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185654.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185655.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185656.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185657.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185658.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185659.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185676.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185677.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185679.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185737.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185738.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185739.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185740.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185741.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185742.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185743.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185791.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185806.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185914.png">
+<meta property="article:published_time" content="2023-04-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:16:08.624Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185429.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/","path":"2023/04/10/Python课程学习-基本数据类型/","title":"Python学习-ch2基本数据类型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python学习-ch2基本数据类型 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BC%E5%AD%A6"><span class="nav-number">1.</span> <span class="nav-text">导学</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%86%85%E5%AE%B9%E2%80%937%E4%B8%AA%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">主要内容–7个部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%92%8C%E8%A6%81%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">目标和要求</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-1-%E5%8F%98%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">2.1 变量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">变量的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">2.2.</span> <span class="nav-text">变量的命名规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%85%B3%E9%94%AE%E5%AD%97%E5%92%8C%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">查看关键字和内置函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">2.4.</span> <span class="nav-text">常量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-2%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">2.2数字类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E3%80%81%E6%B5%AE%E7%82%B9%E6%95%B0%E3%80%81%E5%A4%8D%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">整数、浮点数、复数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E5%92%8C%E6%B5%AE%E7%82%B9%E6%95%B0"><span class="nav-number">3.1.1.</span> <span class="nav-text">整数和浮点数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E6%95%B0"><span class="nav-number">3.1.2.</span> <span class="nav-text">复数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%88%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.</span> <span class="nav-text">进制之间的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E6%A8%A1%E5%9D%97"><span class="nav-number">3.3.</span> <span class="nav-text">内置模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E6%A8%A1%E5%9D%97%E2%80%93math"><span class="nav-number">3.3.1.</span> <span class="nav-text">内置模块–math</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E6%A8%A1%E5%9D%97%E2%80%93random"><span class="nav-number">3.3.2.</span> <span class="nav-text">内置模块–random</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-3-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">4.</span> <span class="nav-text">2.3 字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%A1%A8%E7%A4%BA"><span class="nav-number">4.1.</span> <span class="nav-text">字符串的表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="nav-number">4.2.</span> <span class="nav-text">字符串的常用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.2.1.</span> <span class="nav-text">字符串的索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8B%BC%E6%8E%A5"><span class="nav-number">4.2.2.</span> <span class="nav-text">字符串的拼接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%96%B9%E6%B3%95"><span class="nav-number">4.2.3.</span> <span class="nav-text">常用的字符串方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.2.4.</span> <span class="nav-text">字符串的转换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-4-%E8%BE%93%E5%85%A5%E3%80%81%E8%BE%93%E5%87%BA"><span class="nav-number">5.</span> <span class="nav-text">2.4 输入、输出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%EF%BC%9AOutput"><span class="nav-number">5.1.</span> <span class="nav-text">输出：Output</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F%EF%BC%9A"><span class="nav-number">5.1.1.</span> <span class="nav-text">输出格式：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%A2%E5%BC%8F%E7%9A%84%E8%BE%93%E5%87%BA"><span class="nav-number">5.1.1.1.</span> <span class="nav-text">%形式的输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%80%9C-%E2%80%9D-dormat-str-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0"><span class="nav-number">5.1.1.2.</span> <span class="nav-text">“{}”.dormat(str)格式化字符串函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%EF%BC%9AInput"><span class="nav-number">5.2.</span> <span class="nav-text">输入：Input</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#eval-%E8%AF%84%E4%BC%B0%E5%87%BD%E6%95%B0"><span class="nav-number">5.2.1.</span> <span class="nav-text">eval()评估函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-5-%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83"><span class="nav-number">6.</span> <span class="nav-text">2.5 代码规范</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-6-%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81"><span class="nav-number">7.</span> <span class="nav-text">2.6 字符编码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E7%A8%8B%E5%BA%8F%EF%BC%9A%E8%8A%B3%E5%90%8D%E5%92%8C%E8%8A%B3%E9%BE%84"><span class="nav-number">8.</span> <span class="nav-text">综合示例程序：芳名和芳龄</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Python学习-ch2基本数据类型 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python学习-ch2基本数据类型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-10T13:48:32+08:00">2023-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:16:08" itemprop="dateModified" datetime="2023-11-08T18:16:08+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】编程语言学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/python%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">python学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="导学"><a href="#导学" class="headerlink" title="导学"></a>导学</h1><blockquote>
+<p>在正课开始之前对所要学习的内容进行梳理。</p>
+</blockquote>
+<h2 id="主要内容–7个部分"><a href="#主要内容–7个部分" class="headerlink" title="主要内容–7个部分"></a>主要内容–7个部分</h2><blockquote>
+<p>变量</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185429.png" alt="变量"></p>
+<blockquote>
+<p>数字类型</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185432.png" alt="数字类型"></p>
+<blockquote>
+<p>字符串</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185434.png" alt="字符串"></p>
+<blockquote>
+<p>基本输入输出</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185436.png" alt="IOP"></p>
+<blockquote>
+<p>编程规范</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185439.png" alt="编码规范"></p>
+<blockquote>
+<p>编码格式</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185440.png" alt="编码格式"></p>
+<blockquote>
+<p>两个实例</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185441.png" alt="实例"></p>
+<h2 id="目标和要求"><a href="#目标和要求" class="headerlink" title="目标和要求"></a>目标和要求</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185444.png" alt="目标和要求"></p>
+<p>在本节，要求完成第一个实训作业：turtle作品，会阅读官方文档。</p>
+<hr>
+<blockquote>
+<p>下面我们就按照上面的规划进行深入的学习——&gt;</p>
+</blockquote>
+<hr>
+<h1 id="2-1-变量"><a href="#2-1-变量" class="headerlink" title="2.1 变量"></a>2.1 变量</h1><blockquote>
+<p>下面给出本小节思维导图</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185442.png" alt="思维导图-2.1"></p>
+<h2 id="变量的定义"><a href="#变量的定义" class="headerlink" title="变量的定义"></a>变量的定义</h2><ul>
+<li>在编程语言的学习中，变量是最基础的东西。</li>
+<li>与其他语言不同的是，Python是一个<strong>弱类型语言</strong>，不需要事先声明变量名及其类型，直接赋值即可创建各种类型的对象变量。</li>
+<li>使用type(x)查看对象类型</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185445.png" alt="eg1"></p>
+<blockquote>
+<p>Python采用基于值的内存管理方式</p>
+</blockquote>
+<ul>
+<li>为不同变量赋予相同的值，那么这个值<strong>在内存中只有一份</strong>，多个变量执行同一块内存地址</li>
+<li>使用<code>id(x)</code>获取对象x的内存地址</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185446.png" alt="一个地址"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185448.png" alt="eg2.1"></p>
+<h2 id="变量的命名规范"><a href="#变量的命名规范" class="headerlink" title="变量的命名规范"></a>变量的命名规范</h2><p>一个规范的变量名应该符合以下6条规则（最后一条是更深的要求）：</p>
+<ul>
+<li>以字母、下划线开头，后面可以跟任意字母、下划线、数字</li>
+<li>变量名不能以数字开头</li>
+<li>变量名对字母大小写敏感</li>
+<li>不可以有空格以及标点符号</li>
+<li>不可以使用关键字或者内置函数作为变量名</li>
+<li>作为一名合格的程序员，变量的命名要与其含义相关，尽量不要使用简单的字母命名，一时的便利会带来长久的麻烦。（所以要学号英语哦）</li>
+</ul>
+<h2 id="查看关键字和内置函数"><a href="#查看关键字和内置函数" class="headerlink" title="查看关键字和内置函数"></a>查看关键字和内置函数</h2><blockquote>
+<p>上面我们已经提到变量的命名规则，其中有一条是不可使用关键字和内置函数。在实际的编程中，我们可以一些帮助文档进行查看。</p>
+</blockquote>
+<ol>
+<li>关键字的查看：<code>help(&#39;keywords&#39;)</code><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185468.png" alt="关键字"></li>
+</ol>
+<p>注：使用<code>import keyword</code>   —&gt;  <code> keyword.kwlist</code>也可以看到。<br>使用len()可以得到关键字的个数：<strong>35个</strong><br>（len属于内置函数，解释器启动既有；而内置模块需要import)</p>
+<ol start="2">
+<li>内置函数的查看：<code> import builtins</code> —&gt; <code> dir(builtins)</code><br>ps:该模块提供对Python的所有“内置”标识符的直接访问<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185471.png" alt="内置函数"></li>
+</ol>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><ul>
+<li>常量在指定初始值后不再改变</li>
+<li>一般使用大写字母表示</li>
+<li>遵循常量阅读，使得代码具有良好的可读性（PI &#x3D; 3.14等）</li>
+</ul>
+<h1 id="2-2数字类型"><a href="#2-2数字类型" class="headerlink" title="2.2数字类型"></a>2.2数字类型</h1><blockquote>
+<p>本小节思维导图</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185473.png" alt="思维导图2.2"></p>
+<p>ps：本节要求掌握基本数字类型的表示与进制之间的转换</p>
+<ul>
+<li>Python中的数据类型很多，比如数字、字符串、列表、字典、文件等基本数据类型</li>
+<li>数据类型和值相关，而不是和变量相关。（基于值的内存管理模式）</li>
+<li>数字类型包括：整数、浮点数、复数</li>
+</ul>
+<h2 id="整数、浮点数、复数"><a href="#整数、浮点数、复数" class="headerlink" title="整数、浮点数、复数"></a>整数、浮点数、复数</h2><h3 id="整数和浮点数"><a href="#整数和浮点数" class="headerlink" title="整数和浮点数"></a>整数和浮点数</h3><ul>
+<li>整数和浮点数的差异在于是否包含小数部分</li>
+<li>浮点数必须<strong>包含一个小数点</strong>，否则会被当做整数</li>
+<li><code>int </code>表示整数；<code>float</code>表示浮点数</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185474.png" alt="差异"></p>
+<blockquote>
+<p>浮点数补充——&gt;</p>
+</blockquote>
+<p>浮点数有两种表示形式：</p>
+<ul>
+<li>十进制形式，例如：3.14  5.21等</li>
+<li>科学计数形式：5.21e2或5.21E2 就是指5.21* 10^2</li>
+</ul>
+<p>注：只有浮点数可以使用科学计数的方法<br>并且如果运算是既有整数又有浮点数，结果为浮点数。</p>
+<h3 id="复数"><a href="#复数" class="headerlink" title="复数"></a>复数</h3><p>复数的虚部用j或J表示：<code>a=3+4j  </code><br>使用 <code>x.real</code> 和 <code>x.imag</code>获取实部、虚部的数值，以<strong>浮点数</strong>的形式输出。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185476.png" alt="表示和运算"></p>
+<h2 id="进制之间的转换"><a href="#进制之间的转换" class="headerlink" title="进制之间的转换"></a>进制之间的转换</h2><blockquote>
+<p>整数的表示方法</p>
+</blockquote>
+<p>一个整数可以采用多种进制进行表示：</p>
+<ul>
+<li>十进制</li>
+<li>二进制 0b或者0B</li>
+<li>八进制 0o或者0O</li>
+<li>十六进制 0x或者0X</li>
+</ul>
+<blockquote>
+<p>不同进制之间可以进行转换(使用Python的内置函数)</p>
+</blockquote>
+<ul>
+<li><code>int(x, d)</code>  —&gt;  接收的是字符串x，转换d进制的整数为十进制</li>
+<li><code>bin(x)</code>   —&gt;   将十进制数x转换为二进制</li>
+<li><code>oct(x)</code>   —&gt;   将十进制数x转换为八进制</li>
+<li><code>hex(x) </code>  —&gt;   将十进制数x转换为十六进制</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185479.png" alt="eg2.2.2"></p>
+<h2 id="内置模块"><a href="#内置模块" class="headerlink" title="内置模块"></a>内置模块</h2><blockquote>
+<p>Python中含有很多<strong>标准库</strong>，也就是封装好的已有的代码合集。<br>Python中的标准库被组织为<strong>模块</strong>，相关的函数和数据类型被分组封装在不同的模块中，需要使用时需要进行<strong>模块的导入</strong></p>
+</blockquote>
+<h3 id="内置模块–math"><a href="#内置模块–math" class="headerlink" title="内置模块–math"></a>内置模块–math</h3><blockquote>
+<p><code>import math</code>导入模块</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185480.png" alt="math模块"></p>
+<p>注：使用<code>dir(math)</code>查看math模块下的内置函数<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185482.png" alt="dir"></p>
+<h3 id="内置模块–random"><a href="#内置模块–random" class="headerlink" title="内置模块–random"></a>内置模块–random</h3><blockquote>
+<p><code>random,random()</code>随机生成一个<strong>实数</strong>，在[0, 1]范围<br><code>random.randint(a, b)</code>用于生成一个指定范围的<strong>整数</strong>。(前闭后开)</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185639.png" alt="eg2.2.3"></p>
+<h1 id="2-3-字符串"><a href="#2-3-字符串" class="headerlink" title="2.3 字符串"></a>2.3 字符串</h1><blockquote>
+<p>下面给出本节思维导图</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185640.png" alt="思维导图2.3"></p>
+<ul>
+<li>字符串也是Python中最常用的数据类型</li>
+<li>文本就是由一些列字符组成的字符串</li>
+</ul>
+<h2 id="字符串的表示"><a href="#字符串的表示" class="headerlink" title="字符串的表示"></a>字符串的表示</h2><blockquote>
+<p>字符串可以使用<strong>单引号(‘…’)</strong> 或者<strong>双引号(“…”)</strong> 表示—-&gt;</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185642.png" alt="eg2.3.1"></p>
+<blockquote>
+<p>对于字符串中含有引号的形式，需要进行<strong>特殊处理</strong>：—-&gt;</p>
+</blockquote>
+<ul>
+<li>第一种方法：使用不同的引号将字符串括起来。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185646.png" alt="eg1"></p>
+<ul>
+<li>第二种方法：使用三引号</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185647.png" alt="eg2"></p>
+<ul>
+<li>第三章方法：使用转义字符\，在引号之前使用\进行转义</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185648.png" alt="eg3"></p>
+<p>   注：使用\n可以实现换行输出</p>
+<blockquote>
+<p>原始字符串的使用—-&gt;</p>
+</blockquote>
+<p>如果我们输出的字符串含有\符号，那么处理可以使用转义字符外，还可以在字符串前加上r，就表示原始字符串，不会把\当成特殊符号。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185649.png" alt="eg"></p>
+<h2 id="字符串的常用操作"><a href="#字符串的常用操作" class="headerlink" title="字符串的常用操作"></a>字符串的常用操作</h2><blockquote>
+<p>思维导图如下：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185650.png" alt="思维导图"></p>
+<h3 id="字符串的索引"><a href="#字符串的索引" class="headerlink" title="字符串的索引"></a>字符串的索引</h3><blockquote>
+<p>在Python中，不支持单字符类型，单字符也是作为一个字符串使用。</p>
+<blockquote>
+<p>可以使用<strong>索引</strong>访问单个字符。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185651.png" alt="索引"></p>
+<p>注：通过[x]获取对应位置的单字符，下标<strong>从0开始</strong></p>
+<h3 id="字符串的拼接"><a href="#字符串的拼接" class="headerlink" title="字符串的拼接"></a>字符串的拼接</h3><blockquote>
+<p>这是最基础的字符串操作：+</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185652.png" alt="拼接"></p>
+<h3 id="常用的字符串方法"><a href="#常用的字符串方法" class="headerlink" title="常用的字符串方法"></a>常用的字符串方法</h3><blockquote>
+<p>什么是方法？对象的行为称为方法，方法只能用于<strong>定义好的对象</strong>，函数是独立的操作。<br>调用对象的方法：<code>对象名.方法名</code></p>
+</blockquote>
+<ul>
+<li><code>s.lower()</code> 转换为小写形式</li>
+<li><code>s.upper()</code> 转换为大写形式</li>
+<li><code>s.replace(&#39;old&#39;, &#39;new&#39;)</code> 内容的替换</li>
+<li><code>s.find(p)</code> 查找p，存在返回下标，不存在返回-1</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185653.png" alt="eg"></p>
+<p>注：通过上例我们可以看见，使用方法后不会改变对象的原始内容</p>
+<ul>
+<li><code> &#39;s&#39;.join(str)</code> 以指定的字符‘s’作为分隔符，将字符串str连接成一个新的字符串</li>
+<li><code>str.split(s,[num]) </code>以s为指定的识别分隔符，将str字符串进行分割，num为分割次数。（无参数，默认按照空格进行分割）</li>
+</ul>
+<p>  <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185654.png" alt="eg"></p>
+<p>注：通过上例我们可以看到，str.split(s, [num])会在字符串里寻找s，并以此为分隔符进行分割，分割过的字符串以引号隔开；而’s’.join(str1)则是将s作为分隔符加入到字符串，形成一个整体。<br><strong>如果使用str.split()则会自动以空白字符为分隔符。</strong></p>
+<ul>
+<li><code>reversed() </code>内置函数：字符串置逆<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185655.png" alt="eg"></li>
+</ul>
+<p>注：在进行分割后再使用置逆，会以分割的部分为整体进行，而不是以一个字符。</p>
+<h3 id="字符串的转换"><a href="#字符串的转换" class="headerlink" title="字符串的转换"></a>字符串的转换</h3><blockquote>
+<p>字符串与数字中间的转换</p>
+</blockquote>
+<ul>
+<li><code>str(x)</code>：将数字转换为字符串</li>
+<li><code>int(x)</code>：将字符串x转换为数字</li>
+<li><code>int(x,d)</code>：将d进制的字符串转换为数字</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185656.png" alt="eg"></p>
+<p>注：在使用int(x,d)指定d进制时要符合规范，例如:8进制时不可出现8以上数字。</p>
+<blockquote>
+<p>字符串与字符值</p>
+</blockquote>
+<p>在内存，字符是以整数值的形式进行存储的，具体值取决于编码规则。</p>
+<ul>
+<li><code>ord()</code>:返回字符的值</li>
+<li><code>chr()</code>:返回给定编码指定的字符</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185657.png" alt="eg"> </p>
+<blockquote>
+<p>补充内容：<a target="_blank" rel="noopener" href="https://www.php.cn/python-tutorials-471465.html#:~:text=python%E5%8E%BB%E6%8E%89%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%89%80%E6%9C%89%E7%A9%BA%E6%A0%BC%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9A1%E3%80%81%E4%BD%BF%E7%94%A8strip%E6%96%B9%E6%B3%95%E5%8E%BB%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%BC%80%E5%A4%B4%E6%88%96%E8%80%85%E7%BB%93%E5%B0%BE%E7%9A%84%E7%A9%BA%E6%A0%BC%EF%BC%9B2%E3%80%81%E4%BD%BF%E7%94%A8replace%E6%96%B9%E6%B3%95%E5%8E%BB%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BB%93%E5%B0%BE%E7%9A%84%E7%A9%BA%E6%A0%BC%EF%BC%9B3%E3%80%81%20%E4%BD%BF%E7%94%A8join%E6%96%B9%E6%B3%95%2Bsplit%E6%96%B9%E6%B3%95%EF%BC%8C%E5%8E%BB%E9%99%A4%E5%85%A8%E9%83%A8%E7%A9%BA%E6%A0%BC%E3%80%82%20%E6%9C%AC%E6%96%87%E6%93%8D%E4%BD%9C%E7%8E%AF%E5%A2%83%EF%BC%9Awindows7%E7%B3%BB%E7%BB%9F%E3%80%81python3.5%E7%89%88%EF%BC%8CDELL,G3%E7%94%B5%E8%84%91%E3%80%82%20%E4%BB%A5%E4%B8%8A%E5%B0%B1%E6%98%AFpython%E6%80%8E%E4%B9%88%E5%8E%BB%E6%8E%89%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%89%80%E6%9C%89%E7%A9%BA%E6%A0%BC%E7%9A%84%E8%AF%A6%E7%BB%86%E5%86%85%E5%AE%B9%EF%BC%8C%E6%9B%B4%E5%A4%9A%E8%AF%B7%E5%85%B3%E6%B3%A8php%E4%B8%AD%E6%96%87%E7%BD%91%E5%85%B6%E5%AE%83%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%EF%BC%81%20%E5%A3%B0%E6%98%8E%EF%BC%9A%20%E6%9C%AC%E6%96%87%E5%8E%9F%E5%88%9B%E5%8F%91%E5%B8%83php%E4%B8%AD%E6%96%87%E7%BD%91%EF%BC%8C%E8%BD%AC%E8%BD%BD%E8%AF%B7%E6%B3%A8%E6%98%8E%E5%87%BA%E5%A4%84%EF%BC%8C%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%B0%8A%E9%87%8D%EF%BC%81">删除字符串里的空格（几种方法）</a></p>
+</blockquote>
+<h1 id="2-4-输入、输出"><a href="#2-4-输入、输出" class="headerlink" title="2.4 输入、输出"></a>2.4 输入、输出</h1><blockquote>
+<p>本节思维导图如下：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185658.png" alt="思维导图2.4"></p>
+<p>输入是Input,输出是Output,所以我们把输入输出简写为IO。<br>用户和计算机程序的交互离不开输入输出。</p>
+<h2 id="输出：Output"><a href="#输出：Output" class="headerlink" title="输出：Output"></a>输出：Output</h2><blockquote>
+<p>最基本的输出:<code>print()</code></p>
+</blockquote>
+<p><strong>作用</strong>：以字符的形式向控制台输出结果</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185659.png" alt="eg"></p>
+<p>print() 可以接受一个或多个字符串，以逗号进行分割，输出时会<strong>使用空格</strong>进行替代</p>
+<h3 id="输出格式："><a href="#输出格式：" class="headerlink" title="输出格式："></a>输出格式：</h3><blockquote>
+<p>（使用格式限定符对输出的格式进行美化）</p>
+</blockquote>
+<ul>
+<li>%形式</li>
+<li>str.format()形式</li>
+</ul>
+<h4 id="形式的输出"><a href="#形式的输出" class="headerlink" title="%形式的输出"></a>%形式的输出</h4><ul>
+<li>%d 格式化一个整数</li>
+<li>%f 格式化一个浮点数</li>
+<li>%s 格式化一个字符串</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185676.png" alt="eg"></p>
+<p><strong>注:</strong> 和C语言类似，小数点<strong>后为精度</strong>，<strong>前为宽度</strong>，不足以空格替。<br>    但是和C语言不同的是在字符串之后的替换中<strong>没有逗号</strong>，而是**使用%**进行。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185677.png" alt="eg"></p>
+<p><strong>注</strong>：对应于多个替换，需要使用上图格式。</p>
+<h4 id="“-”-dormat-str-格式化字符串函数"><a href="#“-”-dormat-str-格式化字符串函数" class="headerlink" title="“{}”.dormat(str)格式化字符串函数"></a>“{}”.dormat(str)格式化字符串函数</h4><p>{}叫做<strong>替换槽</strong>，其中可以指定<strong>填充的字符</strong>、<strong>对其方式</strong>、替换字符的<strong>宽度</strong>。<br>其中，^ &lt; &gt; 分别代表中间对齐、左对齐、右对齐</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185679.png" alt="eg"></p>
+<blockquote>
+<p>如果是数字，可以在槽里指定数字的格式</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185737.png" alt="eg"></p>
+<p><strong>注</strong>：使用：b,o 指定进制格式。</p>
+<h2 id="输入：Input"><a href="#输入：Input" class="headerlink" title="输入：Input"></a>输入：Input</h2><blockquote>
+<p>最基本的输入:input</p>
+</blockquote>
+<ul>
+<li>作用：从控制台接收用户信息的输出，并返回字符串</li>
+<li>格式: <code>变量 = input(&lt;提示信息&gt;)</code></li>
+<li>注意：接收到的变量属于字符串形式</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185738.png" alt="eg"></p>
+<blockquote>
+<p>格式的转换</p>
+</blockquote>
+<p>我们知道通过input接收的变量为字符串格式，所以如果需要使用数字类型，要使用前面的转换方法。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185739.png" alt="eg"></p>
+<h3 id="eval-评估函数"><a href="#eval-评估函数" class="headerlink" title="eval()评估函数"></a>eval()评估函数</h3><p>作用：执行一个字符串表达式，并返回计算值<br>本质：剥离引号</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185740.png" alt="eg"></p>
+<h1 id="2-5-代码规范"><a href="#2-5-代码规范" class="headerlink" title="2.5 代码规范"></a>2.5 代码规范</h1><blockquote>
+<p>编程语言从某种意义上来说作为一种工具，需要遵循一套<strong>编码规范</strong><br>在PEP8中有具体的描述：<a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0008">https://www.python.org/dev/peps/pep-0008</a></p>
+</blockquote>
+<blockquote>
+<p>规范1：缩进</p>
+</blockquote>
+<ul>
+<li>在Python里，使用缩进来体现代码之间的逻辑关系。</li>
+<li>同一级别的代码块的缩进必须相同。</li>
+<li>一般使用4个空格或者一个Tab作为一个缩进量。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185741.png" alt="缩进错误"></p>
+<blockquote>
+<p>规范2：注释</p>
+</blockquote>
+<ul>
+<li>单行注释：以#开头，其后的内容为注释内容</li>
+<li>多行注释：使用三个单引号或者双引号作为开始和结束标识</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185742.png" alt="eg"></p>
+<p>注：前面我们知道，三引号也可以作为字符串的标识</p>
+<blockquote>
+<p>规范3：换行</p>
+</blockquote>
+<p>如果一个语句太长，可以使用换行符\进行换行<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185743.png" alt="eg"></p>
+<blockquote>
+<p>规范4： 必要的空行或空格</p>
+</blockquote>
+<ul>
+<li>运算符两侧、逗号后面建议加一个空格。</li>
+<li>不同功能之间的代码块建议之间加一个空行</li>
+</ul>
+<h1 id="2-6-字符编码"><a href="#2-6-字符编码" class="headerlink" title="2.6 字符编码"></a>2.6 字符编码</h1><blockquote>
+<p>常用的编码格式：</p>
+</blockquote>
+<ul>
+<li><strong>ACSII编码</strong>：最早只有127个字符被编码到计算机里，也就是大小写英文字母、数字和一些符号。这个编码表被称为ASCII编码。</li>
+<li><strong>GB2312编码</strong>：处理中文显然一个字节是不够的，至少需要两个字节，而且还不能和ASCII码冲突，所以中国制定了GB2312编码用于处理中文。</li>
+<li><strong>Unicode编码</strong>：使用两个字节表示一个字符，把所有的语言统一到一个编码格式下。</li>
+<li><strong>UTF-8编码</strong>：为了节省空间，出现了“可变长编码”即UTF-8编码，UTF-8编码把一个Unicode字符根据不同的数字大小编码成1-6个字节。常用的英文字母为1个字节，汉字通常为3个字节，很生僻的字符我为4-6个字节。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185791.png" alt="eg"></p>
+<p><strong>注</strong>:一般我们使用记事本编写代码时，如果使用了中文，记得设置为UTF-8的编码格式。<br>在开头使用：<code># coding=utf-8</code>即可进行声明</p>
+<blockquote>
+<p>解码和编码:</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185806.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1682581185914.png"></p>
+<h1 id="综合示例程序：芳名和芳龄"><a href="#综合示例程序：芳名和芳龄" class="headerlink" title="综合示例程序：芳名和芳龄"></a>综合示例程序：芳名和芳龄</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">first_name = <span class="built_in">input</span>(<span class="string">&quot;请输入你的姓氏：&quot;</span>)</span><br><span class="line">last_name = <span class="built_in">input</span>(<span class="string">&quot;请输入你的名字：&quot;</span>)</span><br><span class="line">age = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入你的年龄&quot;</span>))</span><br><span class="line"></span><br><span class="line">age_10 = age-<span class="number">10</span></span><br><span class="line">age_10_8 = <span class="built_in">oct</span>(age_10)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;十年前你的年龄为：%o(八进制)&quot;</span>%age_10)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;十年前你的年龄为:&#123;:x&#125;(十六进制)&quot;</span>.<span class="built_in">format</span>(age_10))</span><br><span class="line"></span><br><span class="line">full_name = first_name + last_name</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;&#123;:*^10&#125;&quot;</span>.<span class="built_in">format</span>(full_name), <span class="string">&quot;的国标码为：&quot;</span>, full_name.encode(<span class="string">&quot;GBK&quot;</span>))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>注意点：<br>1、print之中的不同字符串可以使用逗号隔开，不用+<br>2、进制的转换输出可以直接使用%o,%d,%x。<br>3、编码格式时要使用引号”GBK”</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Python学习-ch2基本数据类型">https://danggeovo.github.io/2023/04/10/Python课程学习-基本数据类型/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch5%20%E5%87%BD%E6%95%B0%E5%92%8C%E6%A8%A1%E5%9D%97/" rel="prev" title="Python学习-ch5 函数和模块">
+                  <i class="fa fa-angle-left"></i> Python学习-ch5 函数和模块
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/10/Python%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0-ch3%E7%BB%84%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="next" title="Python学习-ch3组合数据类型">
+                  Python学习-ch3组合数据类型 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

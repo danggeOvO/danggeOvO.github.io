@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="ps：这篇文章旨在记录常用规则，为网上搜集。  wirshark的过滤  在Filter编辑框中，收入过虑规则时，如果语法有误，框会显红色，如正确，会是绿色  过滤源ip、目的ip 查找目的地址为192.168.101.8的包，ip.dst&#x3D;&#x3D;192.168.101.8； 查找源地址为192.168.43.199 的包， ip.src&#x3D;&#x3D;192.168.43.199.  端口过滤 过滤80端口，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="wirshark的过滤规则.md">
+<meta property="og:url" content="https://danggeovo.github.io/2023/10/01/wirshark%E7%9A%84%E8%BF%87%E6%BB%A4%E8%A7%84%E5%88%99/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="ps：这篇文章旨在记录常用规则，为网上搜集。  wirshark的过滤  在Filter编辑框中，收入过虑规则时，如果语法有误，框会显红色，如正确，会是绿色  过滤源ip、目的ip 查找目的地址为192.168.101.8的包，ip.dst&#x3D;&#x3D;192.168.101.8； 查找源地址为192.168.43.199 的包， ip.src&#x3D;&#x3D;192.168.43.199.  端口过滤 过滤80端口，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638082403847.png">
+<meta property="article:published_time" content="2023-10-01T05:26:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:21:29.413Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="恶意代码分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638082403847.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/10/01/wirshark%E7%9A%84%E8%BF%87%E6%BB%A4%E8%A7%84%E5%88%99/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/10/01/wirshark%E7%9A%84%E8%BF%87%E6%BB%A4%E8%A7%84%E5%88%99/","path":"2023/10/01/wirshark的过滤规则/","title":"wirshark的过滤规则.md"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>wirshark的过滤规则.md | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#wirshark%E7%9A%84%E8%BF%87%E6%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">wirshark的过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E6%BA%90ip%E3%80%81%E7%9B%AE%E7%9A%84ip"><span class="nav-number">2.</span> <span class="nav-text">过滤源ip、目的ip</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E8%BF%87%E6%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">端口过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E8%BF%87%E6%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">协议过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#http%E6%A8%A1%E5%BC%8F%E8%BF%87%E6%BB%A4"><span class="nav-number">5.</span> <span class="nav-text">http模式过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4MAC"><span class="nav-number">6.</span> <span class="nav-text">过滤MAC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP%E5%8F%82%E6%95%B0%E8%BF%87%E6%BB%A4"><span class="nav-number">7.</span> <span class="nav-text">TCP参数过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%AC%A6%E5%8F%B7%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">8.</span> <span class="nav-text">特殊符号的使用</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/10/01/wirshark%E7%9A%84%E8%BF%87%E6%BB%A4%E8%A7%84%E5%88%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="wirshark的过滤规则.md | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          wirshark的过滤规则.md
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-10-01 13:26:32" itemprop="dateCreated datePublished" datetime="2023-10-01T13:26:32+08:00">2023-10-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:21:29" itemprop="dateModified" datetime="2023-11-08T18:21:29+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】恶意代码分析与处置</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%BD%AE/%E5%B7%A5%E5%85%B7%E6%95%B4%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">工具整理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>ps：这篇文章旨在记录常用规则，为网上搜集。</p>
+</blockquote>
+<h1 id="wirshark的过滤"><a href="#wirshark的过滤" class="headerlink" title="wirshark的过滤"></a>wirshark的过滤</h1><p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638082403847.png" alt="输入位置"></p>
+<blockquote>
+<p>在Filter编辑框中，收入过虑规则时，如果语法有误，框会显红色，如正确，会是绿色</p>
+</blockquote>
+<h1 id="过滤源ip、目的ip"><a href="#过滤源ip、目的ip" class="headerlink" title="过滤源ip、目的ip"></a>过滤源ip、目的ip</h1><ul>
+<li>查找目的地址为192.168.101.8的包，<code>ip.dst==192.168.101.8；</code></li>
+<li>查找源地址为192.168.43.199 的包，<code> ip.src==192.168.43.199.</code></li>
+</ul>
+<h1 id="端口过滤"><a href="#端口过滤" class="headerlink" title="端口过滤"></a>端口过滤</h1><ul>
+<li>过滤80端口，在Filter中输入，<code>tcp.port==80</code>，这条规则是把源端口和目的端口为80的都过滤出来。</li>
+<li><code>tcp.dstport==80</code>只过滤目的端口为80的，</li>
+<li><code>tcp.srcport==80</code>只过滤源端口为80的包</li>
+<li>过滤端口范围 ：<code>tcp.port &gt;= 1 and tcp.port &lt;= 80</code></li>
+</ul>
+<blockquote>
+<p>前面的为协议类型，如tcp、udp等</p>
+</blockquote>
+<h1 id="协议过滤"><a href="#协议过滤" class="headerlink" title="协议过滤"></a>协议过滤</h1><p>比较简单，直接在Filter框中直接输入协议名即可，如过滤HTTP的协议,输入HTTP即可。<br>tcp、udp、arp、icmp、http、smtp、ftp、dns、msnms、ip、ssl、oicq、bootp</p>
+<blockquote>
+<p>排除arp包，如!arp   或者   not arp<br>DHCP协议的检索规则不是dhcp&#x2F;DHCP， 而是bootp</p>
+</blockquote>
+<h1 id="http模式过滤"><a href="#http模式过滤" class="headerlink" title="http模式过滤"></a>http模式过滤</h1><ul>
+<li>过滤get包，<code>http.request.method==&quot;GET&quot;</code></li>
+<li>过滤post包，<code>http.request.method==&quot;POST&quot;</code></li>
+</ul>
+<h1 id="过滤MAC"><a href="#过滤MAC" class="headerlink" title="过滤MAC"></a>过滤MAC</h1><p><strong>太以网头过滤</strong></p>
+<ul>
+<li><code>eth.dst == A0:00:00:04:C5:84</code> &#x2F;&#x2F; 过滤目标mac</li>
+<li><code>eth.src eq A0:00:00:04:C5:84</code> &#x2F;&#x2F; 过滤来源mac</li>
+<li><code>eth.addr eq A0:00:00:04:C5:84</code>&#x2F;&#x2F; 过滤来源MAC和目标MAC都等于A0:00:00:04:C5:84的</li>
+</ul>
+<h1 id="TCP参数过滤"><a href="#TCP参数过滤" class="headerlink" title="TCP参数过滤"></a>TCP参数过滤</h1><ul>
+<li><code>tcp.flags</code> 显示包含TCP标志的封包。</li>
+<li><code>tcp.flags.syn == 0x02</code>     显示包含TCP SYN标志的封包。</li>
+<li><code>tcp.window_size == 0 &amp;&amp; tcp.flags.reset != 1</code></li>
+</ul>
+<h1 id="特殊符号的使用"><a href="#特殊符号的使用" class="headerlink" title="特殊符号的使用"></a>特殊符号的使用</h1><ul>
+<li>过滤两种条件时，使用and连接，如过滤ip为192.168.101.8并且为http协议的，<code>ip.src==192.168.101.8 and http</code></li>
+<li>过滤两种条件时，使用or连接，如过滤ip为192.168.101.8或者http协议的，<code>ip.src==192.168.101.8 or http</code></li>
+<li>less than 小于 &lt; lt </li>
+<li>小于等于 le</li>
+<li>等于 eq</li>
+<li>大于 gt</li>
+<li>大于等于 ge</li>
+<li>不等 ne</li>
+</ul>
+<blockquote>
+<p>最后，补充一下好的网址：<a target="_blank" rel="noopener" href="https://blog.csdn.net/wojiaopanpan/article/details/69944970">https://blog.csdn.net/wojiaopanpan/article/details/69944970</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/10/01/wirshark%E7%9A%84%E8%BF%87%E6%BB%A4%E8%A7%84%E5%88%99/" title="wirshark的过滤规则.md">https://danggeovo.github.io/2023/10/01/wirshark的过滤规则/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag"># 恶意代码分析</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/09/25/%5B%E2%88%9A%5D%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%8A%A0%E8%BD%BD%EF%BC%88%E6%8F%90%E9%AB%98%EF%BC%89/" rel="prev" title="PE文件与加载（提高）">
+                  <i class="fa fa-angle-left"></i> PE文件与加载（提高）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/10/01/%5B%E2%88%9A%5D%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-PE%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%A7%A3%E7%96%91/" rel="next" title="PE文件加载解疑">
+                  PE文件加载解疑 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：  在上一节我们学习了两个简单的IO设备驱动管理–显示器和键盘，通过对这两个设备的学习，我们理清了printf和scanf的实现流程，同时也看到了文件视图在操作系统中的作用。在本节中，我们将更加深入的学习这个操作系统的第二个核心视图–文件视图。我们将从磁盘出发，层层递进，完成五层抽象机制，最终实现整个文件系统的构建。   磁盘工作的基本原理磁盘工作的原理 磁盘的工作原理与上一节中介绍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="（第八节）操作系统--磁盘管理和文件系统">
+<meta property="og:url" content="https://danggeovo.github.io/2022/08/24/%EF%BC%88%E7%AC%AC%E5%85%AB%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：  在上一节我们学习了两个简单的IO设备驱动管理–显示器和键盘，通过对这两个设备的学习，我们理清了printf和scanf的实现流程，同时也看到了文件视图在操作系统中的作用。在本节中，我们将更加深入的学习这个操作系统的第二个核心视图–文件视图。我们将从磁盘出发，层层递进，完成五层抽象机制，最终实现整个文件系统的构建。   磁盘工作的基本原理磁盘工作的原理 磁盘的工作原理与上一节中介绍">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661240967077.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661241266528.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661242567760.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253194634.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253578452.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253654252.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253840207.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661266276903.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661254342724.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661266805033.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301084334.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301100781.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301120291.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301134643.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661323782154.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661312415753.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310848557.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661311357888.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661311532592.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661312025049.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310317075.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310344905.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310453144.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310506517.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661323007751.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310543955.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661312691051.png">
+<meta property="article:published_time" content="2022-08-24T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:57:49.495Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661240967077.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2022/08/24/%EF%BC%88%E7%AC%AC%E5%85%AB%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2022/08/24/%EF%BC%88%E7%AC%AC%E5%85%AB%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/","path":"2022/08/24/（第八节）操作系统--磁盘管理和文件系统/","title":"（第八节）操作系统--磁盘管理和文件系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>（第八节）操作系统--磁盘管理和文件系统 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%B7%A5%E4%BD%9C%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">磁盘工作的基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%B7%A5%E4%BD%9C%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">磁盘工作的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%B7%A5%E4%BD%9C%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">磁盘工作的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A3%81%E7%9B%98%E7%9A%84%E7%9B%B4%E8%A7%82%E6%96%B9%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">使用磁盘的直观方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E7%A3%81%E7%9B%98%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">生磁盘的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9A%E4%BB%8E%E6%89%87%E5%8C%BA%E5%88%B0%E7%A3%81%E7%9B%98%E5%9D%97%E7%9A%84%E8%AF%B7%E6%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">第一层抽象：从扇区到磁盘块的请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9A%E5%A4%9A%E4%B8%AA%E8%BF%9B%E7%A8%8B%E4%BA%A7%E7%94%9F%E7%9A%84%E7%A3%81%E7%9B%98%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97"><span class="nav-number">2.2.</span> <span class="nav-text">第二层抽象：多个进程产生的磁盘请求队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AC%A1%E6%8A%BD%E8%B1%A1%EF%BC%9A%E4%BB%8E%E7%A3%81%E7%9B%98%E8%AF%B7%E6%B1%82%E5%88%B0%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="nav-number">2.3.</span> <span class="nav-text">第三次抽象：从磁盘请求到高速缓存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E7%A3%81%E7%9B%98%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">基于文件的磁盘使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9A%E5%BC%95%E5%87%BA%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">第四层抽象：引出文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9A%E5%B0%86%E7%A3%81%E7%9B%98%E6%8A%BD%E8%B1%A1%E4%B8%BA%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.</span> <span class="nav-text">第五层抽象：将磁盘抽象为一个文件系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%AF%BB%E5%86%99%E7%9A%84%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">磁盘读写的流程总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%AF%BB%E5%86%99%E7%9A%84%E5%85%B7%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">磁盘读写的具体流程</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/08/24/%EF%BC%88%E7%AC%AC%E5%85%AB%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="（第八节）操作系统--磁盘管理和文件系统 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          （第八节）操作系统--磁盘管理和文件系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-24 13:48:32" itemprop="dateCreated datePublished" datetime="2022-08-24T13:48:32+08:00">2022-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:57:49" itemprop="dateModified" datetime="2023-11-08T17:57:49+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong>：</p>
+<blockquote>
+<p>在<strong>上一节</strong>我们学习了两个简单的<strong>IO设备驱动管理</strong>–<strong>显示器</strong>和<strong>键盘</strong>，通过对这两个设备的学习，我们理清了<code>printf</code>和<code>scanf</code>的实现流程，同时也看到了<code>文件视图</code>在操作系统中的作用。<br>在<strong>本节中</strong>，我们将<strong>更加深入</strong>的学习这个操作系统的<strong>第二个核心视图</strong>–<code>文件视图</code>。我们将<strong>从磁盘出发</strong>，层层递进，完成<code>五层抽象机制</code>，最终实现整个<strong>文件系统的构建</strong>。</p>
+</blockquote>
+</blockquote>
+<h1 id="磁盘工作的基本原理"><a href="#磁盘工作的基本原理" class="headerlink" title="磁盘工作的基本原理"></a>磁盘工作的基本原理</h1><h2 id="磁盘工作的原理"><a href="#磁盘工作的原理" class="headerlink" title="磁盘工作的原理"></a>磁盘工作的原理</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661240967077.png"></p>
+<p>磁盘的<strong>工作原理</strong>与上一节中介绍的<strong>显示器、键盘</strong>一致，都是包含<code>两条主线</code>：</p>
+<ol>
+<li><code>使用磁盘</code>：CPU<strong>发送命令</strong>给磁盘设备，最终落到“<code>out ax，端口号</code>”</li>
+<li><code>磁盘中断</code>：即磁盘完成工作后告诉CPU，CPU在<strong>中断处理中</strong>完成后续工作，比如<strong>将磁盘读入的内容放到内存buf</strong>等。</li>
+</ol>
+<h2 id="磁盘工作的过程"><a href="#磁盘工作的过程" class="headerlink" title="磁盘工作的过程"></a>磁盘工作的过程</h2><blockquote>
+<p>磁盘的<strong>基本构造</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661241266528.png"></p>
+<p>如图所示，一个<strong>磁盘由多个盘面组成</strong>，也就是图中的一层层的圆盘；而<strong>一个盘面</strong>又可以分为<strong>多个半径不同</strong>的<strong>同心环</strong>，这些同心环被称为<code>磁道</code>；每一个磁道又可以分为多个<code>扇区</code>，这是磁盘<strong>读写的基本单位</strong>。同时<strong>不同盘面的同一个磁道</strong>形成<code>柱面</code>。</p>
+<blockquote>
+<p>磁盘读写的<strong>具体过程</strong></p>
+</blockquote>
+<p>如上图所示，在磁盘中有一个装置叫做<code>磁头</code>，<strong>每一个盘面</strong>都会有一个磁头，并且<strong>不同盘面</strong>的磁头是<strong>绑定在一起</strong>的，也就是说<strong>不同的磁头会对应不同盘面的同一个相对位置</strong>。而后将对应<strong>磁头上电</strong>即可进行<strong>扇区的选择</strong>和<strong>后续读写</strong>。具体的步骤可以分为以下几步：</p>
+<ol>
+<li><code>柱面C</code>的选择：通过<strong>控制磁头的移动</strong>选择对应的柱面。</li>
+<li><code>磁道</code>的选择：本质是磁头的选择，将<strong>对应磁道上的磁头上电</strong>即可</li>
+<li><code>扇区</code>的选择：选择完磁道后，即可<strong>旋转盘面</strong>将需要的扇区S转到<strong>上电磁头下方</strong></li>
+<li>完成<code>读写</code>：<strong>在磁盘扇区</strong>和<strong>内存缓存</strong>之间进行。</li>
+</ol>
+<h2 id="使用磁盘的直观方法"><a href="#使用磁盘的直观方法" class="headerlink" title="使用磁盘的直观方法"></a>使用磁盘的直观方法</h2><p>通过上文对<strong>磁盘工作原理和工作流程</strong>的介绍，我们可以得出<strong>使用磁盘完成读写的直观方法</strong>：CPU告知磁盘要读写的<strong>柱面C</strong>、<strong>磁头H</strong>、<strong>扇区S</strong>以及内存<strong>缓存位置</strong>和<strong>读写长度</strong>即可。当然在传入命令之前还需要<strong>获取这些信息的端口地址</strong>。</p>
+<p>具体的<strong>实现代码</strong>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661242567760.png"></p>
+<p>如上图代码所示，实现代码主要包含<strong>两个函数</strong>，<code>hd_out</code>用于<strong>将信息传入对应端口</strong>，<code>port_write</code>完成<strong>数据交换</strong>。</p>
+<p>其中对于<code>hd_out函数</code>的<strong>参数</strong>我们需要知道：</p>
+<ul>
+<li><code>drive</code>:为驱动器信息</li>
+<li><code>nsect</code>:为读写长度信息</li>
+<li><code>sec</code>:为扇区信息</li>
+<li><code>head</code>:为磁头信息 </li>
+<li><code>cyl</code>:为柱面信息</li>
+<li><code>cmd</code>:为读写类型信息</li>
+</ul>
+<p>通过将这些信息放到<strong>控制器</strong>对应的位置即可完成后续的<strong>数据交换</strong>。</p>
+<p><strong>注</strong>：<strong>磁盘与内存</strong>之间进行<strong>数据交换</strong>是通过<code>磁头</code>进行的。磁头上电，<strong>读磁盘</strong>就是<code>磁信号转换为电信号</code>；<strong>写磁盘</strong>就是<code>电信号转换为磁信号</code>。数据的传输还是通过<strong>总线</strong>。</p>
+<h1 id="生磁盘的使用"><a href="#生磁盘的使用" class="headerlink" title="生磁盘的使用"></a>生磁盘的使用</h1><h2 id="第一层抽象：从扇区到磁盘块的请求"><a href="#第一层抽象：从扇区到磁盘块的请求" class="headerlink" title="第一层抽象：从扇区到磁盘块的请求"></a>第一层抽象：从扇区到磁盘块的请求</h2><blockquote>
+<p>问题引入：CHS机制的<strong>复杂性</strong></p>
+</blockquote>
+<p>前面我们介绍了<strong>磁盘读写的流程</strong>：通过给定<code>C、H、S</code>定位到<strong>确定的扇区</strong>，而后进行<strong>数据交换</strong>。但是，对于上层用户来说要想准确定位到一个扇区，需要<strong>对磁盘的结构了解</strong>，还要知道这个<strong>磁盘有多少柱面、多少磁头、多少扇区</strong>等，这对于用户来说太复杂了。</p>
+<p>所以，有必要引入<strong>新的机制</strong>来简化用户对于磁盘读写的操作，采取的方法就是——<code>编址方案</code>。</p>
+<blockquote>
+<p>问题解决：<strong>新的编址方案</strong></p>
+</blockquote>
+<p>新的编址方案就是<strong>将CHS寻址与扇区号建立一个映射</strong>，换句话说，就是给每一个<strong>扇区编号</strong>，用户直接调用扇区号即可访问，<code>CHS地址</code>的转换由<strong>操作系统自动完成</strong>。</p>
+<blockquote>
+<blockquote>
+<p>扇区编号<strong>方案选取</strong></p>
+</blockquote>
+</blockquote>
+<p>既然要给<strong>扇区编号</strong>，就要有<strong>一定的规范</strong>，接下来我们就来介绍一下<strong>这个规范</strong>：</p>
+<p>首先<strong>确定0号扇区的位置</strong>，一般是<code>0柱面</code>（最外面的柱面）、<code>0磁道</code>（最上面的磁道）、<code>0扇区</code>（磁盘旋转整圈以后的扇区）为<code>0号扇区</code>，之后将与此扇区同一个磁道上的扇区<strong>依次进行命名</strong>。如下图所示：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253194634.png"></p>
+<blockquote>
+<blockquote>
+<p>采取这种<strong>编号方案的原因</strong></p>
+</blockquote>
+</blockquote>
+<p>为什么要按照上图的<code>方案1</code> 来编号呢，其他几个方案<strong>为什么不行</strong>？</p>
+<p><strong>答案</strong>很简单，因为第一个方案可以<strong>提高磁盘读写的速度</strong>。<br>至于为什么与其他方案相比第一种方案读写较快，一个很重要的原因就是第一种方案在读写连续扇区时<strong>不需要进行磁道的切换</strong>。（与<code>旋转磁盘、数据传输</code>相比，<code>磁道切换</code>花费的<strong>时间最多</strong>）</p>
+<p><strong>注</strong>：<code>磁盘访问时间</code>&#x3D;<code>写入控制器时间</code>+<code>寻道时间(即柱面的选择，大约10ms)</code>+<code>旋转时间(即磁头在磁道上旋转，半周大概4ms)</code>+<code>传输时间（磁、电信号转换，大约0.3ms)</code></p>
+<blockquote>
+<blockquote>
+<p>编址后<strong>地址的换算</strong></p>
+</blockquote>
+</blockquote>
+<p>通过第一种方案为<strong>扇区编号</strong>，可以得到<code>编址结构</code>如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253578452.png"></p>
+<p>当然，无论是采取<strong>哪一种编址方案</strong>，最终都要落实到<code>CHS地址</code>上。按照第一种方案可以得到<strong>扇区号和CHS扇区</strong>地址的<strong>计算公式</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253654252.png"></p>
+<p>根据<strong>上述公式</strong>可以推出<strong>由扇区号到CHS地址的计算方法</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661253840207.png"></p>
+<hr>
+<p>到这里，就完成了<strong>CSH到扇区号</strong>的<strong>完整映射</strong>，用户只需要给出<strong>扇区号</strong>，操作系统就可以根据上公式<strong>自动换算</strong>出其具体地址，而后由<code>out指令</code>将参数信息传入<strong>磁盘控制器</strong>最终实现磁盘读写。</p>
+<p>但是，磁盘的第一层抽象<strong>不仅仅</strong>只有编址方案，还有：<code>从扇区到磁盘块的抽象</code></p>
+<blockquote>
+<p><strong>从扇区到磁盘块</strong>的抽象</p>
+</blockquote>
+<p>因为磁盘进行<code>数据交换</code>花费的时间相比于<code>磁道切换</code>、<code>磁盘旋转</code>花费的时间可以<strong>忽略不计</strong>，所以将<strong>多个扇区</strong>抽象为<strong>一个磁盘块</strong>可以显著<strong>提高读写速度</strong>（不要每一个扇区读写完毕后都要进行磁盘旋转了）。</p>
+<p><strong>磁盘块的抽象</strong>是<code>以空间换时间</code>，但是现在<strong>磁盘越来越大</strong>而读写花费时间上却<strong>没有太大的进步</strong>，所以这种交换是值得的。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661266276903.png" alt=" =200x100"></p>
+<p>所以，使用<strong>盘块号取代扇区号</strong>，其换算关系如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661254342724.png"></p>
+<p>其中<code>blocksize</code>为<strong>磁盘块的大小</strong>即所含<strong>扇区的个数</strong>。一般来说，<strong>磁盘块越大</strong>则读写的<strong>效率越高</strong>，但是对空间的<strong>浪费也就越大</strong>。</p>
+<p>不论如何抽象，最终还是要<strong>转换为CHS地址</strong>才可以<strong>真正完成</strong>磁盘读写。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong></p>
+<blockquote>
+<p>前面我们介绍了<strong>磁盘读写的第一层抽象</strong>：<code>扇区到磁盘块的抽象</code>。用户只需要提供<strong>盘块号</strong>就可以完成扇区号、CHS地址的计算，进而准确定位到一个<strong>具体的扇区</strong>并完成<strong>读写操作</strong>请求。<br>但是，在实际操作系统中往往是<strong>多个进程产出多个磁盘块请求</strong>的情况，所以就要使用<strong>一个队列</strong>来管理这些请求，这就是磁盘管理的<strong>第二层抽象</strong>。</p>
+</blockquote>
+</blockquote>
+<h2 id="第二层抽象：多个进程产生的磁盘请求队列"><a href="#第二层抽象：多个进程产生的磁盘请求队列" class="headerlink" title="第二层抽象：多个进程产生的磁盘请求队列"></a>第二层抽象：多个进程产生的磁盘请求队列</h2><blockquote>
+<p>抽象的实现与后续执行步骤</p>
+</blockquote>
+<p><strong>多个进程</strong>请求磁盘读写，使用<strong>请求队列</strong>来控制进行的请求。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661266805033.png"></p>
+<p>其实问题的<strong>关键</strong>不在于请求队列的建立，而在于<strong>如何从队列中选择下一个要执行的请求</strong>。这要综合考虑，使得<code>平均访问延迟</code>最小。</p>
+<p>所以，下面我们将从<strong>最基本的调度算法</strong>讲起，而后<strong>一步步优化</strong>，最终给出一个<strong>较优的调度算法</strong>。</p>
+<blockquote>
+<p><strong>调度算法的选择</strong></p>
+</blockquote>
+<p>调度算法的目的就是为了<strong>使得访问延迟最小</strong>。下面我们介绍几个调度算法：</p>
+<blockquote>
+<blockquote>
+<p><strong>调度算法1</strong>：<code>FCFS算法</code></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301084334.png"></p>
+<ul>
+<li><strong>算法描述</strong>：<strong>最先请求的最先响应</strong>。</li>
+<li><strong>算法特点</strong>：<strong>最直观最公平</strong>的调度算法</li>
+<li><strong>算法缺点</strong>：磁头的<strong>来回奔袭</strong>，读写<strong>时间较长</strong></li>
+</ul>
+<blockquote>
+<blockquote>
+<p><strong>调度算法2</strong>：<code>SSTF算法</code></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301100781.png"></p>
+<ul>
+<li><strong>算法描述</strong>：优先选择距离最近的请求</li>
+<li><strong>算法特点</strong>：可以显著降低磁头移动的数目从而降低访问延迟</li>
+<li><strong>算法缺点</strong>：可能会导致一些距离局部较远的请求一直无法被响应，从而导致饥饿问题。</li>
+</ul>
+<blockquote>
+<blockquote>
+<p><strong>调度算法3</strong>：<code>SCAN算法</code></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301120291.png"></p>
+<ul>
+<li><strong>算法描述</strong>：在SSTF算法的基础上中途不回折</li>
+<li><strong>算法特点</strong>：可以显著降低访问延迟,同时也可以解决饥饿问题</li>
+<li><strong>算法缺点</strong>：如果从中间开始启动也可能会导致公平性问题</li>
+</ul>
+<blockquote>
+<blockquote>
+<p><strong>调度算法4</strong>：<code>C-SCAN算法即电梯算法</code></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661301134643.png"></p>
+<ul>
+<li><strong>算法描述</strong>：在SCAN算法的基础上直接移动到另一端</li>
+<li><strong>算法特点</strong>：即兼顾了SCAN算法的优点又可以使得两端请求都可以很快处理</li>
+</ul>
+<blockquote>
+<p>磁盘调度的<strong>补充</strong></p>
+</blockquote>
+<p>磁盘调度发生在<strong>磁盘中断</strong>后，即完成当前请求的读写任务后就会告知CPU，之后就会在<strong>队列中</strong>选择合适的<strong>盘块号</strong>进行下一次的读写。</p>
+<p>关于这些调度算法的<strong>代码实现</strong>这里不再赘述。(之后也不会在各个部分介绍代码，而是重在概念、流程，在最后会整合磁盘管理的流程，到时会附上对应的代码）<br>在操作系统中有<strong>很多地方涉及到调度算法</strong>，比如：<code>多进程切换</code>时的调度、<code>内存换入换出</code>时的调度等，对于这些调度算法我们<strong>不需要死记硬背</strong>，而是要<strong>学会自己去推导</strong>，一般常用的推导思路：<strong>从FxFx开始，而后找出缺点，针对其进行优化等</strong>。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong></p>
+<blockquote>
+<p>前面我们介绍了操作系统对于磁盘管理的<strong>第二层抽象——多进程、多请求的处理</strong>。我们<strong>通过队列</strong>管理请求信息并使用<strong>调度算法</strong>确定请求执行顺序。<br>下面就要从<strong>数据的存储方面</strong>进行进一步优化，也就是<strong>第三层抽象</strong>——<code>磁盘请求到高速缓存</code>。</p>
+</blockquote>
+</blockquote>
+<h2 id="第三次抽象：从磁盘请求到高速缓存"><a href="#第三次抽象：从磁盘请求到高速缓存" class="headerlink" title="第三次抽象：从磁盘请求到高速缓存"></a>第三次抽象：从磁盘请求到高速缓存</h2><blockquote>
+<p>磁盘读写与高速缓存的联系</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661323782154.png"></p>
+<p>如图所示，<code>高速缓存</code>是位于<code>用户态buf</code>和<code>磁盘</code>之间的一个区域，其作用就是为了<strong>减少磁盘读写次数</strong>以提高读写效率。</p>
+<p>因为<strong>磁盘读写</strong>是<strong>以磁盘块为单位</strong>的，根据<code>局部思想</code>，程序访问的地址往往在<strong>同一个磁盘块</strong>，所以这时就<strong>不需要重复去读写磁盘</strong>了，而是将此磁盘块内容<strong>保存在高速缓存中</strong>以便于后续使用。如果访问内容已经在高速缓存，就不需要进行<strong>后续的请求req</strong>与<strong>电梯队列</strong>了。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong></p>
+<blockquote>
+<p>通过上文的<strong>三层抽象</strong>，用户只需要通过<strong>盘块号</strong>调用<code>bread函数</code>即可完成<strong>磁盘的读写</strong>。<br>但是通过盘块号进行磁盘读写<strong>对于用户来说还是不够方便</strong>，因为用户不仅要了解<strong>磁盘块的概念、磁盘块的大小</strong>，还要记住<strong>数据存储的盘块号</strong>以便于后续访问。所以为了使得磁盘的数据访问<strong>更加符合人们习惯</strong>，引出了操作系统对于磁盘管理的进一步抽象——<code>基于文件的磁盘使用</code>。(文件抽象又可以<strong>分为两层</strong>，下面我们会依次进行介绍，<strong>由浅入深</strong>）</p>
+</blockquote>
+</blockquote>
+<h1 id="基于文件的磁盘使用"><a href="#基于文件的磁盘使用" class="headerlink" title="基于文件的磁盘使用"></a>基于文件的磁盘使用</h1><h2 id="第四层抽象：引出文件"><a href="#第四层抽象：引出文件" class="headerlink" title="第四层抽象：引出文件"></a>第四层抽象：引出文件</h2><p>raw disk即生磁盘对于普通用户来说还是太复杂了，所以操作系统引入一个更高层次的抽象：文件 </p>
+<blockquote>
+<p>文件是什么样的？</p>
+</blockquote>
+<ul>
+<li><strong>用户</strong>眼中的文件就是一个<code>字符流</code>。</li>
+<li><strong>磁盘</strong>上的文件则是由一个个<code>盘块拼接</code>而成的。</li>
+</ul>
+<p>到这里，本小节内容就已经出来了：<strong>如何将字符流与盘块号对应起来</strong>。即建<strong>立字符流到盘块集合</strong>的<code>映射关系</code>。</p>
+<blockquote>
+<p>映射的<strong>作用</strong></p>
+</blockquote>
+<p>看下面<strong>这个例子</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661312415753.png" alt=" =600x300"></p>
+<p>如图所示，在用户眼中这个<code>test.c</code>文件就是一个多个字符组成的<strong>字符流</strong>，可以直接在这个流中进行修改；而在<strong>最终在磁盘中</strong>，字符流的修改就要<strong>具化到一个具体的盘块</strong>，之后进行内容修改。</p>
+<p><code>映射</code>就是将用户对于<strong>磁盘的使用</strong>具体到<strong>硬件的实现</strong>，即<strong>完成字符流到盘块号的转换</strong>。</p>
+<blockquote>
+<p>映射的<strong>建立</strong></p>
+</blockquote>
+<p>文件是存放在磁盘上的盘块上的，所以要建立映射关系，只需要在<code>FCB</code>中<strong>初始化一个数据结构</strong>，记录当前文件处于的起始块和块数即可。</p>
+<p>所以这时用户想对<strong>文件进行操作</strong>只需要给出<code>文件名</code>和所操作区域在<code>字符流的位置</code>就可以了。</p>
+<blockquote>
+<p>文件存储的结构</p>
+</blockquote>
+<p>前面我们介绍映射关系时<strong>默认使用</strong>的<strong>文件存储结构</strong>是<code>连续结构</code>，这种方式有<strong>很多缺点</strong>。下面我们会具体介绍一些<strong>文件存储的结构</strong>并分析其优缺点。</p>
+<blockquote>
+<blockquote>
+<p>存储结构1：<code>连续结构</code></p>
+</blockquote>
+</blockquote>
+<p><strong>结构视图</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310848557.png"></p>
+<p><strong>视图介绍</strong>：创建文件时，会将对应的<strong>字符流</strong>依次存放在盘块号<strong>连续的多个磁盘块</strong>上，然后将<strong>第一个磁盘块</strong>的盘块号放到此文件的<strong>FCB中</strong>。用户需要访问此文件时，就可以通过文件的FCB取出<strong>起始块号</strong>并与<strong>pos</strong>计算得出<strong>磁盘块块号</strong>。</p>
+<p><strong>映射表的建立</strong>：如图所示，只需要保存<code>文件名</code>、<code>起始块号</code>、<code>文件长度</code>即可。</p>
+<p><strong>优点</strong>：<strong>访问速度</strong>很快，可以根据字符位置很快计算出磁盘块块号</p>
+<p><strong>缺点</strong>：文件<strong>改写很麻烦</strong>，同时对文件进行<strong>追加内容</strong>时可能会<strong>覆盖掉其他文件</strong>。</p>
+<blockquote>
+<blockquote>
+<p>存储结构2：<code>链式结构</code></p>
+</blockquote>
+</blockquote>
+<p><strong>结构视图</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661311357888.png"></p>
+<p><strong>视图介绍</strong>：字符流的存储<strong>不需要连续</strong>，而是可以存放在不同的磁盘块中，只是每一个磁盘块中都要<strong>存储下一个磁盘块的盘块号</strong>。</p>
+<p><strong>映射表的建立</strong>：如图所示，只需要保存<code>文件名</code>、<code>起始块号</code>、<code>文件长度</code>即可。</p>
+<p><strong>优点</strong>：方便对文件<strong>进行修改</strong>。</p>
+<p><strong>缺点</strong>：文件<strong>读的效率很低</strong>，因为涉及到<strong>跳转</strong>。</p>
+<blockquote>
+<blockquote>
+<p>存储结构3：<code>索引结构</code></p>
+</blockquote>
+</blockquote>
+<p><strong>结构视图</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661311532592.png"></p>
+<p><strong>视图介绍</strong>：对于一个文件，其<strong>字符流</strong>被分为<strong>多个逻辑块</strong>，这些逻辑块被存储在<strong>不连续的磁盘块中</strong>，也是拿出<strong>一个磁盘块</strong>作为<code>索引块</code>，用于存储该文件<strong>各个逻辑块</strong>存储的<strong>磁盘块块号</strong>。</p>
+<p><strong>映射表的建立</strong>：需要存储<strong>文件名</strong>、<code>索引块号</code>、<strong>文件长度</strong></p>
+<p><strong>优点</strong>：<strong>读写效率都较高</strong>。因为对于<strong>读操作</strong>，<strong>索引存储结构</strong>是顺序结构和链式结构的折中；而对于<strong>写操作</strong>，由于是存储在<strong>不连续的磁盘块</strong>，所以效率较高。</p>
+<p><strong>缺点</strong>：没有考虑到<code>文件大小</code>的因素，即<strong>小文件不需要索引块</strong>、<strong>大文件一个索引块存储不了</strong>。</p>
+<blockquote>
+<blockquote>
+<p>存储结构4：<code>多级索引结构</code>（** **）</p>
+</blockquote>
+</blockquote>
+<p><strong>结构视图</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661312025049.png"></p>
+<p><strong>视图介绍</strong>：考虑到<code>文件大小</code>的因素。对于<strong>小文件</strong>可以直接使用<strong>直接数据块号</strong>；<strong>中文件</strong>使用<strong>一阶索引</strong>；<strong>大文件</strong>使用<strong>多阶间接索引</strong>。这个模式类似内存管理中介绍的<code>多级页表</code>。</p>
+<p>这种存储结构就是现在<strong>实际操作系统使用</strong>的。</p>
+<hr>
+<blockquote>
+<p><strong>承上启下</strong></p>
+<blockquote>
+<p>通过<strong>前面4层抽象</strong>，我们已经可以通过<strong>文件</strong>完成磁盘的读写操作。<br>但是前面我们是直接告诉了<strong>文件的位置</strong>，而后获取到<code>inode</code>。在实际情况下，我们需要根据<strong>文件名</strong>在<strong>文件表</strong>里查询以找到此文件，这个过程就是第五层抽象——<code>文件系统的建立</code>。</p>
+</blockquote>
+</blockquote>
+<h2 id="第五层抽象：将磁盘抽象为一个文件系统"><a href="#第五层抽象：将磁盘抽象为一个文件系统" class="headerlink" title="第五层抽象：将磁盘抽象为一个文件系统"></a>第五层抽象：将磁盘抽象为一个文件系统</h2><p>不论对<strong>磁盘</strong>如何抽象，最终到用户眼中就是<code>一棵目录树</code>，这个树就是一个<code>文件系统</code>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310317075.png"></p>
+<p><code>目录树</code>即<strong>文件系统</strong>就是对<strong>磁盘块的进一步抽象</strong>，与文件抽象不同，<strong>文件抽象是指如何将一个文件映射到多个盘块</strong>，而文件系统的抽象是把<strong>所有的盘块</strong>都放到这个目录树中，从而在用户层面实现一个直观的使用界面。</p>
+<blockquote>
+<p>从<strong>多个文件</strong>开始：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310344905.png" alt=" =400x200"></p>
+<p>从<strong>单层目录到集合划分目录</strong>，为了方面用户进行管理和使用。但是仍<strong>不能很好解决问题</strong>。</p>
+<blockquote>
+<p>引入<code>目录树</code></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310453144.png" alt=" =600x300"></p>
+<p>如图所示，目录树是<code>分治思想</code>的体现，经过划分后每一个集合中的文件数会变得很少。并且这种<strong>树结构扩展性好</strong>、<strong>表示清晰</strong>。</p>
+<p>同时，有了目录树就要引入一个新的概念：<code>目录</code>即<strong>文件集合</strong>。</p>
+<blockquote>
+<p><strong>目录</strong>的实现：</p>
+</blockquote>
+<p>如何通过目录定位到具体的文件是一个关键问题，即<strong>通过树根到叶子节点</strong>。</p>
+<p>如下例：给出<code>/my/data/a</code>，如何得到<strong>a文件的FCB</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310506517.png" alt=" =600x300"></p>
+<p>如图所示，树状目录的完整实现是通过<strong>FCB数组</strong>和<strong>数据盘块集合</strong>实现。其中FCB数组存放着磁盘中<strong>所有文件的FCB</strong>，而一个文件的FCB中又保存着这个文件<strong>逻辑地址</strong>与<strong>磁盘块</strong>的<strong>映射</strong>，换句话说，<strong>找到了FCB就可以进入磁盘获取到该文件</strong>。</p>
+<p>所以进行<code>目录解析</code>的<strong>流程</strong>如下：</p>
+<ol>
+<li>首先获取到<code>“/”根目录</code>的FCB，这个FCB是磁盘初始化时就有的，且<strong>在FCB数组的第一个位置</strong>。</li>
+<li>通过根目录的FCB中存储的<strong>物理盘号</strong>信息可以定位到<strong>具体的磁盘块</strong>进而读写其中内容，此例中我们假设其中的信息为 <code>[var,13]</code>和<code>[my,82]</code>等，其代表着 <code>var</code> 和 <code>my</code> 两个目录的FCB在<strong>FCB数组的索引号</strong>。</li>
+<li>使用路径信息进行匹配，进入 <code>my</code> 的<strong>PCB</strong>，从而定位到<strong>my的磁盘块</strong>，在其中保存着<strong>my目录下文件的FCB地址</strong></li>
+<li>最终根据my目录下的内容定位到<strong>a文件的FCB</strong>，从而完成<strong>目录解析</strong>。</li>
+</ol>
+<p>具体的<strong>解析流程</strong>如下图：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661323007751.png"></p>
+<hr>
+<h1 id="磁盘读写的流程总结"><a href="#磁盘读写的流程总结" class="headerlink" title="磁盘读写的流程总结"></a>磁盘读写的流程总结</h1><blockquote>
+<p>经过上文<strong>5层抽象</strong>的学习，我们已经对<strong>磁盘管理</strong>有了较为<strong>清晰的认知</strong>。下面我们将对磁盘读写的内容进行<strong>全面整理</strong>：包括<code>磁盘读写的流程</code>、每一个流程<code>涉及到的代码</code>与各个代码之间的<code>调用关系</code>。通过整理，我们可以整合前文知识，<strong>更加深入</strong>的理解文件系统和磁盘管理，也可以将这部分内容与<strong>操作系统的其他模块</strong>结合起来。</p>
+</blockquote>
+<h2 id="磁盘读写的具体流程"><a href="#磁盘读写的具体流程" class="headerlink" title="磁盘读写的具体流程"></a>磁盘读写的具体流程</h2><blockquote>
+<p>下面我们将以一个<code>open</code>的例子来介绍<strong>磁盘管理</strong>的具体流程：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661310543955.png" alt=" =600x300"></p>
+<ol>
+<li>操作系统在安装时会将<strong>磁盘格式化</strong>，成为如<strong>下图的结构</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661312691051.png"></li>
+<li>系统在启动时会把<strong>磁盘根目录文件</strong>找到，并把其<strong>inode写入内存</strong>作为1号进程的资源</li>
+<li>用户创建的进程会<strong>继承这个根目录</strong>的FCB（<code>fork()创建进程是以复制父进程实现的</code>）</li>
+<li>用户<strong>启动一个进程</strong>，调用<code>open(/my/data/a)</code>打开一个文件：本质是<strong>将a文件的inode写入内存</strong>，并返回一个<strong>文件句柄fd</strong>。（会根据文件路径进行<code>目录解析</code>）</li>
+<li>用户根据此句柄<strong>进行文件操作</strong>。如<code>read(fd，buf，count)</code>,会根据<strong>fd</strong>找到当前<strong>文件字符流的pos</strong>，之后根据<code>pos</code>和文件<code>inode</code>中存储的<strong>索引信息</strong>可以找到pos对应的<strong>物理盘块的盘块号</strong></li>
+<li>调用<code>bread(block)</code>读磁盘<strong>高速缓存</strong>，如果内容已在则直接读到内存buf；没在就获取一个<strong>空闲的高速缓存</strong>并将block信息写到bh</li>
+<li>发起磁盘<strong>读写请求req</strong>，根据<code>block</code>计算得出<strong>扇区号</strong>，并将req加入到<strong>电梯队列</strong>，而后<strong>进程睡眠</strong></li>
+<li>磁盘控制器处理完毕上一个磁盘请求会产生<strong>磁盘中断</strong>，这时就很根据调度算法从电梯队列中取出这个<strong>请求req</strong>，并将<code>扇区号</code>换算为<code>CHS地址</code>，利用<code>out指令</code>将CHS发送到磁盘控制器。</li>
+<li>磁盘操作完毕再次进行中断，此时a文件的字符流数据已经<strong>存放到bh高速缓存</strong>，唤醒的进程将此内容<strong>复制到buf</strong>即可完成read。</li>
+</ol>
+<p>最后，不论是这里的<code>磁盘管理</code>，还是第七节的<code>IO设备管理</code>，其<strong>执行流程</strong>是一致的，无非是在<strong>inode处进行分支</strong>，一个通过<strong>映射表</strong>定位到<strong>磁盘</strong>一个通过<strong>函数</strong>实现数据的显示。究其根本还是对于<strong>文件的使用</strong>，所以对于文件和文件系统理解十分重要，<code>文件视图</code>也当之无愧的成为操作系统的<strong>第二个核心视图</strong>。</p>
+<p>注：关于文件系统和磁盘管理的内容还有部分未学习——磁盘读写过程中各个环节具体代码的实现。后续会继续补充。现在主要是要了解文件视图的框架和思想，可以将读写的流程说个大概。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2022/08/24/%EF%BC%88%E7%AC%AC%E5%85%AB%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="（第八节）操作系统--磁盘管理和文件系统">https://danggeovo.github.io/2022/08/24/（第八节）操作系统--磁盘管理和文件系统/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/21/%EF%BC%88%E7%AC%AC%E4%B8%83%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="prev" title="（第七节）操作系统--设备驱动">
+                  <i class="fa fa-angle-left"></i> （第七节）操作系统--设备驱动
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/09/%E4%BD%9C%E4%B8%9A2.1%20%E4%B8%8A%E8%AF%BE%E5%AD%A6%E4%B9%A0--%E8%AE%A1%E7%BD%91%E7%9B%B8%E5%85%B3/" rel="next" title="初入计网">
+                  初入计网 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

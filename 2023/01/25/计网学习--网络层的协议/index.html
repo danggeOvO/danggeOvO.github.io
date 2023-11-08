@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="网络层协议 网络层协议，OSI参考模型的第三层。它控制通信子网进行工作，提供建立、保持和释放连接的手段，保证传输层实体之间进行透明的数据传输。   网络层有四个协议：ARP协议，IP协议，ICMP协议，IGMP协议。ARP协议为IP协议提供服务，IP协议为ICMP协议提供服务，ICMP协议为IGMP协议提供服务。  ARP协议 地址解析协议，即ARP（Address Resolution Prot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始的计网学习-网络层协议">
+<meta property="og:url" content="https://danggeovo.github.io/2023/01/25/%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0--%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="网络层协议 网络层协议，OSI参考模型的第三层。它控制通信子网进行工作，提供建立、保持和释放连接的手段，保证传输层实体之间进行透明的数据传输。   网络层有四个协议：ARP协议，IP协议，ICMP协议，IGMP协议。ARP协议为IP协议提供服务，IP协议为ICMP协议提供服务，ICMP协议为IGMP协议提供服务。  ARP协议 地址解析协议，即ARP（Address Resolution Prot">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638085951628.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638086179434.png">
+<meta property="article:published_time" content="2023-01-25T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:57:16.770Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638085951628.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/01/25/%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0--%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E5%8D%8F%E8%AE%AE/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/01/25/%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0--%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E5%8D%8F%E8%AE%AE/","path":"2023/01/25/计网学习--网络层的协议/","title":"从零开始的计网学习-网络层协议"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从零开始的计网学习-网络层协议 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">网络层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ARP%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.</span> <span class="nav-text">ARP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#arp%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BC%BA%E7%82%B9%E2%80%93arp%E6%AC%BA%E9%AA%97"><span class="nav-number">1.1.1.</span> <span class="nav-text">arp协议的缺点–arp欺骗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.2.</span> <span class="nav-text">IP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ICMP%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.</span> <span class="nav-text">ICMP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IGMP%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.4.</span> <span class="nav-text">IGMP协议</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/25/%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0--%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E5%8D%8F%E8%AE%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从零开始的计网学习-网络层协议 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从零开始的计网学习-网络层协议
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-25 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-25T13:48:32+08:00">2023-01-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:57:16" itemprop="dateModified" datetime="2023-11-08T17:57:16+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="网络层协议"><a href="#网络层协议" class="headerlink" title="网络层协议"></a>网络层协议</h1><blockquote>
+<p>网络层协议，OSI参考模型的第三层。它控制通信子网进行工作，提供建立、保持和释放连接的手段，保证传输层实体之间进行透明的数据传输。</p>
+</blockquote>
+<blockquote>
+<p>网络层有四个协议：<code>ARP协议</code>，<code>IP协议</code>，<code>ICMP协议</code>，<code>IGMP协议</code>。ARP协议为IP协议提供服务，IP协议为ICMP协议提供服务，ICMP协议为IGMP协议提供服务。</p>
+</blockquote>
+<h2 id="ARP协议"><a href="#ARP协议" class="headerlink" title="ARP协议"></a>ARP协议</h2><blockquote>
+<p><strong>地址解析协议</strong>，即ARP（<strong>Address Resolution Protocol</strong>），是根据IP地址获取物理地址的一个TCP&#x2F;IP协议。</p>
+<blockquote>
+<p>物理地址也叫MAC地址，是一个直接烧录在网卡上的数据，也是一个不变的真实地址。</p>
+</blockquote>
+</blockquote>
+<p>主机发送信息时将包含目标IP地址的ARP请求广播到局域网络上的<strong>所有主机</strong>，并接收返回消息，以此确定目标的物理地址；收到返回消息后将该IP地址和物理地址存入本机ARP缓存中并保留一定时间，下次请求时直接查询ARP缓存以节约资源。</p>
+<p>每一个主机都有一个<code>ARP高速缓存</code>，此缓存中记录了最近一段时间内其它<code>IP地址与其MAC地址的对应关系</code>。如果本机想与某台主机通信，则首先在ARP高速缓存中查找此台主机的IP和MAC信息，如果存在，则直接利用此MAC地址构造以太帧；如果不存在，则向本网络上每一个主机<strong>广播一个ARP请求报文</strong>，其意义是”如果你有此IP地址，请告诉我你的MAC地址”，目的主机收到此请求包后，发送一个ARP响应报文，本机收到此响应后，把相关信息记录在ARP高速缓存中，以下的步骤同上。</p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638085951628.png" alt="arp报文格式"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638086179434.png" alt="wirshark抓取"></p>
+<h3 id="arp协议的缺点–arp欺骗"><a href="#arp协议的缺点–arp欺骗" class="headerlink" title="arp协议的缺点–arp欺骗"></a>arp协议的缺点–arp欺骗</h3><p>可以看出，ARP协议是有缺点的，第三方主机可以构造一个ARP欺骗报文，而源主机却无法分辨真假。如果发送者硬件地址字段填入攻击者的硬件地址，而发送者IP地址填入被假冒者的IP地址，那么就构造出了一个用于欺骗的ARP请求报文。那么被欺骗主机的ARP高速缓存，被假冒者的IP地址与其MAC地址的对应关系就会更改为欺骗者的，从而达到<strong>ARP欺骗</strong>的目的。特别的，如果攻击者冒充网关，将转发子网内到外网的所有通信量，以达到捕获其他主机的通信量，从而破坏数据传输的保密性。</p>
+<h2 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h2><blockquote>
+<p>IP是<strong>Internet Protocol</strong>（网际互连协议）的缩写,是TCP&#x2F;IP体系中的网络层协议。</p>
+</blockquote>
+<p>设计IP的目的是提高网络的可扩展性：<strong>一是解决互联网问题，实现大规模、异构网络的互联互通</strong>；<strong>二是分割顶层网络应用和底层网络技术之间的耦合关系，以利于两者的独立发展</strong>。根据端到端的设计原则，IP只为主机提供一种无连接、不可靠的、尽力而为的数据包传输服务。</p>
+<p>作用的范围不同也是IP协议和ARP协议的区别，一般ARP协议只可以作用在一个子网之中；而IP协议是可以作用在不同网络之间的。</p>
+<h2 id="ICMP协议"><a href="#ICMP协议" class="headerlink" title="ICMP协议"></a>ICMP协议</h2><blockquote>
+<p>ICMP（Internet Control Message Protocol）,全称为Internet控制报文协议。</p>
+</blockquote>
+<p>它是TCP&#x2F;IP协议簇的一个<strong>子协议</strong>，用于在IP主机、路由器之间传递控制消息。控制消息是指<strong>网络通不通</strong>、<strong>主机是否可达</strong>、<strong>路由是否可用</strong>等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用。</p>
+<p>ICMP使用IP的基本支持，就像它是一个更高级别的协议，但是，ICMP实际上是IP的一个组成部分，必须由每个IP模块实现。</p>
+<blockquote>
+<p>以前的关于ICMP协议的具体描述：<a target="_blank" rel="noopener" href="https://qidangge.github.io/2021/10/24/%E4%BD%9C%E4%B8%9A2.2%20ping%E6%93%8D%E4%BD%9C%E4%B8%8Eicmp/">https://qidangge.github.io/2021/10/24/%E4%BD%9C%E4%B8%9A2.2%20ping%E6%93%8D%E4%BD%9C%E4%B8%8Eicmp</a>&#x2F;</p>
+</blockquote>
+<h2 id="IGMP协议"><a href="#IGMP协议" class="headerlink" title="IGMP协议"></a>IGMP协议</h2><blockquote>
+<p>互联网组管理协议（IGMP，Internet Group Management Protocol）是因特网协议家族中的一个<strong>组播</strong>协议。</p>
+</blockquote>
+<p>TCP&#x2F;IP协议族的一个子协议，用于IP主机向任一个直接相邻的路由器报告他们的组成员情况。允许Internet主机参加多播，也是IP主机用作向相邻多目路由器报告多目组成员的协议。多目路由器是支持组播的路由器，向本地网络发送IGMP查询。主机通过发送IGMP报告来应答查询。组播路由器负责将组播包转发到所有网络中组播成员。　</p>
+<p>互联网组管理协议（IGMP）是对应于开源系统互联（OSI）七层框架模型中网络层的协议。在互联网工程任务组（The Internet Engineering Task Force，简称IETF）编写的标准文档（RFC）2236.中对Internet组管理协议（IGMP）做了详尽的描述。附上链接：<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc2236">https://datatracker.ietf.org/doc/html/rfc2236</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/01/25/%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0--%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E5%8D%8F%E8%AE%AE/" title="从零开始的计网学习-网络层协议">https://danggeovo.github.io/2023/01/25/计网学习--网络层的协议/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%EF%BC%88B%E7%AB%99%EF%BC%89.md/" rel="prev" title="计算机基础——计算机组成原理（b栈视频版）">
+                  <i class="fa fa-angle-left"></i> 计算机基础——计算机组成原理（b栈视频版）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/26/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95-%E6%A6%82%E8%BF%B0/" rel="next" title="从零开始学习算法-概述">
+                  从零开始学习算法-概述 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

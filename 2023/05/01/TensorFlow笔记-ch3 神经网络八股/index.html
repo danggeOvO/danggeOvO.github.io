@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="tf.keras 搭建网络八股keras介绍 tf.keras 是 tensorflow2 引入的高封装度的框架，可以用于快速搭建神经网络模型，keras 为支持快速实验而生，能够把想法迅速转换为结果，是深度学习框架之中最终易上手的一个，它提供了一致而简洁的 API，能够极大地减少一般应用下的工作量，提高代码地封装程度和复用性。  深度学习编程框架中的 API 众多，就算是从业很久的算法工程师也不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TensorFlow笔记-ch3 神经网络八股">
+<meta property="og:url" content="https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0-ch3%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="tf.keras 搭建网络八股keras介绍 tf.keras 是 tensorflow2 引入的高封装度的框架，可以用于快速搭建神经网络模型，keras 为支持快速实验而生，能够把想法迅速转换为结果，是深度学习框架之中最终易上手的一个，它提供了一致而简洁的 API，能够极大地减少一般应用下的工作量，提高代码地封装程度和复用性。  深度学习编程框架中的 API 众多，就算是从业很久的算法工程师也不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887389.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887405.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887378.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887386.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887407.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887406.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887408.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887392.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887388.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887401.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887390.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887391.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887402.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887404.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887403.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887409.png">
+<meta property="article:published_time" content="2023-05-01T05:26:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:18:49.303Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887389.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0-ch3%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0-ch3%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1/","path":"2023/05/01/TensorFlow笔记-ch3 神经网络八股/","title":"TensorFlow笔记-ch3 神经网络八股"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TensorFlow笔记-ch3 神经网络八股 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tf-keras-%E6%90%AD%E5%BB%BA%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1"><span class="nav-number">1.</span> <span class="nav-text">tf.keras 搭建网络八股</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#keras%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">keras介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AD%E9%83%A8%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">搭建神经网络六部法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E4%B8%AA%E5%87%BD%E6%95%B0%E7%94%A8%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">各个函数用法介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iris-%E6%95%B0%E6%8D%AE%E9%9B%86%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%8E%B0"><span class="nav-number">1.3.</span> <span class="nav-text">iris 数据集代码复现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%EF%BC%9AMNIST%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">实例：MNIST数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MNIST%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.1.</span> <span class="nav-text">MNIST数据集的介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%85%AD%E9%83%A8%E6%B3%95%E8%AE%AD%E7%BB%83MNIST%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">2.2.</span> <span class="nav-text">使用六部法训练MNIST数据集</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E4%BA%8C%EF%BC%9AFashion-mnist-%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">3.</span> <span class="nav-text">实践二：Fashion_mnist 数据集</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0-ch3%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="TensorFlow笔记-ch3 神经网络八股 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TensorFlow笔记-ch3 神经网络八股
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-01 13:26:32" itemprop="dateCreated datePublished" datetime="2023-05-01T13:26:32+08:00">2023-05-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:18:49" itemprop="dateModified" datetime="2023-11-08T18:18:49+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】人工智能</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/TensorFlow%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">TensorFlow实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="tf-keras-搭建网络八股"><a href="#tf-keras-搭建网络八股" class="headerlink" title="tf.keras 搭建网络八股"></a>tf.keras 搭建网络八股</h1><h2 id="keras介绍"><a href="#keras介绍" class="headerlink" title="keras介绍"></a>keras介绍</h2><blockquote>
+<p>tf.keras 是 tensorflow2 引入的<strong>高封装度的框架</strong>，可以用于快速搭建神经网络模型，keras 为支持快速实验而生，能够把想法迅速转换为结果，是深度学习框架之中最终易上手的一个，它提供了一致而简洁的 API，能够极大地减少一般应用下的工作量，提高代码地封装程度和复用性。</p>
+</blockquote>
+<p>深度学习编程框架中的 API 众多，就算是从业很久的算法工程师也不可能记住所有的 API。由于本课程时间有限，只覆盖了 tensorflow2 系列中的<strong>最常用的几个 API</strong>，仍然还有很多需要在今后的实践中继续学习，这时我们就需要参考tensorflow 的官方文档，通过<strong>阅读源码和注释</strong>的方法学习 API。<br>通常有两种方法，以下将分别介绍:</p>
+<blockquote>
+<p>第一种方法： pycharm 集成开发环境中查看框架源码</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887389.png" alt="Pycharm"></p>
+<p>如上图，将鼠标放置在函数上按住 Ctrl 键，会显示函数的基本信息，包括封装函数的类，函数入口参数，函数功能等。<br>按住 Ctrl 键点击函数会跳转到函数的源代码部分，使用者可以根据源码和注释进一步了解函数的实现方法。</p>
+<blockquote>
+<p>在 tensorflow 官网中查询函数文档</p>
+<blockquote>
+<p>附上官网网址：<a target="_blank" rel="noopener" href="https://tensorflow.google.cn/api_docs/python/tf/keras/Model#fit">https://tensorflow.google.cn/api_docs&#x2F;python&#x2F;tf&#x2F;keras&#x2F;Model#fit</a></p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887405.png" alt="官网查看"></p>
+<p>在左侧选择想要查看的API即可。</p>
+<h2 id="搭建神经网络六部法"><a href="#搭建神经网络六部法" class="headerlink" title="搭建神经网络六部法"></a>搭建神经网络六部法</h2><blockquote>
+<p>六部格式，定下神经网络训练的基本框架</p>
+</blockquote>
+<ul>
+<li>第一步：<strong>import 相关模块</strong>，如 import tensorflow as tf。</li>
+<li>第二步：<strong>指定输入网络的训练集和测试集</strong>，如指定训练集的输入 x_train 和标签y_train，测试集的输入 x_test 和标签 y_test。(要使得数据格式符合神经网络的输入格式)</li>
+<li>第三步：逐层<strong>搭建网络结构</strong>，<code>model = tf.keras.models.Sequential()</code></li>
+<li>第四步：在<code> model.compile()</code>中配置<strong>训练方法</strong>，选择训练时使用的<strong>优化器</strong>、<strong>损失函数</strong>和最终<strong>评价指标</strong>。</li>
+<li>第五步：在 <code>model.fit()</code>中执行训练过程，告知训练集和测试集的<strong>输入值</strong>和<strong>标签</strong>、每个 <strong>batch 的大小</strong>（batchsize）和<strong>数据集的迭代次数</strong>（epoch）。</li>
+<li>第六步：使用 <code>model.summary()</code>打印网络结构，统计参数数目。</li>
+</ul>
+<h3 id="各个函数用法介绍"><a href="#各个函数用法介绍" class="headerlink" title="各个函数用法介绍"></a>各个函数用法介绍</h3><blockquote>
+<p>tf.keras.models.Sequential()</p>
+</blockquote>
+<p>Sequential 函数是一个<strong>容器</strong>，描述了神经网络的网络结构，在 Sequential函数的输入参数中描述从输入层到输出层的网络结构。可以在其中定义激活函数、正则化等。</p>
+<ul>
+<li><p>拉直层：<code>tf.keras.layers.Flatten()</code><br>拉直层可以变换张量的尺寸，把输入特征拉直为一维数组，是不含计算参数的层。</p>
+</li>
+<li><p>全连接层：<code>tf.keras.layers.Dense</code>( 神经元个数,activation&#x3D;”激活函数”,kernel_regularizer&#x3D;”正则化方式”)</p>
+<p>   其中：<br>activation（字符串给出）可选<code> relu</code>、<code>softmax</code>、<code>sigmoid</code>、<code>tanh</code> 等<br>kernel_regularizer 可选 <code>tf.keras.regularizers.l1()</code>、<code>tf.keras.regularizers.l2()</code></p>
+</li>
+<li><p>卷积层：<code>tf.keras.layers.Conv2D</code>( filter &#x3D; <strong>卷积核个数</strong>, kernel_size &#x3D; <strong>卷积核尺寸</strong>,strides &#x3D; <strong>卷积步长</strong>,padding &#x3D; “valid” or “same”)</p>
+</li>
+<li><p>LSTM 层：tf.keras.layers.LSTM()。</p>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p>Model.compile( optimizer &#x3D; 优化器, loss &#x3D; 损失函数, metrics &#x3D; [“准确率”])</p>
+</blockquote>
+<p>Compile 用于配置神经网络的训练方法，告知训练时使用的<strong>优化器</strong>、<strong>损失函数</strong>和<strong>准确率评测标准</strong>。</p>
+<ol>
+<li>optimizer 可以是<strong>字符串形式</strong>给出的优化器名字，也可以是函数形式，使用函数形式可以设置学习率、动量和超参数。</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887378.png" alt="optimizer"></p>
+<p>注：前期建议使用字符串形式，后面再使用函数设置学习率。<br>       更多optimizer的调用可以去官方文档：tf.keras下的Model查看。</p>
+<ol start="2">
+<li>Loss 可以是字符串形式给出的损失函数的名字，也可以是函数形式。</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887386.png" alt="Loss可选性"></p>
+<p>注：损失函数常需要经过 softmax 等函数将输出转化为概率分布的形式。from_logits 则用来标注该损失函数是否需要转换为概率的形式，<strong>取 False 时表示转化为概率分布，取 True 时表示没有转化为概率分布</strong>，直接输出。</p>
+<ol start="3">
+<li>Metrics 标注网络评测指标。</li>
+</ol>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887407.png" alt="Metrics可选项"></p>
+<p>注：我们这里选择第三个，即y为概率分布，y_为数值。</p>
+<hr>
+<blockquote>
+<p>model.fit()</p>
+<blockquote>
+<p>训练集的输入特征， 训练集的标签， batch_size, epochs,<br>validation_data &#x3D; (测试集的输入特征，测试集的标签)，<br>validataion_split &#x3D; 从训练集划分多少比例给测试集，<br>validation_freq &#x3D; 测试的 epoch 间隔次数</p>
+</blockquote>
+</blockquote>
+<p>fit 函数用于执行训练过程。</p>
+<hr>
+<blockquote>
+<p>model.summary()</p>
+</blockquote>
+<p>summary 函数用于打印<strong>网络结构</strong>和<strong>参数统计</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887406.png"></p>
+<p>上图是 model.summary()对鸢尾花分类网络的网络结构和参数统计，对于一个输入为 4 输出为 3 的全连接网络，共有 15 个参数。</p>
+<h2 id="iris-数据集代码复现"><a href="#iris-数据集代码复现" class="headerlink" title="iris 数据集代码复现"></a>iris 数据集代码复现</h2><p>先给出<strong>简化后的代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x_train = datasets.load_iris().data</span><br><span class="line">y_train = datasets.load_iris().target</span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(x_train)</span><br><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(y_train)</span><br><span class="line">tf.random.set_seed(<span class="number">116</span>)</span><br><span class="line"></span><br><span class="line">model = tf.keras.models.Sequential([</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">3</span>, activation=<span class="string">&#x27;softmax&#x27;</span>, kernel_regularizer=tf.keras.regularizers.l2())</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=tf.keras.optimizers.SGD(lr=<span class="number">0.1</span>),</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">False</span>),</span><br><span class="line">              metrics=[<span class="string">&#x27;sparse_categorical_accuracy&#x27;</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">32</span>, epochs=<span class="number">500</span>, validation_split=<span class="number">0.2</span>, validation_freq=<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line">model.summary()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>空间，使用tf.keras后，原本上百行的代码只需要24行。究其原因，在于tf.keras将原本很复杂的底层代码封装成了一个个接口函数，而我们只需要填上对应的参数即可。</p>
+<blockquote>
+<p>下面我们具体分析一下上代码，将六部法套入其中：</p>
+</blockquote>
+<p><strong>第一步：import 相关模块：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<hr>
+<p><strong>第二步：指定输入网络地训练集和测试集：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x_train = datasets.load_iris().data</span><br><span class="line">y_train = datasets.load_iris().target</span><br></pre></td></tr></table></figure>
+<p>其中测试集的输入特征 x_test 和标签 y_test 可以像 x_train 和 y_train 一样直接从数据集获取，也可以如上述在 fit 中按比例从训练集中划分，本例选择从训练集中划分，所以只需加载 x_train，y_train 即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(x_train)</span><br><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(y_train)</span><br><span class="line">tf.random.set_seed(<span class="number">116</span>)</span><br></pre></td></tr></table></figure>
+<p>以上代码实现了数据集的乱序。</p>
+<hr>
+<p><strong>第三步：逐层搭建网络结构：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model = tf.keras.models.Sequential([</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">3</span>, activation=<span class="string">&#x27;softmax&#x27;</span>, kernel_regularizer=tf.keras.regularizers.l2())</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p>如上所示，本例使用了<strong>单层全连接网络</strong>，第一个参数表示神经元个数，第二个参数表示网络所使用的激活函数，第三个参数表示选用的正则化方法。</p>
+<p>使用 Sequential 可以快速搭建网络结构，但是如果网络包含跳连等其他复杂网络结构，Sequential 就无法表示了。这就需要使用 <strong>class</strong> 来声明网络结构。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyModel</span>(<span class="title class_ inherited__">Model</span>):</span><br><span class="line">			  <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">							<span class="built_in">super</span>(MyModel, self).__init__()</span><br><span class="line"> 							//初始化网络结构</span><br><span class="line">			  <span class="keyword">def</span> <span class="title function_">call</span>(<span class="params">self, x</span>):</span><br><span class="line">							y = self.d1(x)</span><br><span class="line">							<span class="keyword">return</span> y</span><br></pre></td></tr></table></figure>
+<p>使用 <strong>class 类</strong>封装网络结构，如上所示是一个 <strong>class 模板</strong>，<code>MyModel </code>表示声明的神经网络的名字，括号中的<code>Model</code>表示创建的类需要继承 tensorflow 库中的 Model 类。类中需要定义<strong>两个函数</strong>，<code>__ init__()</code>函数为类的构造函数,用于初始化类的参数，<code>spuer(MyModel,self).__ init__()</code>这行表示<strong>初始化父类的参数</strong>。之后便可初始化网络结构,搭建出神经网络所需的各种网络结构块。<code>call()</code>函数中调用<code>__init__()</code>函数中完成初始化的网络块，实现前向传播并返回推理值。<br>使用 class 方式搭建鸢尾花网络结构的代码如下所示。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887408.png" alt="class-鸢尾花"></p>
+<p>搭建好网络结构后只需要使用 Model&#x3D;MyModel()构建类的对象，就可以使用该模型了。</p>
+<p>下面给出使用class类搭建鸢尾花数据集的神经网络：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887392.png" alt="class"></p>
+<p>下面给出源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="comment">###########################################</span></span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> Dense</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> Model</span><br><span class="line"><span class="comment">###########################################</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x_train = datasets.load_iris().data</span><br><span class="line">y_train = datasets.load_iris().target</span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(x_train)</span><br><span class="line">np.random.seed(<span class="number">116</span>)</span><br><span class="line">np.random.shuffle(y_train)</span><br><span class="line">tf.random.set_seed(<span class="number">116</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IrisModel</span>(<span class="title class_ inherited__">Model</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(IrisModel, self).__init__()</span><br><span class="line">        self.d1 = Dense(<span class="number">3</span>, activation=<span class="string">&#x27;softmax&#x27;</span>, kernel_regularizer=tf.keras.regularizers.l2())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">call</span>(<span class="params">self, x</span>):</span><br><span class="line">        y = self.d1(x)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line">model = IrisModel()</span><br><span class="line"><span class="comment">#################################################</span></span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=tf.keras.optimizers.SGD(lr=<span class="number">0.1</span>),</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">False</span>),</span><br><span class="line">              metrics=[<span class="string">&#x27;sparse_categorical_accuracy&#x27;</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">32</span>, epochs=<span class="number">500</span>, validation_split=<span class="number">0.2</span>, validation_freq=<span class="number">20</span>)</span><br><span class="line">model.summary()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注： 和原本的代码相比，改变的地方在代码中标出。<br>①import 中添加了 Model 模块和 Dense 层、Flatten 层。<br>②使用 class 声明网络结构，model &#x3D; IrisModel()初始化模型对象。</p>
+<hr>
+<p><strong>第四步：在 model.compile()中配置训练方法：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">model.<span class="built_in">compile</span>(optimizer=tf.keras.optimizers.SGD(lr=<span class="number">0.1</span>),</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">False</span>),</span><br><span class="line">              metrics=[<span class="string">&#x27;sparse_categorical_accuracy&#x27;</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如上所示，本例使用 <strong>SGD 优化器</strong>，并将<strong>学习率设置为 0.1</strong> ，选择<code>SparseCategoricalCrossentrop </code>作为损失函数。由于神经网络输出使用了softmax 激活函数，使得输出是概率分布，而不是原始输出，所以需要将<br><strong>from_logits 参数设置为 False</strong>。鸢尾花数据集给的标签是 0，1，2 这样的数值，而网络前向传播的输出为 概率分布，所以 metrics 需要设置为	<code>sparse_categorical_accuracy</code>。</p>
+<hr>
+<p><strong>第五步：在 model.fit()中执行训练过程:</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">32</span>, epochs=<span class="number">500</span>, validation_split=<span class="number">0.2</span>, validation_freq=<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<p>在 fit 中执行训练过程,x_train,y_train 分别表示网络的输入特征和标签，batch_size 表示一次喂入神经网络的数据量，epochs 表示数据集的迭代次数,validation_split 表示数据集中测试集的划分比例，validation_freq 表示每迭<br>代 20 次在测试集上测试一次准确率。</p>
+<hr>
+<p><strong>第六步：使用 model.summary()打印网络结构，统计参数数目：</strong></p>
+<p><code>model.summary()</code></p>
+<h1 id="实例：MNIST数据集"><a href="#实例：MNIST数据集" class="headerlink" title="实例：MNIST数据集"></a>实例：MNIST数据集</h1><blockquote>
+<p>MNIST是一个入门的手写数字识别的数据集。</p>
+</blockquote>
+<h2 id="MNIST数据集的介绍"><a href="#MNIST数据集的介绍" class="headerlink" title="MNIST数据集的介绍"></a>MNIST数据集的介绍</h2><p>MNIST 数据集一共有 7 万张图片，是 <strong>28×28 像素</strong>的 0 到 9 <strong>手写数字数据集</strong>，其中 6 万张用于训练，1 万张用于测试。每张图片包括 <strong>784（28×28）</strong> 个像素点，使用全连接网络时可将 <strong>784 个像素点</strong>组成长度为 784 的一维数组，作为输入特征。数据集图片如下所示。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887388.png" alt="MNIST数据集"></p>
+<blockquote>
+<p>数据集的导入：</p>
+</blockquote>
+<p>keras 函数库中提供了使用 <strong>mnist 数据集的接口</strong>，代码如下所示，可以使用load_data()直接从 mnist 中读取测试集和训练集。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mnist = tf.keras.datasets.mnist</span><br><span class="line">(x_train, y_train), (x_test, y_test) = mnist.load_data()</span><br></pre></td></tr></table></figure>
+<p>注：这里已经导入了测试数据。</p>
+<hr>
+<blockquote>
+<p>以二位数组的形式打印出来</p>
+</blockquote>
+<p><strong>使用代码</strong>：<code>print(&quot;x_train.shape:\n&quot;, x_train.shape)</code></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887401.png" alt="二维数组"></p>
+<p>上述代码将读取的x_train的第一层打印出来，是一个28x28的二维数组。<br>对比矩阵图和PIL得到的图，可以知道在MNIST数据集里是使用灰度值表示具体的数字。</p>
+<p>注：在MNIST里，0为黑色，255位白色，介于二者之间的呈现不同的颜色。以数值表示颜色的深浅就是灰度值。</p>
+<hr>
+<blockquote>
+<p>MNIST数据集其它部分的shape</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887390.png" alt="shape"></p>
+<p>这里我们可以看到，x都是三维矩阵，分别为60000和10000个图片像素矩阵。<br>而y都是一维数组，每一个表示x图片代表的正确数字，是以数值的形式给出。</p>
+<hr>
+<h2 id="使用六部法训练MNIST数据集"><a href="#使用六部法训练MNIST数据集" class="headerlink" title="使用六部法训练MNIST数据集"></a>使用六部法训练MNIST数据集</h2><p><strong>先来给出源码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">mnist = tf.keras.datasets.mnist</span><br><span class="line">(x_train, y_train), (x_test, y_test) = mnist.load_data()</span><br><span class="line">x_train, x_test = x_train / <span class="number">255.0</span>, x_test / <span class="number">255.0</span></span><br><span class="line"></span><br><span class="line">model = tf.keras.models.Sequential([</span><br><span class="line">    tf.keras.layers.Flatten(),</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">128</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">10</span>, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>,</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">False</span>),</span><br><span class="line">              metrics=[<span class="string">&#x27;sparse_categorical_accuracy&#x27;</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">32</span>, epochs=<span class="number">5</span>, validation_data=(x_test, y_test), validation_freq=<span class="number">1</span>)</span><br><span class="line">model.summary()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>运行结果</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887391.png" alt="result"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887402.png" alt="六部法"></p>
+<hr>
+<blockquote>
+<p>使用class定义模型：</p>
+</blockquote>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> Dense, Flatten</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> Model</span><br><span class="line"></span><br><span class="line">mnist = tf.keras.datasets.mnist</span><br><span class="line">(x_train, y_train), (x_test, y_test) = mnist.load_data()</span><br><span class="line">x_train, x_test = x_train / <span class="number">255.0</span>, x_test / <span class="number">255.0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MnistModel</span>(<span class="title class_ inherited__">Model</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(MnistModel, self).__init__()</span><br><span class="line">        self.flatten = Flatten()</span><br><span class="line">        self.d1 = Dense(<span class="number">128</span>, activation=<span class="string">&#x27;relu&#x27;</span>)</span><br><span class="line">        self.d2 = Dense(<span class="number">10</span>, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">call</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.flatten(x)</span><br><span class="line">        x = self.d1(x)</span><br><span class="line">        y = self.d2(x)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">model = MnistModel()</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>,</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">False</span>),</span><br><span class="line">              metrics=[<span class="string">&#x27;sparse_categorical_accuracy&#x27;</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">32</span>, epochs=<span class="number">5</span>, validation_data=(x_test, y_test), validation_freq=<span class="number">1</span>)</span><br><span class="line">model.summary()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>注：与源代码相比，变化的地方只是模型建立区域和开头导入的几个模块。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887404.png" alt="model"></p>
+<hr>
+<blockquote>
+<p>注意事项：</p>
+</blockquote>
+<p>我们这里在导入数据集后进行了归一化，也就是同除255得到[0,1]的数据，利于模型的训练。<br>同时我们在实际进行手写输入的识别时除了要进行矩阵的变换之外，还要进行归一化处理。</p>
+<p>MNIST数据集的图片是黑底白字，所以实际测试时也要是这个样式。</p>
+<h1 id="实践二：Fashion-mnist-数据集"><a href="#实践二：Fashion-mnist-数据集" class="headerlink" title="实践二：Fashion_mnist 数据集"></a>实践二：Fashion_mnist 数据集</h1><p>Fashion_mnist 数据集具有 mnist 近乎所有的特征，包括 60000 张训练图片和 10000 张测试图片，图片被分为十类，每张图像为 28×28 的分辨率。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887403.png" alt="数据集类别"></p>
+<p>图片的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074887409.png" alt="数据集图片"></p>
+<p>代码实例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">fashion = tf.keras.datasets.fashion_mnist</span><br><span class="line">(x_train, y_train), (x_test, y_test) = fashion.load_data()</span><br><span class="line">x_train, x_test = x_train/<span class="number">255</span>, x_test/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">model = tf.keras.models.Sequential([</span><br><span class="line">    tf.keras.layers.Flatten(),</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">128</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">10</span>, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(</span><br><span class="line">    optimizer=<span class="string">&#x27;adam&#x27;</span>,</span><br><span class="line">    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">False</span>),</span><br><span class="line">    metrics=[<span class="string">&#x27;sparse_categorical_accuracy&#x27;</span>]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">32</span>, epochs=<span class="number">5</span>, validation_data=(x_test, y_test), validation_freq=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">model.summery()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<hr>
+<blockquote>
+<p>写在最后：</p>
+</blockquote>
+<p>到此，本篇内容已经学习完毕，最重要的收获就是通过tf.keras进行神经网络的构建与训练，有了前面的基础，这里就可以直接调用API了，也可以理解调用的背后具体的过程了，对于API给定的一个个参数也知道了是什么含义。</p>
+<p>这只是最简单的神经网络的学习，却是以后学习的根基，毕竟构建神经网络的六部法是不会变的，适用于以后的所有实践，只是更加细化。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0-ch3%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1/" title="TensorFlow笔记-ch3 神经网络八股">https://danggeovo.github.io/2023/05/01/TensorFlow笔记-ch3 神经网络八股/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0--ch5%20%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="prev" title="TensorFlow笔记--ch5 卷积神经网络">
+                  <i class="fa fa-angle-left"></i> TensorFlow笔记--ch5 卷积神经网络
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0--ch4%20%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1%E6%89%A9%E5%B1%95/" rel="next" title="TensorFlow笔记--ch4 神经网络八股扩展">
+                  TensorFlow笔记--ch4 神经网络八股扩展 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

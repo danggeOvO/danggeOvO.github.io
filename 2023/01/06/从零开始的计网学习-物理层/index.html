@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：本篇文章的主要资料来源为《[公众号蓝蓝考研]计算机网络背诵版》，同时会在遇到重点问题时广泛收集网上资料，使得记录更加详细。本次整理仅用于个人学习。   老规矩，先来说一下本节考点：  定义标准的四大特性 奈式准则与香农定理 编码与调制 数据交换方式 物理层设备与传输介质  考点说明：各个考点即为下面的小节标题，会分别进行介绍。其中奈式准则与香农定理涉及到计算。  基础概念下面会介绍一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始的计网学习-物理层">
+<meta property="og:url" content="https://danggeovo.github.io/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：本篇文章的主要资料来源为《[公众号蓝蓝考研]计算机网络背诵版》，同时会在遇到重点问题时广泛收集网上资料，使得记录更加详细。本次整理仅用于个人学习。   老规矩，先来说一下本节考点：  定义标准的四大特性 奈式准则与香农定理 编码与调制 数据交换方式 物理层设备与传输介质  考点说明：各个考点即为下面的小节标题，会分别进行介绍。其中奈式准则与香农定理涉及到计算。  基础概念下面会介绍一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999582984.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672919596982.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672920137234.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999913253.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999933285.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999044126.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999218107.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999380680.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922537031.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922695204.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999004933.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924145595.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922872444.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922882131.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922891870.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672923103752.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924100749.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672923168574.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672998293596.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672998914764.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672923337374.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924059053.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999642872.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999677843.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924029768.png">
+<meta property="article:published_time" content="2023-01-06T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T09:56:04.120Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999582984.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/","path":"2023/01/06/从零开始的计网学习-物理层/","title":"从零开始的计网学习-物理层"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从零开始的计网学习-物理层 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">基础概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%88%E5%BC%8F%E5%87%86%E5%88%99%E4%B8%8E%E9%A6%99%E5%86%9C%E5%AE%9A%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">奈式准则与香农定理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%A4%A7%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">四大编码方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E4%B8%8E%E8%B0%83%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">编码与调制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E4%BA%A4%E6%8D%A2"><span class="nav-number">5.</span> <span class="nav-text">三大交换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E4%BB%8B%E8%B4%A8"><span class="nav-number">6.</span> <span class="nav-text">传输介质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82%E8%AE%BE%E5%A4%87"><span class="nav-number">7.</span> <span class="nav-text">物理层设备</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从零开始的计网学习-物理层 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从零开始的计网学习-物理层
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-06 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-06T13:48:32+08:00">2023-01-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:56:04" itemprop="dateModified" datetime="2023-11-08T17:56:04+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>写在最前面：本篇文章的主要资料来源为<code>《[公众号蓝蓝考研]计算机网络背诵版》</code>，同时会在遇到重点问题时广泛收集网上资料，使得记录更加详细。本次整理仅用于个人学习。</p>
+</blockquote>
+<hr>
+<p>老规矩，先来说一下<strong>本节考点</strong>：</p>
+<ul>
+<li>定义标准的四大特性</li>
+<li><em>奈式准则与香农定理</em></li>
+<li>编码与调制</li>
+<li>数据交换方式</li>
+<li>物理层设备与传输介质</li>
+</ul>
+<p><strong>考点说明</strong>：各个考点即为下面的小节标题，会分别进行介绍。其中奈式准则与香农定理涉及到计算。</p>
+<hr>
+<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><p>下面会介绍一些重要的<strong>术语定义</strong>，要注意区分与记忆。</p>
+<blockquote>
+<p>定义标准的四大特性</p>
+<blockquote>
+<p>这是一个很重要的考点，需要<code>记住这四大特性的特征</code>。</p>
+</blockquote>
+</blockquote>
+<ul>
+<li><strong>机械特性</strong>：规定连接时候的规格、接口形状、引线数目、引脚数量等</li>
+<li><strong>电气特性</strong>：电压范围、阻抗匹配、传输效率、距离限制</li>
+<li><strong>功能特性</strong>：某条线上出现的某一电平代表何种意义</li>
+<li><strong>规程特性</strong>：物理线路的工作规程与时序关系</li>
+</ul>
+<p><strong>注</strong>：简记为“<code>机电功规</code>”。因为是物理层范畴，所以都是与硬件相关的。</p>
+<p><strong>实例题目</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999582984.png"></p>
+<blockquote>
+<p><strong>数据通信</strong>基础概念</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672919596982.png"><br><strong>注</strong>：这里的几个概念要明确，与信息论学习结合起来。</p>
+<blockquote>
+<p><strong>速率</strong>与<strong>波特</strong></p>
+</blockquote>
+<p><strong>提醒</strong>：这是一个很重要的计算题考点，要注意区分这些很类似的概念。</p>
+<ul>
+<li>码元传输速率 &#x3D; 码元速率 &#x3D; 波形速率 &#x3D; 符号速率 &#x3D; 调制速率 &#x3D; <strong>单位时间内通信系统传输的码元个数</strong></li>
+<li>信息传输速率 &#x3D; 信息速率 &#x3D; <strong>比特率</strong>（b&#x2F;s)</li>
+<li><strong>波特率</strong> &#x3D; 每秒传输的码元符号的个数</li>
+<li>关系：<strong>波特率</strong> &#x3D; <strong>比特率&#x2F;每个码元所含比特数</strong> &#x3D; <strong>信息传输速率&#x2F;每个码元所含比特数</strong></li>
+</ul>
+<p><strong>提醒</strong>：这里要区分波特率和比特率，具体如下：</p>
+<ul>
+<li>波特率：是<strong>码元</strong>传输速率单位，他说明单位时间传输了多少个码元。</li>
+<li>比特率：是<strong>信息量</strong>传送速率单位，即每秒传输二进制代码位数。bit&#x2F;s</li>
+</ul>
+<p>可能还不是很清楚，举例说明：</p>
+<ul>
+<li>如果在数字传输过程中，用0V表示数字0，5V表示数字1，那么<strong>每个码元有两种状态0和1</strong>. 每个码元代表<strong>一个二进制数字</strong>。此时的每秒码元数和每秒二进制代码数是一样的，这叫<strong>两相调制</strong>，<strong>波特率等于比特率</strong>。</li>
+<li>如果在数字传输过程中，0V、2V、4V和6V分别表示00、01、10和11，那么<strong>每个码元有四种状态00、01、10和11</strong>. 每个码元代表两个二进制数字。此时的每秒码元数是每秒二进制代码数是一半的，这叫<strong>四相调制</strong>，<strong>波特率等于比特率一半</strong>。</li>
+</ul>
+<p>两者关系：比特率&#x3D;波特率X单个调制状态对应的二进制位数</p>
+<p>一个例子：<code>波特率计算</code><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672920137234.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999913253.png"></p>
+<blockquote>
+<p>三大通信方式</p>
+</blockquote>
+<ul>
+<li><strong>单工通信</strong>：一个方向的通信，如无线电广播</li>
+<li><strong>半双工通信</strong>：双向交替通信，只是<strong>双方不能同时发送</strong></li>
+<li><strong>双工通信</strong>：双方可以同时通信</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999933285.png"></p>
+<blockquote>
+<p>两种传输方式</p>
+</blockquote>
+<ul>
+<li><p><strong>串行传输</strong>：按照比特、时间顺序传输</p>
+<ul>
+<li>速度慢但是费用低，适合<strong>远距离</strong>通信</li>
+</ul>
+</li>
+<li><p><strong>并行传输</strong>：多比特多条通信通道同时传输</p>
+<ul>
+<li>速度快但是费用高，适合<strong>近距离</strong>通信</li>
+</ul>
+<p><strong>注</strong>：很好理解，远距离当然选择成本低的。</p>
+</li>
+</ul>
+<h2 id="奈式准则与香农定理"><a href="#奈式准则与香农定理" class="headerlink" title="奈式准则与香农定理"></a>奈式准则与香农定理</h2><blockquote>
+<p>奈式准则</p>
+</blockquote>
+<ul>
+<li><strong>理想低通信道</strong>的最高码元传输速率 &#x3D; 2W Baud</li>
+<li><strong>理想带通信道</strong>的最高码元传输速率 &#x3D; W Baud</li>
+</ul>
+<p>其中<strong>W为信道带宽</strong>，<strong>Baud为波特即码元&#x2F;秒</strong></p>
+<p><strong>注</strong>：理想低通（<strong>无噪声、带宽受限</strong>），理想带通（<strong>带宽受限、有噪声</strong>）；带宽只有在<strong>奈氏准则和香农定理中</strong>单位是HZ，其余都是b&#x2F;s。</p>
+<ul>
+<li>理想低通信道的极限数据传输速率 &#x3D; 2W * log2V<br>其中<strong>W是信道带宽</strong>，单位为HZ；<strong>V是码元的离散电平数目</strong>，也就是每一个码元的状态数。</li>
+</ul>
+<p><strong>注</strong>：由于码元的传输速率受<strong>奈氏准则的制约</strong>，所以要<strong>提高数据的传输速率</strong>，就必须设法使每个码元能携带更多的个比特量的信息，这就需要<strong>多元制的调制方法</strong>。</p>
+<blockquote>
+<p>香农定理</p>
+</blockquote>
+<p><em><em>信道的极限数据传输速率 c  &#x3D; W</em> log2(1+S&#x2F;N)</em>*</p>
+<p>其中：</p>
+<ul>
+<li>C：信道的极限数据传输速率</li>
+<li>W：信道带宽（HZ）</li>
+<li>S：信道内的高斯噪音</li>
+<li>S&#x2F;N：信噪比(DB) &#x3D; 10 * log2(1+S&#x2F;N) db</li>
+</ul>
+<p><strong>注</strong>：  信噪比就是信号的<strong>平均功率和噪声</strong>的平均功率之比，常记于S&#x2F;N，并<strong>用分贝（dB）作为度量单位</strong>。</p>
+<blockquote>
+<p>奈式公式与香农定理的比较</p>
+</blockquote>
+<p>奈氏准则指出，<strong>码元传输速率是受限的</strong>；香农定理则给出了<strong>信息传输速率的极限</strong>。也就是说，奈氏准则认为码元编码足够好，就不会限制信息传输速率。</p>
+<p>码元传输速率（波特率），是指传输码元的速率。与信息传输速率（比特率）的区别在于，一个码元通过调频调相，可以显示出多种变化，就可以代表多个比特。一般来讲，信息传输速率&#x3D;码元传输速率*log2(码元变化数量)。 - 具体前面已经介绍过</p>
+<p>所以其实区别只有一个，那就是<strong>奈氏准则是针对波特率的</strong>，没有限制比特率，他认为码元传输速率一旦确定，再确定码元所载的比特数，极限信息传输速率也就确定了；而香农公式通过极其复杂的推演，得出了结论：<strong>信息传输速率也是有极限的</strong>，且这个极限不是由波特率单独决定，还是由<strong>传输带宽和信噪比决定</strong>的。</p>
+<blockquote>
+<p>实例题目：主要是的几个相关计算</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999044126.png"></p>
+<p><strong>注意</strong>：使用香农定理时先通过公式由信噪比计算出S&#x2F;N再带入。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999218107.png"></p>
+<p><strong>注意</strong>：只有奈式准则先判断是否有噪声。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999380680.png"></p>
+<p><strong>注意</strong>：这一题是一个易错点，在计算最大数据率时要比较一下香农定理得到的结果与奈式准则的结果，取二者的较小者。</p>
+<h2 id="四大编码方式"><a href="#四大编码方式" class="headerlink" title="四大编码方式"></a>四大编码方式</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922537031.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922695204.png"></p>
+<blockquote>
+<p><strong>实例题目</strong>：主要是区分各个编码的画法</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999004933.png"></p>
+<h2 id="编码与调制"><a href="#编码与调制" class="headerlink" title="编码与调制"></a>编码与调制</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924145595.png"><br><strong>区分一下</strong>：</p>
+<p>1、数字信号是<strong>离散</strong>（不连续）的，而模拟信号是<strong>连续</strong>的；<br>2、数字信号只有“0”和“1”<strong>两种状态</strong>，而摸拟信号可以是<strong>任意数值状态</strong>；<br>3、模拟信号是用一系列<strong>连续变化</strong>的电磁波或电压信号来表示，而数字信号是用一系列<strong>断续变化</strong>的电压脉冲或光脉冲来表示。</p>
+<blockquote>
+<p>扩展一下：模拟数据与数字数据</p>
+</blockquote>
+<p>不同的数据必须转换为<strong>相应的信号才能进行传输</strong>：</p>
+<ul>
+<li>模拟数据一般采用<strong>模拟信号</strong>(Analog Signal)，例如用一系列连续变化的电磁波(如无线电与电视广播中的电磁波)，或电压信号(如电话传输中的音频电压信号)来表示；</li>
+<li>数字数据则采用<strong>数字信号</strong>(Digital Signal)，例如用一系列断续变化的电压脉冲(如我们可用恒定的正电压表示二进制数1，用恒定的负电压表示二进制数0)，或光脉冲来表示。 </li>
+<li>当模拟信号采用连续变化的电磁波来表示时，<strong>电磁波本身</strong>既是信号载体，同时作为传输介质；</li>
+<li>而当模拟信号采用连续变化的信号电压来表示时，它一般通过<strong>传统的模拟信号传输线路</strong>(例如电话网、有线电视网)来传输。 </li>
+<li>当数字信号采用断续变化的电压或光脉冲来表示时，一般则需要用<strong>双绞线、电缆或光纤介质</strong>将通信双方连接起来，才能将信号从一个节点传到另一个节点。</li>
+</ul>
+<p>模拟信号和数字信号之间<strong>可以相互转换</strong>：</p>
+<ul>
+<li>模拟信号一般通过PCM脉码调制(Pulse Code Modulation)方法量化为数字信号，即让模拟信号的不同幅度分别对应不同的二进制值，例如采用8位编码可将模拟信号量化为2^8&#x3D;256个量级，实用中常采取24位或30位编码；</li>
+<li>数字信号一般通过对载波进行移相(Phase Shift)的方法转换为模拟信号。 计算机、计算机局域网与城域网中均使用二进制数字信号，目前在计算机广域网中实际传送的则既有二进制数字信号，也有由数字信号转换而得的模拟信号。但是更具应用发展前景的是数字信号。</li>
+</ul>
+<h2 id="三大交换"><a href="#三大交换" class="headerlink" title="三大交换"></a>三大交换</h2><p>这部分在第一篇文章中已经介绍过了，这里涉及到一些计算和扩展。要知道这<strong>三种不同交换方式的优缺点</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922872444.png"><br><strong>注</strong>：电路交换就是建立专线，时延小、无冲突，但是利用率低，成本高。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922882131.png"><br><strong>注</strong>：报文交换线路利用率高但是时延也高，需要存储转发。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672922891870.png"><br><strong>注</strong>：分组交换是最常见的交换方式。</p>
+<p><strong>三者比较如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672923103752.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924100749.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672923168574.png"></p>
+<blockquote>
+<p><strong>实例题目</strong>：主要是时延的计算，考虑存储转发机制</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672998293596.png"><br><strong>提醒</strong>：这里没有考虑<strong>传输时延和处理分组时延</strong>，只是用到了<strong>发送时延和存储转发时延</strong>。同时是采取分组交换的思想，即只需要考虑第一个分组发送到最后一个分组到达的时间差即可，其中最后一个分组先等待999t，而后耗费3t从H1到H2.</p>
+<p><strong>注意</strong>：对于速率的单位换算是10的n次方形式。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672998914764.png"><br><strong>注意</strong>：通过这个题目就可以很明显的看出分组交换和报文交换的区别，前者是并行的，即不同分组可以在同一时间在不同节点进行存储转发；后者是串行的，同一个时间只可以在一个节点进行转发。</p>
+<h2 id="传输介质"><a href="#传输介质" class="headerlink" title="传输介质"></a>传输介质</h2><p>传输介质可以分为：<strong>导向性传输介质</strong>和<strong>非导向性传输介质</strong>。</p>
+<ul>
+<li>导向性：铜线、光纤</li>
+<li>非导向性：客气、海水、真空</li>
+</ul>
+<p>要了解一些常用的传输介质：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672923337374.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924059053.png"></p>
+<p><strong>实例题目：</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999642872.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672999677843.png"></p>
+<h2 id="物理层设备"><a href="#物理层设备" class="headerlink" title="物理层设备"></a>物理层设备</h2><p><strong>物理层的作用</strong>：连接不同的物理设备，传输比特流。该层为上层协议提供了一个传输数据的可靠的物理媒介。简单来说，物理层确保原始的数据可以在各种物理媒介上传输。</p>
+<p><strong>物理层使用的设备</strong>：</p>
+<ul>
+<li><strong>中继器</strong>：放大信号，延长数据传输距离</li>
+<li><strong>集线器</strong>：多端口中继器，为多台终端放大信号</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1672924029768.png"></p>
+<hr>
+<blockquote>
+<p><strong>写在最后</strong>：物理层在计算机网络中并不是特别重要的部分，所以不需要花费很多时间。主要的易错点就是传输速率与波特率的计算，主要单位、换算，熟记公式即可。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/" title="从零开始的计网学习-物理层">https://danggeovo.github.io/2023/01/06/从零开始的计网学习-物理层/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/09/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80--%E5%AF%84%E5%AD%98%E5%99%A8%E6%95%B4%E7%90%86/" rel="prev" title="汇编语言--寄存器整理">
+                  <i class="fa fa-angle-left"></i> 汇编语言--寄存器整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/" rel="next" title="从零开始的计网学习-链路层习题整理">
+                  从零开始的计网学习-链路层习题整理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

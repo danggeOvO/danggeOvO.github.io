@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="信息收集 信息收集对于渗透测试来说是很重要的，是渗透测试的前期准备工作，俗话说知己知彼，才能百战不殆。掌握了对目标的足够信息，我们才能更好地开展渗透测试。  信息收集的分类 信息收集的根据方式的不同大概分为两个类别：主动扫描与被动扫描  被动扫描 被动信息收集是指通过各种在线网站等第三方服务对网站进行信息收集。通过用Google Hacking，shodan，fofa等搜索引擎对目标进行信息探测，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="主动与被动扫描">
+<meta property="og:url" content="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="信息收集 信息收集对于渗透测试来说是很重要的，是渗透测试的前期准备工作，俗话说知己知彼，才能百战不殆。掌握了对目标的足够信息，我们才能更好地开展渗透测试。  信息收集的分类 信息收集的根据方式的不同大概分为两个类别：主动扫描与被动扫描  被动扫描 被动信息收集是指通过各种在线网站等第三方服务对网站进行信息收集。通过用Google Hacking，shodan，fofa等搜索引擎对目标进行信息探测，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110222252810.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110222223745.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110222223746.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110222223747.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110252136825.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110231314400.png">
+<meta property="og:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110231328220.png">
+<meta property="og:image" content="https://danggeovo.github.io/images/1634969165406.png">
+<meta property="article:published_time" content="2023-03-29T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:02:12.722Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/qidangge/picgo/raw/master/img/202110222252810.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/","path":"2023/03/29/作业3.2 主动与被动扫描/","title":"主动与被动扫描"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>主动与被动扫描 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">信息收集的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F"><span class="nav-number">2.1.</span> <span class="nav-text">被动扫描</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E5%8A%A8%E6%89%AB%E6%8F%8F"><span class="nav-number">2.2.</span> <span class="nav-text">主动扫描</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zoomeye%E7%9A%84%E8%AE%B2%E8%A7%A3%E4%B8%8E%E5%AE%9E%E6%93%8D"><span class="nav-number">3.</span> <span class="nav-text">zoomeye的讲解与实操</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#zoomeye%E7%9A%84%E8%AE%B2%E8%A7%A3"><span class="nav-number">3.1.</span> <span class="nav-text">zoomeye的讲解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zoomeye%E7%9A%84%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">zoomeye的数据操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Nmap%E7%9A%84%E8%AE%B2%E8%A7%A3%E4%B8%8E%E5%AE%9E%E6%93%8D"><span class="nav-number">4.</span> <span class="nav-text">Nmap的讲解与实操</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nmap%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="nav-number">4.1.</span> <span class="nav-text">Nmap的功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nmap%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">Nmap的基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Nmap-%E8%BF%9B%E8%A1%8C%E4%B8%BB%E6%9C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">4.3.</span> <span class="nav-text">使用Nmap 进行主机发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Nmap%E8%BF%9B%E8%A1%8C%E7%AB%AF%E5%8F%A3%E5%8F%91%E7%8E%B0"><span class="nav-number">4.4.</span> <span class="nav-text">使用Nmap进行端口发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8nmap%E6%89%AB%E6%8F%8F%E7%9B%AE%E6%A0%87%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.5.</span> <span class="nav-text">使用nmap扫描目标操作系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8NMAP%E6%89%AB%E6%8F%8F%E7%9B%AE%E6%A0%87%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.6.</span> <span class="nav-text">使用NMAP扫描目标操作系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap%E7%9A%84%E5%90%8E%E8%AF%9D"><span class="nav-number">4.7.</span> <span class="nav-text">nmap的后话</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="主动与被动扫描 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          主动与被动扫描
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:02:12" itemprop="dateModified" datetime="2023-11-08T18:02:12+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><blockquote>
+<p>信息收集对于渗透测试来说是很重要的，是渗透测试的前期准备工作，俗话说知己知彼，才能百战不殆。掌握了对目标的足够信息，我们才能更好地开展渗透测试。</p>
+</blockquote>
+<h1 id="信息收集的分类"><a href="#信息收集的分类" class="headerlink" title="信息收集的分类"></a>信息收集的分类</h1><blockquote>
+<p>信息收集的根据方式的不同大概分为两个类别：主动扫描与被动扫描</p>
+</blockquote>
+<h2 id="被动扫描"><a href="#被动扫描" class="headerlink" title="被动扫描"></a>被动扫描</h2><blockquote>
+<p>被动信息收集是指通过各种在线网站等第三方服务对网站进行信息收集。通过用<code>Google Hacking</code>，<code>shodan</code>，<code>fofa</code>等搜索引擎对目标进行信息探测，虽然获得的信息可能不多，但是不存在被目标发现的可能。</p>
+</blockquote>
+<p><em><strong>收集的信息？</strong></em></p>
+<ul>
+<li>目标网站所有者的信息：姓名、地址、电话、电子邮件等</li>
+<li>目标网站相关的电子邮箱。</li>
+<li>目标网站用户的社交信息：网站工作人员的微博、QQ、论坛发帖…</li>
+</ul>
+<p><em><strong>被动扫描的常用方法？</strong></em></p>
+<ul>
+<li>俄罗斯搜索引擎-图片搜索（<a target="_blank" rel="noopener" href="https://www.yandex.com/">https://www.yandex.com/</a>）</li>
+<li>图片信息 metadata （如<a target="_blank" rel="noopener" href="http://www.toolzl.com/tools/getGpsArea.html">经纬度查看</a>等）</li>
+<li>Maltego的使用（开源情报收集和取证）</li>
+<li>利用Recon-NG进行信息收集</li>
+<li>神奇的搜索引擎：<code>ZoomEye</code>、shodan（支持公网设备指纹检索和 Web (网站)指纹检索）</li>
+</ul>
+<h2 id="主动扫描"><a href="#主动扫描" class="headerlink" title="主动扫描"></a>主动扫描</h2><blockquote>
+<p>主动信息收集是指通过各种工具直接对往网站进行检测。直接使用工具对网站进行信息探测可以获得较多较全的信息，但是可能会被目标主机发现，对你的可疑行为进行记录，分析，可能会对后期的渗透工作产生影响。</p>
+</blockquote>
+<p>可见，没有一种方式可以做到面面俱到，每个方式都有自己的优势和劣势，作为一名合格的渗透测试人员，我们要学会各种工具搭配使用，取长补短，对目标进行多次隐秘而有效的探测，获得自己想要的信息，完成对目标网站完整的信息收集报告。</p>
+<h1 id="zoomeye的讲解与实操"><a href="#zoomeye的讲解与实操" class="headerlink" title="zoomeye的讲解与实操"></a>zoomeye的讲解与实操</h1><h2 id="zoomeye的讲解"><a href="#zoomeye的讲解" class="headerlink" title="zoomeye的讲解"></a>zoomeye的讲解</h2><p>ZoomEye搜索引擎支持<strong>关键词检索</strong>，可以快速搜索到我们需要的数据。</p>
+<ul>
+<li>app：组件名称  ver：组件版本</li>
+<li>app:apache ver:2.4   搜索 apache 2.4</li>
+<li>port:搜索端口号 port:22  搜索开放了SSH端口的主机</li>
+<li>OS:搜索指定的操作系统 OS:linux</li>
+<li>service：服务名称 Service:SSH   搜索SSH服务</li>
+<li>country：国家名   city：城市名  country:China    city: Beijing</li>
+<li>Device：搜索指定的设备类型，divice:router</li>
+<li>ip:搜索特定的IP地址，ip:192.168.1.1</li>
+<li>cidr：指定的CIDR网段   CIDR：192.168.158.12&#x2F;24</li>
+<li>Service：搜索指定的服务类型，service:http</li>
+<li>Hostname:guet.edu.cn</li>
+</ul>
+<h2 id="zoomeye的数据操作"><a href="#zoomeye的数据操作" class="headerlink" title="zoomeye的数据操作"></a>zoomeye的数据操作</h2><blockquote>
+<p>这里以海康威视的摄像头进行演示</p>
+</blockquote>
+<p><strong>第一步：打开zoomeye，并输入关键词DVRDVS-Webs进行检索</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222252810.png" alt="第一步"></p>
+<p><strong>第二步：打开搜索到的地址</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222223745.png" alt="第二步"><br>看你看见其ip地址</p>
+<p><strong>第三步：连接80端口</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222223746.png" alt="第三步"><br>因为web服务的默认端口为80，所以打开后极有可能是登录界面</p>
+<p><strong>第四步：弱口令测试</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222223747.png" alt="第四步"><br>一般海康威视的摄像头管理员：账号：admin  密码：12345。这里我们进行测试</p>
+<p><strong>第五步：是否成功？</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110252136825.png" alt="第五步"><br>在尝试的5、6个地址后成功以管理员身份登录。因为隐私保护，测试到此为止。</p>
+<h1 id="Nmap的讲解与实操"><a href="#Nmap的讲解与实操" class="headerlink" title="Nmap的讲解与实操"></a>Nmap的讲解与实操</h1><blockquote>
+<p>可以进行主动扫描的工具很多，但是最为优秀的一定是Nmap。</p>
+</blockquote>
+<h2 id="Nmap的功能"><a href="#Nmap的功能" class="headerlink" title="Nmap的功能"></a>Nmap的功能</h2><blockquote>
+<p>主机发现功能、端口扫描功能、服务及版本检测功能、操作系统检测功能+实现一些高级的审计技术。<br>也就是，通过Nmap对一台计算机进行审计的话，可以获取<strong>以下信息</strong>：</p>
+</blockquote>
+<ol>
+<li>目标主机是否在线，所在的网络结构</li>
+<li>开放的端口：80端口、135端口、443端口</li>
+<li>目标主机所使用的操作系统：Win7、Linux、Android…</li>
+<li>目标主机上运行的服务及其版本：Apache httpd、OpenSSH、Debian…</li>
+<li>目标主机上所存在的漏洞：弱口令、ms08_067…</li>
+</ol>
+<h2 id="Nmap的基本用法"><a href="#Nmap的基本用法" class="headerlink" title="Nmap的基本用法"></a>Nmap的基本用法</h2><ol>
+<li>对单个主机进行扫描<blockquote>
+<p>使用命令： <code>nmap 扫描地址</code>（ip或者域名）</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110231314400.png" alt="一个例子"><br>可以看见，通过nmap指令对目标进行扫描，可以得到以上信息。<br>在这些信息中我们要重点关注第6行及其之后的信息，那里显示了我们扫描的主机的端口状态及其开放情况。</p>
+<hr>
+<ol start="2">
+<li>对多个不连续的主机进行扫描<blockquote>
+<p>命令语法： <code>nmap [扫描目标1 扫描目标2 ...... 扫描目标n]</code></p>
+</blockquote>
+</li>
+</ol>
+<p>显示内容与上同，只是会分开显示，同时会给出扫描主机的在线情况。</p>
+<hr>
+<ol start="3">
+<li>对连续范围内的主机进行扫描<blockquote>
+<p>命令语法: nmap [IP地址的范围]</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110231328220.png" alt="连续扫描"></p>
+<blockquote>
+<p>ps:可以通过添加<code>-sn</code>参数提高扫描速度，其作用是只扫描在线的主机。</p>
+</blockquote>
+<hr>
+<ol start="4">
+<li>对整个子网进行扫描<blockquote>
+<p>命令语法: <code>nmap [IP地址/掩码位数]</code></p>
+</blockquote>
+</li>
+</ol>
+<p>知道了ip地址与掩码位数，通过与运算可以得到ip的网络号与子网网络号。</p>
+<h2 id="使用Nmap-进行主机发现"><a href="#使用Nmap-进行主机发现" class="headerlink" title="使用Nmap 进行主机发现"></a>使用Nmap 进行主机发现</h2><blockquote>
+<p>当我们测试的目标是一个网络时，需要知道其中在线的主机。主机发现技术就是用来实现这个前提目标。</p>
+</blockquote>
+<p>nmap进行主机发现的常用方法：</p>
+<ul>
+<li>跳过ping扫描阶段 <code> namp –PN [目标]</code></li>
+<li>仅使用ping协议进行主机发现 <code>namp –sP [目标]</code></li>
+<li>使用ARP协议进行主机发现 <code>namp –PR [目标]  同一子网的目标</code></li>
+<li>使用TCP协议进行主机发现 <code>namp –sS [目标]</code></li>
+<li>使用UDP协议进行主机发现 <code>namp –sU [目标]</code></li>
+</ul>
+<blockquote>
+<p>这里给出上述几种扫描方式的补充：</p>
+<blockquote>
+<ul>
+<li>使用ARP协议进行主机发现仅适用于与所扫描主机在同一个子网的情况。</li>
+<li>使用TCP协议进行主机发现可以分为全开扫描（<code>-sT</code>)和半开扫描（<code>-sS</code>),一般使用半开扫描，耗时短且不易被发现。</li>
+<li>使用UDP协议进行主机扫描的方法不常用，耗时较多。</li>
+</ul>
+</blockquote>
+</blockquote>
+<h2 id="使用Nmap进行端口发现"><a href="#使用Nmap进行端口发现" class="headerlink" title="使用Nmap进行端口发现"></a>使用Nmap进行端口发现</h2><blockquote>
+<p>我们知道，一台计算机可以进行多种网络服务，其原因便在于端口的使用。每一个端口对应一种网络服务，所以我们想自由出入目标，就要知道端口的开放情况。</p>
+</blockquote>
+<p><em><strong>端口状态的5种</strong></em></p>
+<ul>
+<li>Open：开放，应用程序在此端口接收TCP或UDP报文。</li>
+<li>Closed：关闭，关闭的端口也是可以访问的，会接收nmap的探测报文并做出回应，只有没有应用程序进行监听端口。</li>
+<li>Filtered：防火墙过滤探测报文，由于防火墙把我们的探测报文进行过滤，所以我们无法知道端口的状态。</li>
+<li>unfiltered：未被过滤状态表示可以访问，但是nmap无法确定其开放情况。</li>
+<li>open|filtered：无法确定端口是开放还是被过滤，比如：端口不响应。</li>
+</ul>
+<ol>
+<li><p>扫描全部端口</p>
+<blockquote>
+<p>命令语法： <code>nmap -p  “*” IP地址</code></p>
+</blockquote>
+</li>
+<li><p>扫描使用频率最高的端口</p>
+<blockquote>
+<p>命令语法：<code>nmap --top-ports n [目标]</code></p>
+</blockquote>
+</li>
+<li><p>扫描指定端口</p>
+<blockquote>
+<p>命令语法：<code>nmap -p [端口号][目标]</code></p>
+</blockquote>
+</li>
+</ol>
+<p><img src="/./images/1634969165406.png" alt="三个例子"></p>
+<h2 id="使用nmap扫描目标操作系统"><a href="#使用nmap扫描目标操作系统" class="headerlink" title="使用nmap扫描目标操作系统"></a>使用nmap扫描目标操作系统</h2><blockquote>
+<p>通过想目标发送探针，而后根据目标的会有来猜猜系统。</p>
+</blockquote>
+<blockquote>
+<p>命令语法：<code>nmap -O [目标地址]</code></p>
+</blockquote>
+<hr>
+<h2 id="使用NMAP扫描目标操作系统"><a href="#使用NMAP扫描目标操作系统" class="headerlink" title="使用NMAP扫描目标操作系统"></a>使用NMAP扫描目标操作系统</h2><p>对目标进行渗透的时候，尽量检测出目标系统运行的各种软件。<br>端口：80  well-known  知名端口、熟知端口  对应什么服务？<br>应该掌握哪些知名端口呢？</p>
+<ul>
+<li>sqlserver默认端口号为：1433</li>
+<li>mysql      默认端口号为：3306</li>
+<li>oracle    默认端口号为：1521</li>
+</ul>
+<blockquote>
+<p>命令语法：<code>nmap -sV [目标地址]</code></p>
+</blockquote>
+<h2 id="nmap的后话"><a href="#nmap的后话" class="headerlink" title="nmap的后话"></a>nmap的后话</h2><p>nmap无疑是一个很强大的扫描工具，其功能也不只是上面介绍的几种。<br>想要继续深入了解学习nmap的使用：</p>
+<ul>
+<li>namp脚本：<a target="_blank" rel="noopener" href="https://nmap.org/nsedoc/">https://nmap.org/nsedoc/</a></li>
+<li>NMAP工控分析： <a target="_blank" rel="noopener" href="http://plcscan.org/blog/">http://plcscan.org/blog/</a></li>
+<li>《诸神之眼——nmap网络安全审计技术揭秘》</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/" title="主动与被动扫描">https://danggeovo.github.io/2023/03/29/作业3.2 主动与被动扫描/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A4.2%20Easy%20File%20Sharing%20Web%20Server%20%E6%BC%8F%E6%B4%9E%E7%9A%84%E7%AE%80%E5%8D%95%E5%A4%8D%E7%8E%B0/" rel="prev" title="Easy File Sharing Web Server 缓冲区溢出漏洞的简单复现">
+                  <i class="fa fa-angle-left"></i> Easy File Sharing Web Server 缓冲区溢出漏洞的简单复现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/30/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E4%B9%8B%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA%E7%AE%97%E6%B3%95/" rel="next" title="机器学习算法之支持向量机算法">
+                  机器学习算法之支持向量机算法 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

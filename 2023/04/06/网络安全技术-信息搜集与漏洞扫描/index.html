@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="写在最前面：本次实践的主要内容包括 主机存活探测、端口扫描、scapy编程、漏洞扫描等，每种内容涉及一种或几种技术。记录只是形式，学会才是目的！  下面是大纲：  主机探测 ping与TTL 实践过程 知识补充   arping使用 实践过程 arping指令扩展     端口扫描 实践过程 nmap指令扩展   scapy编程 实践过程 scapy扩展    主机探测ping与TTL实践过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息搜集与漏洞扫描">
+<meta property="og:url" content="https://danggeovo.github.io/2023/04/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="写在最前面：本次实践的主要内容包括 主机存活探测、端口扫描、scapy编程、漏洞扫描等，每种内容涉及一种或几种技术。记录只是形式，学会才是目的！  下面是大纲：  主机探测 ping与TTL 实践过程 知识补充   arping使用 实践过程 arping指令扩展     端口扫描 实践过程 nmap指令扩展   scapy编程 实践过程 scapy扩展    主机探测ping与TTL实践过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680778312520.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680778328290.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779156049.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779168906.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779188634.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779337097.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779974688.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780010120.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780018263.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780048958.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780075374.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780084105.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780133940.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780144735.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780176675.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780196894.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780697670.png">
+<meta property="article:published_time" content="2023-04-06T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:00:19.563Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680778312520.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/04/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/04/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F/","path":"2023/04/06/网络安全技术-信息搜集与漏洞扫描/","title":"信息搜集与漏洞扫描"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>信息搜集与漏洞扫描 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E6%8E%A2%E6%B5%8B"><span class="nav-number">1.</span> <span class="nav-text">主机探测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ping%E4%B8%8ETTL"><span class="nav-number">1.1.</span> <span class="nav-text">ping与TTL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">实践过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E8%A1%A5%E5%85%85"><span class="nav-number">1.1.2.</span> <span class="nav-text">知识补充</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#arping%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">arping使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">实践过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arping%E6%8C%87%E4%BB%A4%E6%89%A9%E5%B1%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">arping指令扩展</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">2.</span> <span class="nav-text">端口扫描</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B-2"><span class="nav-number">2.1.</span> <span class="nav-text">实践过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap%E6%8C%87%E4%BB%A4%E6%89%A9%E5%B1%95"><span class="nav-number">2.2.</span> <span class="nav-text">nmap指令扩展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#scapy%E7%BC%96%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">scapy编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B-3"><span class="nav-number">3.1.</span> <span class="nav-text">实践过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scapy%E6%89%A9%E5%B1%95"><span class="nav-number">3.2.</span> <span class="nav-text">scapy扩展</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="信息搜集与漏洞扫描 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          信息搜集与漏洞扫描
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-06 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-06T13:48:32+08:00">2023-04-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:00:19" itemprop="dateModified" datetime="2023-11-08T18:00:19+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在最前面</strong>：本次实践的主要内容包括 主机存活探测、端口扫描、scapy编程、漏洞扫描等，每种内容涉及一种或几种技术。<br><strong>记录只是形式，学会才是目的</strong>！</p>
+</blockquote>
+<p>下面是大纲：</p>
+<ul>
+<li><a href="#%E4%B8%BB%E6%9C%BA%E6%8E%A2%E6%B5%8B">主机探测</a><ul>
+<li><a href="#ping%E4%B8%8Ettl">ping与TTL</a><ul>
+<li><a href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B">实践过程</a></li>
+<li><a href="#%E7%9F%A5%E8%AF%86%E8%A1%A5%E5%85%85">知识补充</a></li>
+</ul>
+</li>
+<li><a href="#arping%E4%BD%BF%E7%94%A8">arping使用</a><ul>
+<li><a href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B">实践过程</a></li>
+<li><a href="#arping%E6%8C%87%E4%BB%A4%E6%89%A9%E5%B1%95">arping指令扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F">端口扫描</a><ul>
+<li><a href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B">实践过程</a></li>
+<li><a href="#nmap%E6%8C%87%E4%BB%A4%E6%89%A9%E5%B1%95">nmap指令扩展</a></li>
+</ul>
+</li>
+<li><a href="#scapy%E7%BC%96%E7%A8%8B">scapy编程</a><ul>
+<li><a href="#%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B">实践过程</a></li>
+<li><a href="#scapy%E6%89%A9%E5%B1%95">scapy扩展</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="主机探测"><a href="#主机探测" class="headerlink" title="主机探测"></a>主机探测</h1><h2 id="ping与TTL"><a href="#ping与TTL" class="headerlink" title="ping与TTL"></a>ping与TTL</h2><h3 id="实践过程"><a href="#实践过程" class="headerlink" title="实践过程"></a>实践过程</h3><blockquote>
+<p><strong>实践要求</strong>：主机A开启命令行，对B进行ping探测，根据B的回复，可以确定主机A和B的连通情况，还可以根据回复数据包的TTL值对操作系统进行猜测。</p>
+</blockquote>
+<p>下面是<strong>具体的实施过程</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680778312520.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680778328290.png"></p>
+<p>如上图所示，在未开启防火墙的情况下主机A对主机B进行ping扫描，得到返回信息。</p>
+<p>回复数据包的TTL值：   <code>64</code>     ，B运行的操作系统可能为：   <code>LINUX</code>    。</p>
+<h3 id="知识补充"><a href="#知识补充" class="headerlink" title="知识补充"></a>知识补充</h3><ol>
+<li><strong>Kali Linux 防火墙指令</strong></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Apt-get install ufw</td>
+<td>安装防火墙</td>
+</tr>
+<tr>
+<td>Systemctl status ufw</td>
+<td>查看防火墙状态</td>
+</tr>
+<tr>
+<td>Ufw disable</td>
+<td>关闭防火墙</td>
+</tr>
+<tr>
+<td>Ufw enable</td>
+<td>开启防火墙</td>
+</tr>
+<tr>
+<td>Ufw status</td>
+<td>查看防火墙开启情况</td>
+</tr>
+<tr>
+<td>Ufw version</td>
+<td>查看防火墙版本</td>
+</tr>
+<tr>
+<td>Ufw default deny</td>
+<td>拒绝所有服务</td>
+</tr>
+<tr>
+<td>Ufw default allow</td>
+<td>允许所有服务</td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li><strong>TTL与系统类型判断</strong></li>
+</ol>
+<p><code>TTL（Time To Live，生存时间）</code>是IP协议包中的一个值，当我们使用Ping命令进行网络连通测试或者是测试网速的时候，本地计算机会向目的主机发送数据包，但是有的数据包会因为一些特殊的原因不能正常传送到目的主机，如果没有设置TTL值的话，数据包会一直在网络上面传送，浪费网络资源。数据包在传送的时候至少会经过一个以上的路由器，<strong>当数据包经过一个路由器的时候，TTL就会自动减1，如果减到0了还是没有传送到目的主机，那么这个数据包就会自动丢失</strong>，这时路由器会发送一个ICMP报文给最初的发送者。<br>不同的操作系统的默认TTL值是不同的， 所以我们<strong>可以通过TTL值来判断主机的操作系统</strong>，但是当用户修改了TTL值的时候，就会误导我们的判断，所以这种判断方式也不一定准确。</p>
+<p><strong>注</strong>：通过TTL判断操作系统类型是十分不准确的，需要使用更加可靠和精准的方法，比如使用指纹识别技术或者其他的技术手段。这些方法可以通过分析网络协议、使用的服务、传输的数据包结构等来确定操作系统类型。</p>
+<ol start="3">
+<li><strong>设置防火墙以避免Ping扫描</strong></li>
+</ol>
+<p>可以使用Kali Linux自带的防火墙工具ufw来防御ping扫描。ufw是一种简单的防火墙工具，它允许在Linux上轻松配置防火墙规则。ufw默认情况下已经安装在Kali Linux中，您可以使用以下命令启用它：<code>sudo ufw enable</code>。然后，您可以使用以下命令来阻止ping扫描：<code>sudo ufw deny icmp</code>。这将禁止所有ICMP流量，包括ping扫描。</p>
+<h2 id="arping使用"><a href="#arping使用" class="headerlink" title="arping使用"></a>arping使用</h2><h3 id="实践过程-1"><a href="#实践过程-1" class="headerlink" title="实践过程"></a>实践过程</h3><blockquote>
+<p> arping是一个在LAN中<strong>使用ARP地址解析协议发现目标主机的工具</strong>。arping工具测试特定IP地址在网络中是否在线。该命令只能在本地局域网内运行，无法跨越路由器和网关，常用的选项为arping -c。Wireshark抓包分析该工具的工作原理。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779156049.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779168906.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779188634.png"></p>
+<p>如图所示，通过wirshark抓包，可以得到arping指令下的网络数据包情况。通过分析具体的协议字段可以看出：这个工具<strong>通过广播的方式发送ARP请求报文</strong>。当探测主机（192.168.72.129）接收到ARP请求包后会向报文中的目的地址<strong>发送ARP响应报文</strong>。<br><strong>综上所述</strong>：arping命令是一个用于测试和管理局域网的工具，它可以通过向本网段下所有主机发起arp请求，然后看收到响应的消息的mac地址是否是我们需要的mac地址，如果是，那么这个ip就是该网卡绑定的ip了。同时如何收到响应包也就说明该主机存活。</p>
+<blockquote>
+<p>分析并回答：<strong>在同一子网中判断目标主机存活性，ping和arping谁更具优势？</strong><br>当需要在同一子网中确定主机是否存活时，使用arping命令有以下优势：</p>
+</blockquote>
+<ul>
+<li><strong>更快的响应时间</strong>：在同一子网中，目标主机的MAC地址可以从ARP缓存中获取，而无需使用IP地址进行寻址。因此，arping命令可以直接向目标主机发送ARP请求，并根据目标主机是否响应来判断其是否存活。相比之下，ping命令需要发送ICMP数据包并等待回复，这可能会花费更多的时间，并且目标主机可能会过滤掉ICMP数据包。</li>
+<li><strong>不会被目标主机屏蔽</strong>：一些主机可能会过滤掉ICMP数据包，从而使ping命令无法检测到其存活状态。相比之下，arping命令发送的是ARP请求，不会被目标主机屏蔽。</li>
+<li>更精确的诊断：在一些网络环境下，目标主机的ICMP回复可能会被路由器或防火墙拦截，从而导致ping命令误判目标主机的状态。而arping命令只与目标主机进行通信，因此能够提供更精确的诊断结果。</li>
+<li><strong>可以检测到MAC地址变更</strong>：如果目标主机的MAC地址发生变化，arping命令可以检测到这一变化，并更新本地ARP缓存中的MAC地址。而ping命令无法检测到MAC地址的变更，因为它只依赖IP地址进行通信。</li>
+</ul>
+<p>综上所述，当需要在同一子网中快速确定主机是否存活时，arping命令是一种更可靠、更精确、更快速的工具。</p>
+<h3 id="arping指令扩展"><a href="#arping指令扩展" class="headerlink" title="arping指令扩展"></a>arping指令扩展</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779337097.png"></p>
+<p><strong>参数释义：</strong></p>
+<table>
+<thead>
+<tr>
+<th>-A：</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>与-U参数类似，但是使用的是ARP REPLY包而非ARP REQUEST包。</td>
+</tr>
+<tr>
+<td>-b：</td>
+</tr>
+<tr>
+<td>发送以太网广播帧，arping在开始时使用广播地址，在收到回复后使用unicast单播地址。</td>
+</tr>
+<tr>
+<td>-c：</td>
+</tr>
+<tr>
+<td>发送指定的count个ARP REQUEST包后停止。如果指定了-w参数，则会等待相同数量的ARP REPLY包，直到超时为止。</td>
+</tr>
+<tr>
+<td>-D：</td>
+</tr>
+<tr>
+<td>重复地址探测模式，即，Duplicate address detection mode (DAD)，用来检测有没有IP地址冲突，如果没有IP冲突则返回0。</td>
+</tr>
+<tr>
+<td>-f：</td>
+</tr>
+<tr>
+<td>收到第一个响应包后退出。</td>
+</tr>
+<tr>
+<td>-h：</td>
+</tr>
+<tr>
+<td>显示帮助页。</td>
+</tr>
+<tr>
+<td>-I：</td>
+</tr>
+<tr>
+<td>用来发送ARP REQUEST包的网络设备的名称。</td>
+</tr>
+<tr>
+<td>-q：</td>
+</tr>
+<tr>
+<td>quite模式，不显示输出。</td>
+</tr>
+<tr>
+<td>-U：</td>
+</tr>
+<tr>
+<td>无理由的（强制的）ARP模式去更新别的主机上的ARP CACHE列表中的本机的信息，不需要响应。</td>
+</tr>
+<tr>
+<td>-V：</td>
+</tr>
+<tr>
+<td>显示arping的版本号。</td>
+</tr>
+<tr>
+<td>-w：</td>
+</tr>
+<tr>
+<td>指定一个超时时间，单位为秒，arping在到达指定时间后退出，无论期间发送或接收了多少包。在这种情况下，arping在发送完指定的count（-c）个包后并不会停止，而是等待到超时或发送的count个包都进行了回应后才会退出。</td>
+</tr>
+<tr>
+<td>-s：设置发送ARP包的IP资源地址，如果为空，则按如下方式处理：</td>
+</tr>
+<tr>
+<td>1、DAD模式（-D）设置为0.0.0.0；</td>
+</tr>
+<tr>
+<td>2、Unsolicited模式（-U）设置为目标地址；</td>
+</tr>
+<tr>
+<td>3、其它方式，从路由表计算。</td>
+</tr>
+</tbody></table>
+<p><strong>操作实例：</strong></p>
+<ul>
+<li>用于检验目标主机是否存活：<code>arping 192.168.72.129 -c 1</code></li>
+<li>查看某个IP是否被不同的MAC占用: <code>arping -d 192.168.72.159</code></li>
+</ul>
+<h1 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h1><p>这里进行端口扫描使用的工具是nmap，这是一个功能强大的扫描工具。</p>
+<h2 id="实践过程-2"><a href="#实践过程-2" class="headerlink" title="实践过程"></a>实践过程</h2><blockquote>
+<p><strong>对活动主机进行端口扫描</strong></p>
+</blockquote>
+<p>主机A使用Nmap工具对主机B进行TCP端口同步扫描（范围1-150）：<br>Nmap命令：<code>nmap -sS -p 1-150 192.168.72.129</code></p>
+<ul>
+<li>补充1：-sS 表示<strong>TCP SYN扫描</strong></li>
+<li>补充2：<strong>TCP端口同步扫描就是TCP SYN扫描</strong>。它是一种半开放扫描，通过向目标服务器的端口发送一个请求连接的SYN包，如果目标端口开放，则服务器会向扫描器返回一个SYN&#x2F;ACK包，否则会返回一个RST包。</li>
+</ul>
+<blockquote>
+<p><strong>对主机B进行UDP端口扫描（</strong>范围是110-140）：</p>
+</blockquote>
+<p>Nmap命令： <code>nmap -sU -p 110-140 192.168.72.129</code></p>
+<ul>
+<li><strong>补充</strong>：-sU表示扫描UDP端口，-p:指定端口范围</li>
+</ul>
+<blockquote>
+<p><strong>对活动主机操作系统进行探测</strong></p>
+</blockquote>
+<p>主机A对主机B进行TCP&#x2F;IP指纹特征扫描:<br>Nmap命令：<code>nmap -O 192.168.72.129</code></p>
+<blockquote>
+<p><strong>对活动主机运行服务进行探测</strong></p>
+</blockquote>
+<p>Nmap命令：<code>nmap -sV 192.168.72.129</code></p>
+<blockquote>
+<p>主机A使用Nmap命令对主机B进行<strong>IP协议探测</strong>：</p>
+</blockquote>
+<p>Nmap命令：<code>nmap -sO 192.168.72.129</code></p>
+<h2 id="nmap指令扩展"><a href="#nmap指令扩展" class="headerlink" title="nmap指令扩展"></a>nmap指令扩展</h2><table>
+<thead>
+<tr>
+<th>参数(区分大小写)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-sT</td>
+<td>TCP connect()扫描，这种方式会在目标主机的日志中记录大批连接请求和错误信息。</td>
+</tr>
+<tr>
+<td>-sS</td>
+<td>半开扫描，很少有系统能把它记入系统日志。不过，需要Root权限。</td>
+</tr>
+<tr>
+<td>-sF  -sN</td>
+<td>秘密FIN数据包扫描、Xmas Tree、Null扫描模式</td>
+</tr>
+<tr>
+<td>-sP</td>
+<td>ping扫描，Nmap在扫描端口时，默认都会使用ping扫描，只有主机存活，Nmap才会继续扫描。</td>
+</tr>
+<tr>
+<td>-sU</td>
+<td>UDP扫描，但UDP扫描是不可靠的</td>
+</tr>
+<tr>
+<td>-sA</td>
+<td>这项高级的扫描方法通常用来穿过防火墙的规则集</td>
+</tr>
+<tr>
+<td>-sV</td>
+<td>探测端口服务版本</td>
+</tr>
+<tr>
+<td>-Pn</td>
+<td>扫描之前不需要用ping命令，有些防火墙禁止ping命令。可以使用此选项进行扫描</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>显示扫描过程，推荐使用</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>帮助选项，是最清楚的帮助文档</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>指定端口，如“1-65535、1433、135、22、80”等</td>
+</tr>
+<tr>
+<td>-O</td>
+<td>启用远程操作系统检测，存在误报</td>
+</tr>
+<tr>
+<td>-A</td>
+<td>全面系统检测、启用脚本检测、扫描等</td>
+</tr>
+<tr>
+<td>-oN&#x2F;-oX&#x2F;-oG</td>
+<td>将报告写入文件，分别是正常、XML、grepable 三种格式</td>
+</tr>
+<tr>
+<td>-T4</td>
+<td>针对TCP端口禁止动态扫描延迟超过10ms</td>
+</tr>
+<tr>
+<td>-iL</td>
+<td>读取主机列表，例如，“-iL C:\ip.txt”</td>
+</tr>
+</tbody></table>
+<p>Nmap使用时的<strong>注意事项</strong>：</p>
+<ul>
+<li>nmap扫描会产生大量的网络流量，可能会影响网络性能。</li>
+<li>nmap扫描可能会被防火墙或入侵检测系统检测到，因此需要谨慎使用。</li>
+<li>nmap扫描可能会被误认为是攻击行为，因此需要获得授权后再使用。</li>
+<li>nmap扫描可能会泄露网络拓扑结构和主机信息，因此需要谨慎使用</li>
+</ul>
+<h1 id="scapy编程"><a href="#scapy编程" class="headerlink" title="scapy编程"></a>scapy编程</h1><p>Scapy是Python中<strong>构造网络数据包的模块</strong>，它可以完成绝大多数工具所能完成的功能，例如：扫描，网络发现，跟踪路由，探测，攻击等。</p>
+<h2 id="实践过程-3"><a href="#实践过程-3" class="headerlink" title="实践过程"></a>实践过程</h2><p><code>send、sendp、sr、sr1</code> 发送数据包函数使用。可以通过python导入此库也可以在命令行直接输入指令。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680779974688.png"></p>
+<blockquote>
+<p><strong>send函数</strong>工作在第三层，只发送数据包:</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780010120.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780018263.png"></p>
+<blockquote>
+<p><strong>sendp函数</strong>工作在第二层，只发送数据包:</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780048958.png"></p>
+<blockquote>
+<p><strong>sr()函数</strong>用来发送数据包和接收响应:</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780075374.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780084105.png"></p>
+<blockquote>
+<p>构造数据包来实现<strong>TCP SYN端口扫描</strong>：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780133940.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780144735.png"></p>
+<blockquote>
+<p><strong>模拟三次握手实现TCP连接</strong>:</p>
+</blockquote>
+<p><strong>注</strong>：<a target="_blank" rel="noopener" href="https://www.osgeo.cn/scapy/usage.html#syn-scans">官方文档有这个实例</a></p>
+<p><strong>代码如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780176675.png"></p>
+<p><strong>运行效果</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780196894.png"></p>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li>要理清三次握手是seq与ack值的变化，ack的值是seq+1,也是期望收到的下一个包的seq值。seq随机生成初始值，而后在之后的发送中递增1</li>
+<li>进行三次握手要保证目标机器开启了Apache服务，win下通过phpstudy开启，kali可以通过指令开启：<code>service apache2 start</code></li>
+<li>如果用于测试的主机为LINUX，需要关闭RST：<code>iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP</code></li>
+</ol>
+<h2 id="scapy扩展"><a href="#scapy扩展" class="headerlink" title="scapy扩展"></a>scapy扩展</h2><p>一定要看<strong>官方文档</strong>：<a target="_blank" rel="noopener" href="https://www.osgeo.cn/scapy/introduction.html">https://www.osgeo.cn/scapy/introduction.html</a></p>
+<p>这里主要就<strong>上述使用到的知识</strong>进行扩展：</p>
+<blockquote>
+<p> <strong>数据包构造</strong>：</p>
+</blockquote>
+<p>	Scapy数据包的创建与网络中的分层方法一致。<br>	数据包的基本构建块是一层，而整个数据包则是通过将各个层堆叠在一起而构建的。<br>	scapy通过在TCP &#x2F; IP的不同层上为每个协议定义数据包头，然后按顺序堆叠这些层，来构造数据包。</p>
+<p>可以通过<strong>show</strong>显示详细的包头：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1680780697670.png"></p>
+<blockquote>
+<p><strong>send函数</strong>：</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>scapy.sendrecv.send(x, iface&#x3D;None,**kargs)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>功能：在第三层发送数据包</td>
+</tr>
+<tr>
+<td>参数：</td>
+</tr>
+<tr>
+<td>x – 数据包</td>
+</tr>
+<tr>
+<td>inter – 两个数据包之间的时间（以秒为单位）（默认值为0）</td>
+</tr>
+<tr>
+<td>loop – send packet indefinitely (default 0)</td>
+</tr>
+<tr>
+<td>count – 要发送的数据包数（默认无&#x3D;1）</td>
+</tr>
+<tr>
+<td>verbose – 详细模式（默认无&#x3D;conf.详细)</td>
+</tr>
+<tr>
+<td>realtime – 在发送下一个包之前，请检查是否已发送了一个包</td>
+</tr>
+<tr>
+<td>return_packets – 返回发送的数据包</td>
+</tr>
+<tr>
+<td>socket – 要使用的套接字（默认为conf.L3socket（kargs））</td>
+</tr>
+<tr>
+<td>iface – 发送数据包的接口</td>
+</tr>
+<tr>
+<td>monitor – （不在linux上）以监视模式发送</td>
+</tr>
+<tr>
+<td>返回值：无</td>
+</tr>
+<tr>
+<td>源代码链接：<a target="_blank" rel="noopener" href="https://www.osgeo.cn/scapy/api/scapy.sendrecv.html#scapy.sendrecv.send">https://www.osgeo.cn/scapy/api/scapy.sendrecv.html#scapy.sendrecv.send</a></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>sendp函数</strong>：</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>scapy.sendrecv.sendp(x, iface&#x3D;None, iface_hint&#x3D;None, socket&#x3D;None, **kargs)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>功能：在第二层发送数据包</td>
+</tr>
+<tr>
+<td>参数：</td>
+</tr>
+<tr>
+<td>x – 数据包</td>
+</tr>
+<tr>
+<td>inter – 两个数据包之间的时间（以秒为单位）（默认值为0）</td>
+</tr>
+<tr>
+<td>loop – send packet indefinitely (default 0)</td>
+</tr>
+<tr>
+<td>count – 要发送的数据包数（默认无&#x3D;1）</td>
+</tr>
+<tr>
+<td>verbose – 详细模式（默认无&#x3D;conf.详细)</td>
+</tr>
+<tr>
+<td>realtime – 在发送下一个包之前，请检查是否已发送了一个包</td>
+</tr>
+<tr>
+<td>return_packets – 返回发送的数据包</td>
+</tr>
+<tr>
+<td>socket – 要使用的套接字（默认为conf.L3socket（kargs））</td>
+</tr>
+<tr>
+<td>iface – 发送数据包的接口</td>
+</tr>
+<tr>
+<td>monitor – （不在linux上）以监视模式发送</td>
+</tr>
+<tr>
+<td>返回值：无</td>
+</tr>
+<tr>
+<td>源代码：<a target="_blank" rel="noopener" href="https://github.com/secdev/scapy/blob/master/scapy/sendrecv.py#L443-L474">https://github.com/secdev/scapy/blob/master/scapy/sendrecv.py#L443-L474</a></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>sr函数</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>scapy.sendrecv.sr(x, promisc&#x3D;None, filter&#x3D;None, iface&#x3D;None, nofilter&#x3D;0, *args, **kargs)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>功能：在第三层发送和接收数据包</td>
+</tr>
+<tr>
+<td>参数：</td>
+</tr>
+<tr>
+<td>pks – 发送&#x2F;接收数据包的SuperSocket实例</td>
+</tr>
+<tr>
+<td>pkt – 要发送的数据包</td>
+</tr>
+<tr>
+<td>rcv_pks – 如果设置，则将使用而不是pks来接收数据包。数据包仍将通过pks发送</td>
+</tr>
+<tr>
+<td>nofilter – 输入1以避免使用BPF过滤器</td>
+</tr>
+<tr>
+<td>retry – 如果为正数，则重发未应答数据包的次数（如果为负数），当没有更多的数据包被应答时重试多少次</td>
+</tr>
+<tr>
+<td>timeout – 最后一个数据包发送后要等待多长时间</td>
+</tr>
+<tr>
+<td>verbose – 设置详细级别</td>
+</tr>
+<tr>
+<td>multi – 是否接受同一刺激的多个答案</td>
+</tr>
+<tr>
+<td>prebuild – 在开始发送数据包之前，先预构建这些包。当发电机作为数据包传递时自动启用</td>
+</tr>
+<tr>
+<td>sr（）返回两个列表，第一个列表包含响应的，第二个列表包含未响应的</td>
+</tr>
+<tr>
+<td>源代码：<a target="_blank" rel="noopener" href="https://github.com/secdev/scapy/blob/master/scapy/sendrecv.py#L606-L623">https://github.com/secdev/scapy/blob/master/scapy/sendrecv.py#L606-L623</a></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>sr1函数</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>scapy.sendrecv.sr1(x, promisc&#x3D;None, filter&#x3D;None, iface&#x3D;None, nofilter&#x3D;0, *args, **kargs)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>功能：在第三层发送和接收数据包，只返回一个答案</td>
+</tr>
+<tr>
+<td>参数：</td>
+</tr>
+<tr>
+<td>pks – 发送&#x2F;接收数据包的SuperSocket实例</td>
+</tr>
+<tr>
+<td>pkt – 要发送的数据包</td>
+</tr>
+<tr>
+<td>rcv_pks – 如果设置，则将使用而不是pks来接收数据包。数据包仍将通过pks发送</td>
+</tr>
+<tr>
+<td>nofilter – 输入1以避免使用BPF过滤器</td>
+</tr>
+<tr>
+<td>retry – 如果为正数，则重发未应答数据包的次数（如果为负数），当没有更多的数据包被应答时重试多少次</td>
+</tr>
+<tr>
+<td>timeout – 最后一个数据包发送后要等待多长时间</td>
+</tr>
+<tr>
+<td>verbose – 设置详细级别</td>
+</tr>
+<tr>
+<td>multi – 是否接受同一刺激的多个答案</td>
+</tr>
+<tr>
+<td>prebuild – 在开始发送数据包之前，先预构建这些包。当发电机作为数据包传递时自动启用</td>
+</tr>
+<tr>
+<td>sr（）返回一个列表，列表包含响应的</td>
+</tr>
+<tr>
+<td>源代码：<a target="_blank" rel="noopener" href="https://github.com/secdev/scapy/blob/master/scapy/sendrecv.py#L606-L623">https://github.com/secdev/scapy/blob/master/scapy/sendrecv.py#L606-L623</a></td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/04/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F/" title="信息搜集与漏洞扫描">https://danggeovo.github.io/2023/04/06/网络安全技术-信息搜集与漏洞扫描/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/30/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E4%B9%8B%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA%E7%AE%97%E6%B3%95/" rel="prev" title="机器学习算法之支持向量机算法">
+                  <i class="fa fa-angle-left"></i> 机器学习算法之支持向量机算法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/10/python%E5%BA%94%E7%94%A8--excel/" rel="next" title="python应用--excel">
+                  python应用--excel <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

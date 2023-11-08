@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文介绍以下使用python库实现对excel的读写。主要思路就是通过xlrd读取excel数据进行处理、通过openpyxl进行数据的写入。（python有很多处理excel的库，这里只是记录其中一种方式。后面会系统学习pandas）  参考：https:&#x2F;&#x2F;www.jb51.net&#x2F;article&#x2F;165629.htmhttps:&#x2F;&#x2F;www.jb51.net&#x2F;article&#x2F;205141.h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python应用--excel">
+<meta property="og:url" content="https://danggeovo.github.io/2023/04/10/python%E5%BA%94%E7%94%A8--excel/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="本文介绍以下使用python库实现对excel的读写。主要思路就是通过xlrd读取excel数据进行处理、通过openpyxl进行数据的写入。（python有很多处理excel的库，这里只是记录其中一种方式。后面会系统学习pandas）  参考：https:&#x2F;&#x2F;www.jb51.net&#x2F;article&#x2F;165629.htmhttps:&#x2F;&#x2F;www.jb51.net&#x2F;article&#x2F;205141.h">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:15:56.166Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/04/10/python%E5%BA%94%E7%94%A8--excel/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/04/10/python%E5%BA%94%E7%94%A8--excel/","path":"2023/04/10/python应用--excel/","title":"python应用--excel"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>python应用--excel | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#xlrd%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">xlrd的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#openpyxl%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">openpyxl的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">特点概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C"><span class="nav-number">2.2.</span> <span class="nav-text">具体操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E4%BE%8B%E5%AD%90%EF%BC%9A%E8%81%9A%E7%B1%BB%E6%B1%82%E5%92%8C"><span class="nav-number">3.</span> <span class="nav-text">具体例子：聚类求和</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/10/python%E5%BA%94%E7%94%A8--excel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="python应用--excel | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python应用--excel
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-10T13:48:32+08:00">2023-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:15:56" itemprop="dateModified" datetime="2023-11-08T18:15:56+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】编程语言学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/python%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">python学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>本文介绍以下使用python库实现对excel的读写。主要思路就是通过<strong>xlrd</strong>读取excel数据进行处理、通过<strong>openpyxl</strong>进行数据的写入。<br>（python有很多处理excel的库，这里只是记录其中一种方式。后面会系统学习pandas）</p>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.jb51.net/article/165629.htm">https://www.jb51.net/article/165629.htm</a><br><a target="_blank" rel="noopener" href="https://www.jb51.net/article/205141.htm#_label0">https://www.jb51.net/article/205141.htm#_label0</a></p>
+</blockquote>
+</blockquote>
+<h1 id="xlrd的使用"><a href="#xlrd的使用" class="headerlink" title="xlrd的使用"></a>xlrd的使用</h1><blockquote>
+<ol>
+<li>安装</li>
+</ol>
+</blockquote>
+<p>在pycharm中的控制台输入：<code>pip install xlrd</code>即可</p>
+<blockquote>
+<ol start="2">
+<li>操作流程</li>
+</ol>
+</blockquote>
+<ol>
+<li>导入模块</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import xlrd as xr</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>打开工作簿</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># filename是文件的路径名称</span></span><br><span class="line">workbook = xlrd.open_workbook(filename=<span class="string">r&#x27;C:\Users\Windows10\Desktop\xlsx文件.xlsx&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>获取需要操作的sheet表格（有三种方法）</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">通过索引获取：--------------</span><br><span class="line"><span class="comment"># 获取第一个sheet表格</span></span><br><span class="line">table = workbook.sheets()[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">通过sheet名称获取：---------</span><br><span class="line"><span class="comment"># 通过sheet名称获取</span></span><br><span class="line">table = workbook.sheet_by_name(sheet_name=<span class="string">&#x27;Sheet1&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>补充：获取excel所有sheel名称</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取工作薄中所有的sheet名称</span></span><br><span class="line">names = workbook.sheet_names()</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>行列操作</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 获取sheet中有效行数</span></span><br><span class="line">row = table.nrows</span><br><span class="line"><span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取sheet中有效列数</span></span><br><span class="line">col = table.ncols</span><br><span class="line"><span class="built_in">print</span>(col)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 返回该行的有效单元格长度</span></span><br><span class="line">num = table.row_len(<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(num)</span><br><span class="line"></span><br><span class="line"><span class="comment"># rowx表示是获取第几行的数据</span></span><br><span class="line"><span class="comment"># start_col表示从索引为多少开始，end_colx表示从索引为多少结束，</span></span><br><span class="line"><span class="comment"># end_colx为None表示结束没有限制</span></span><br><span class="line"><span class="comment"># 获取指定行中的数据并以列表的形式返回</span></span><br><span class="line">table_list = table.row_values(rowx=<span class="number">0</span>, start_colx=<span class="number">0</span>, end_colx=<span class="literal">None</span>)</span><br><span class="line"><span class="built_in">print</span>(table_list)</span><br><span class="line"></span><br><span class="line"><span class="comment"># colx表示是获取第几列的数据</span></span><br><span class="line"><span class="comment"># start_rowx表示从索引为多少开始，end_rowx表示从索引为多少结束，</span></span><br><span class="line"><span class="comment"># end_rowx为None表示结束没有限制</span></span><br><span class="line"><span class="comment"># 获取指定列中的数据并以列表的形式返回</span></span><br><span class="line">table_list = table.col_values(colx=<span class="number">0</span>, start_rowx=<span class="number">0</span>, end_rowx=<span class="literal">None</span>)</span><br><span class="line"><span class="built_in">print</span>(table_list)</span><br><span class="line"></span><br><span class="line"><span class="comment">#返回由该列中所有的单元格对象组成的列表</span></span><br><span class="line"><span class="built_in">print</span>(table.row(<span class="number">0</span>)) </span><br><span class="line"><span class="comment">#返回由该行中所有的单元格对象组成的列表</span></span><br><span class="line"><span class="built_in">print</span>(table.row_slice(<span class="number">0</span>)) </span><br><span class="line"><span class="comment">#返回由该行中所有单元格的数据类型组成的列表</span></span><br><span class="line"><span class="built_in">print</span>(table.row_types(<span class="number">0</span>, start_colx=<span class="number">0</span>, end_colx=<span class="literal">None</span>)) </span><br><span class="line"></span><br><span class="line"><span class="comment">#返回由该列中所有的单元格对象组成的列表</span></span><br><span class="line"><span class="built_in">print</span>(table.col(<span class="number">0</span>, start_rowx=<span class="number">0</span>, end_rowx=<span class="literal">None</span>)) </span><br><span class="line"><span class="comment">#返回由该列中所有的单元格对象组成的列表</span></span><br><span class="line"><span class="built_in">print</span>(table.col_slice(<span class="number">0</span>, start_rowx=<span class="number">0</span>, end_rowx=<span class="literal">None</span>)) </span><br><span class="line"><span class="comment">#返回由该列中所有单元格的数据类型组成的列表</span></span><br><span class="line"><span class="built_in">print</span>(table.col_types(<span class="number">0</span>, start_rowx=<span class="number">0</span>, end_rowx=<span class="literal">None</span>)) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>单元格操作</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 获取指定单元格内的值</span></span><br><span class="line">value = table.cell_value(rowx=<span class="number">0</span>, colx=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(value)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取单元格内的组成对象和数据</span></span><br><span class="line">value = table.cell(rowx=<span class="number">0</span>, colx=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(value)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取单元格的数据类型</span></span><br><span class="line"><span class="comment"># python读取excel中单元格的内容返回的有5种类型。ctype : 0 empty,1 string, 2 number, 3 date, 4 boolean, 5 error。即date的ctype=3，这时需要使用xlrd的xldate_as_tuple来处理为date格式，先判断表格的ctype=3时xldate才能开始操作。</span></span><br><span class="line">value = table.cell_type(rowx=<span class="number">0</span>, colx=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(value)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="openpyxl的使用"><a href="#openpyxl的使用" class="headerlink" title="openpyxl的使用"></a>openpyxl的使用</h1><h2 id="特点概述"><a href="#特点概述" class="headerlink" title="特点概述"></a>特点概述</h2><blockquote>
+<p>openpyxl（可读写excel表）专门处理Excel2007及以上版本产生的xlsx文件，xls和xlsx之间转换容易 注意：如果文字编码是“gb2312” 读取后就会显示乱码，请先转成Unicode。</p>
+</blockquote>
+<ol>
+<li><p>起始值：1，1</p>
+</li>
+<li><p>openpyxl 支持直接横纵坐标访问，如A1,B2..</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ws[<span class="string">&#x27;A4&#x27;</span>] = <span class="number">4</span> <span class="comment">#直接赋值</span></span><br></pre></td></tr></table></figure>
+<h2 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h2><blockquote>
+<p>先理清openpyxl的操作对象</p>
+</blockquote>
+<ul>
+<li><code>workbook</code>： 工作簿，一个excel文件包含多个sheet。</li>
+<li><code>sheet</code>：工作表，一个workbook有多个，表名识别，如“sheet1”,“sheet2”等。</li>
+<li><code>cell</code>： 单元格，存储数据对象</li>
+</ul>
+<ol>
+<li>新建表</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">wb = Workbook(encoding=<span class="string">&#x27;UTF-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用_active_sheet_index属性, 默认会设置0，也就是第一个worksheet。</span></span><br><span class="line">ws = wb.active</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建worksheets，通过 openpyxl.workbook.Workbook.create_sheet() 方法：</span></span><br><span class="line">ws = wb.create_sheet(<span class="string">&quot;Mysheet&quot;</span>) <span class="comment">#插入到最后(default)</span></span><br><span class="line"><span class="comment">#或者</span></span><br><span class="line"> ws = wb.create_sheet(<span class="string">&quot;Mysheet&quot;</span>, <span class="number">0</span>) <span class="comment">#插入到最开始的位置</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 创建的sheet的名称会自动创建，按照sheet，sheet1，sheet2自动增长，通过title属性可以修改其名称</span></span><br><span class="line">ws.title = <span class="string">&quot;New Title&quot;</span></span><br><span class="line">ws = wb.create_sheet(title=<span class="string">&quot;Pip&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>注：也可以打开已有的excel文件</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xfile = openpyxl.load_workbook(<span class="string">&#x27;D:\\Tencent Files\\95239002\\聚类求和.xlsx&#x27;</span>)</span><br><span class="line">sheet = xfile.get_sheet_by_name(<span class="string">&quot;总的数据&quot;</span>)</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>单元格赋值</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#设定单元格的值，三种方式</span></span><br><span class="line">sheet.cell(row=<span class="number">2</span>,column=<span class="number">5</span>).value=<span class="number">99</span></span><br><span class="line">sheet.cell(row=<span class="number">3</span>,column=<span class="number">5</span>,value=<span class="number">100</span>)</span><br><span class="line">ws[<span class="string">&#x27;A4&#x27;</span>] = <span class="number">4</span> <span class="comment">#write</span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>逐行写</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ws.append(iterable)</span><br><span class="line"><span class="comment">#添加一行到当前sheet的最底部（即逐行追加从第一行开始） iterable必须是list,tuple,dict,range,generator类型的。 1,如果是list,将list从头到尾顺序添加。 2，如果是dict,按照相应的键添加相应的键值。</span></span><br><span class="line">ws.append([‘This <span class="keyword">is</span> A1<span class="string">&#x27;, ‘This is B1&#x27;</span>, ‘This <span class="keyword">is</span> C1<span class="string">&#x27;])</span></span><br><span class="line"><span class="string">ws.append(&#123;‘A&#x27;</span> : ‘This <span class="keyword">is</span> A1<span class="string">&#x27;, ‘C&#x27;</span> : ‘This <span class="keyword">is</span> C1<span class="string">&#x27;&#125;)</span></span><br><span class="line"><span class="string">ws.append(&#123;1 : ‘This is A1&#x27;</span>, <span class="number">3</span> : ‘This <span class="keyword">is</span> C1<span class="string">&#x27;&#125;)</span></span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>读表操作</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#打开文件：</span></span><br><span class="line"><span class="keyword">from</span> openpyxl <span class="keyword">import</span> load_workbook</span><br><span class="line">excel=load_workbook(<span class="string">&#x27;E:/test.xlsx&#x27;</span>)</span><br><span class="line"><span class="comment">#获取sheet：</span></span><br><span class="line">table = excel.get_sheet_by_name(<span class="string">&#x27;Sheet1&#x27;</span>)  <span class="comment">#通过表名获取 </span></span><br><span class="line"><span class="comment">#获取行数和列数：</span></span><br><span class="line">rows=table.max_row  <span class="comment">#获取行数</span></span><br><span class="line">cols=table.max_column  <span class="comment">#获取列数</span></span><br><span class="line"><span class="comment">#获取单元格值：</span></span><br><span class="line">Data=table.cell(row=row,column=col).value <span class="comment">#获取表格内容，是从第一行第一列是从1开始的，注意不要丢掉 .value</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#通过名字</span></span><br><span class="line">  ws = wb[<span class="string">&quot;frequency&quot;</span>] </span><br><span class="line">  <span class="comment">#等同于 ws2 = wb.get_sheet_by_name(&#x27;frequency&#x27;)</span></span><br><span class="line">  <span class="comment">#不知道名字用index</span></span><br><span class="line">  sheet_names = wb.get_sheet_names()</span><br><span class="line">  ws = wb.get_sheet_by_name(sheet_names[index])<span class="comment"># index为0为第一张表 </span></span><br><span class="line"><span class="comment">#或者</span></span><br><span class="line">  ws =wb.active</span><br><span class="line">  <span class="comment"># 等同于 ws = wb.get_active_sheet() #通过_active_sheet_index设定读取的表，默认0读第一个表</span></span><br><span class="line">  <span class="comment">#活动表表名</span></span><br><span class="line">  wb.get_active_sheet().title</span><br><span class="line">  </span><br><span class="line"><span class="comment">#逐行读</span></span><br><span class="line">    ws.iter_rows(range_string=<span class="literal">None</span>, row_offset=<span class="number">0</span>, column_offset=<span class="number">0</span>): <span class="built_in">range</span>-string(string)-单元格的范围：例如(<span class="string">&#x27;A1:C4&#x27;</span>) row_offset-添加行 column_offset-添加列 </span><br><span class="line">  <span class="comment"># 返回一个生成器, 注意取值时要用value,例如：</span></span><br><span class="line">  <span class="keyword">for</span> row <span class="keyword">in</span> ws.iter_rows(<span class="string">&#x27;A1:C2&#x27;</span>):</span><br><span class="line">    <span class="keyword">for</span> cell <span class="keyword">in</span> row:</span><br><span class="line">      <span class="built_in">print</span> cell</span><br><span class="line">  <span class="comment">#读指定行、指定列:</span></span><br><span class="line">  rows=ws.rows<span class="comment">#row是可迭代的 </span></span><br><span class="line">  columns=ws.columns<span class="comment">#column是可迭代的</span></span><br><span class="line">  <span class="comment">#打印第n行数据 </span></span><br><span class="line">  <span class="built_in">print</span> rows[n]<span class="comment">#不需要用.value </span></span><br><span class="line">  <span class="built_in">print</span> columns[n]<span class="comment">#不需要用.value</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="具体例子：聚类求和"><a href="#具体例子：聚类求和" class="headerlink" title="具体例子：聚类求和"></a>具体例子：聚类求和</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xlrd <span class="keyword">as</span> xr</span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line">xlsx = xr.open_workbook(<span class="string">&quot;D:\\Tencent Files\\95239002\\聚类求和.xlsx&quot;</span>)</span><br><span class="line">ret1 = xlsx.sheets()[<span class="number">0</span>]</span><br><span class="line">sheet1_col1 = ret1.col_values(<span class="number">0</span>)</span><br><span class="line">sheet1_col2 = ret1.col_values(<span class="number">1</span>)</span><br><span class="line">sheet1_col3 = [<span class="string">&quot;result&quot;</span>]</span><br><span class="line">i, j = <span class="number">1</span>, <span class="number">2</span></span><br><span class="line">k = <span class="number">1</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">if</span> j&lt;<span class="built_in">len</span>(sheet1_col2) <span class="keyword">and</span> sheet1_col2[i]==sheet1_col2[j]:</span><br><span class="line">        k+=<span class="number">1</span></span><br><span class="line">        j+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> k==<span class="number">1</span>:</span><br><span class="line">        sheet1_col3.append(<span class="built_in">round</span>(sheet1_col1[i], <span class="number">6</span>))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        sheet1_col3.append(<span class="built_in">round</span>(<span class="built_in">sum</span>(sheet1_col1[i:j]), <span class="number">6</span>))</span><br><span class="line">        <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(k-<span class="number">1</span>):</span><br><span class="line">            sheet1_col3.append(<span class="string">&quot;same&quot;</span>)</span><br><span class="line">        k = <span class="number">1</span></span><br><span class="line">    i = j</span><br><span class="line">    j = i+<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> j&gt;=<span class="built_in">len</span>(sheet1_col2):</span><br><span class="line">        sheet1_col3.append(<span class="built_in">round</span>(sheet1_col1[i], <span class="number">6</span>))</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(sheet1_col3)</span><br><span class="line"></span><br><span class="line">xfile = openpyxl.load_workbook(<span class="string">&#x27;D:\\Tencent Files\\95239002\\聚类求和.xlsx&#x27;</span>)</span><br><span class="line">sheet = xfile.get_sheet_by_name(<span class="string">&quot;总的数据&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(sheet1_col3)+<span class="number">1</span>):</span><br><span class="line">    sheet.cell(i, <span class="number">3</span>, sheet1_col3[i-<span class="number">1</span>])</span><br><span class="line">xfile.save(<span class="string">&quot;聚类求和3.xlsx&quot;</span>)</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/04/10/python%E5%BA%94%E7%94%A8--excel/" title="python应用--excel">https://danggeovo.github.io/2023/04/10/python应用--excel/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/06/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86%E4%B8%8E%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F/" rel="prev" title="信息搜集与漏洞扫描">
+                  <i class="fa fa-angle-left"></i> 信息搜集与漏洞扫描
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/10/python%E5%AD%A6%E4%B9%A0%20--%20ch6%20%E6%96%87%E4%BB%B6%E4%B8%8E%E5%BC%82%E5%B8%B8/" rel="next" title="python学习 -- ch6 文件与异常">
+                  python学习 -- ch6 文件与异常 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

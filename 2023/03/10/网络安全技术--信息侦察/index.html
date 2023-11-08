@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="工具1：搜索引擎检索规则 目的：通过在搜索引擎检索栏输入对应的指令可以进行高级搜索，以获取更加精确的搜索结果。    下面是常用的检索规则汇总：   site:[域] 用途：返回与特定域相关的检索结果； 示例：site:guet.edu.cn 考试 （在guet.edu.cn域中查找含有“考试”的结果）。   link:[Web页面] 用途：给出和指定Web页面相链接的站点，可能泄露目标站点的业务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络安全技术--信息侦察">
+<meta property="og:url" content="https://danggeovo.github.io/2023/03/10/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF--%E4%BF%A1%E6%81%AF%E4%BE%A6%E5%AF%9F/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="工具1：搜索引擎检索规则 目的：通过在搜索引擎检索栏输入对应的指令可以进行高级搜索，以获取更加精确的搜索结果。    下面是常用的检索规则汇总：   site:[域] 用途：返回与特定域相关的检索结果； 示例：site:guet.edu.cn 考试 （在guet.edu.cn域中查找含有“考试”的结果）。   link:[Web页面] 用途：给出和指定Web页面相链接的站点，可能泄露目标站点的业务">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678445871698.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678446225264.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678455015181.png">
+<meta property="article:published_time" content="2023-03-10T05:48:32.000Z">
+<meta property="article:modified_time" content="2023-11-08T10:00:48.058Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678445871698.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/03/10/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF--%E4%BF%A1%E6%81%AF%E4%BE%A6%E5%AF%9F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/03/10/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF--%E4%BF%A1%E6%81%AF%E4%BE%A6%E5%AF%9F/","path":"2023/03/10/网络安全技术--信息侦察/","title":"网络安全技术--信息侦察"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>网络安全技术--信息侦察 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%85%B71%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%A3%80%E7%B4%A2%E8%A7%84%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">工具1：搜索引擎检索规则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%85%B72%EF%BC%9AShodan%E4%B8%8EZoomEy"><span class="nav-number">2.</span> <span class="nav-text">工具2：Shodan与ZoomEy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%85%B73%EF%BC%9AWhois%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.</span> <span class="nav-text">工具3：Whois查询</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/10/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF--%E4%BF%A1%E6%81%AF%E4%BE%A6%E5%AF%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="网络安全技术--信息侦察 | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络安全技术--信息侦察
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-10T13:48:32+08:00">2023-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:00:48" itemprop="dateModified" datetime="2023-11-08T18:00:48+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="工具1：搜索引擎检索规则"><a href="#工具1：搜索引擎检索规则" class="headerlink" title="工具1：搜索引擎检索规则"></a>工具1：搜索引擎检索规则</h1><blockquote>
+<p><strong>目的</strong>：通过在搜索引擎检索栏输入对应的指令可以进行高级搜索，以获取更加精确的搜索结果。 </p>
+</blockquote>
+<blockquote>
+<p>下面是<strong>常用的检索规则汇总</strong>：</p>
+</blockquote>
+<ul>
+<li><code>site:[域]</code><ul>
+<li>用途：返回与<strong>特定域相关</strong>的检索结果；</li>
+<li>示例：site:guet.edu.cn 考试 （在guet.edu.cn域中查找含有“考试”的结果）。</li>
+</ul>
+</li>
+<li><code>link:[Web页面]</code><ul>
+<li>用途：给出和<strong>指定Web页面相链接</strong>的站点，可能泄露目标站点的业务关系；</li>
+<li>示例：link:guet.edu.cn （查看和guet.edu.cn相链接的所有站点）</li>
+</ul>
+</li>
+<li><code>intitle:[条件]</code><ul>
+<li>用途：用于检索<strong>标题中含有特定检索文本</strong>的页面。</li>
+<li>示例：site:guet.edu.cn intitle: 徐华蕊 (查看guet.edu.cn站点中标题是否包含有“徐华蕊”的网页)。</li>
+</ul>
+</li>
+<li><code>related:[站点]</code></li>
+<li>用途：显示<strong>与特定的检索页面类似</strong>的Web页面；</li>
+<li>示例：related:guet.edu.cn。</li>
+<li><code>cache:[页面]</code><ul>
+<li>用途：显示来自于<strong>Baidu快照的页面内容</strong>。对于查找最近被移出或当前不可用的页面时非常有用；</li>
+<li>示例：<code>cache:www.csdn.net</code> （查找www. csdn.net中最近被Baidu bot抓取的页面）。</li>
+</ul>
+</li>
+<li><code>filetype:[后缀]</code><ul>
+<li>用途：检索<strong>特定类型的文件</strong>；</li>
+<li>示例：filetype:ppt site:www .csdn.net （查找ww w.csdn.net中所有的ppt文件）</li>
+</ul>
+</li>
+<li><code>Not（－）</code><ul>
+<li>用途：过滤Web页面中所包含的特定条件；</li>
+<li>示例：苹果 –水果。</li>
+</ul>
+</li>
+<li><code>Plus（+）</code><ul>
+<li>用途：告诉Baidu<strong>不应该把某个词过滤掉</strong>（注意：不是告诉Baidu所有的页面都要包含某个条件）；</li>
+<li>示例：site:ww w.csdn.net +how +the。</li>
+</ul>
+</li>
+</ul>
+<p><strong>一个实例</strong>：搜索引擎获取 4399游戏中带有“造梦西游”的网页？</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678445871698.png"></p>
+<h1 id="工具2：Shodan与ZoomEy"><a href="#工具2：Shodan与ZoomEy" class="headerlink" title="工具2：Shodan与ZoomEy"></a>工具2：Shodan与ZoomEy</h1><blockquote>
+<p><strong>目的</strong>：获取<strong>联网设备信息</strong></p>
+</blockquote>
+<blockquote>
+<p>常用网站：</p>
+</blockquote>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.shodan.io/">Shodan网站</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zoomeye.org/">ZoomEy网站</a></li>
+</ol>
+<blockquote>
+<p><strong>检索过滤规则</strong>：以钟馗之眼为例</p>
+</blockquote>
+<ul>
+<li>搜索范围覆盖设备(IPv4、IPv6)及网站(域名)，可以<strong>提交URL参数 t</strong> 进行指定类型 t&#x3D;v4为 IPv4，t&#x3D;v6为 IPv6，t&#x3D;web为域名（或可通过搜索结果侧栏点击对应搜索内容）</li>
+<li>直接输入搜索字符串会认定为“全局”进行匹配搜索关键词，会从http等协议内容(包括http头、html内容等)、ssl证书、组件名等进行匹配搜索。</li>
+<li>搜索字符串<strong>不区分大小写</strong>，会进行分词后匹配(搜索结果页面提供了“分词”测试功能)</li>
+<li>搜索<strong>字符串请使用引号</strong>（如”Cisco Systems”或’Cisco Systems’）， 如不然空格会认定为逻辑 or 运算符，如果搜索字符串里存在引号可以使用 \ 进行转义 比如: “a&quot;b”,如果搜索字符串里存在括号可以使用 \ 进行转义 比如: portinfo()</li>
+</ul>
+<p><strong>逻辑运算：</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678446225264.png"></p>
+<p><strong>地理位置</strong>：</p>
+<ul>
+<li><code>country</code>:”CN”<ul>
+<li>搜索<strong>国家地区</strong>资产</li>
+<li>可以使用国家缩写，也可以使用中&#x2F;英文全称如country:”中国”country:”china”</li>
+</ul>
+</li>
+<li><code>subdivisions</code>:”beijing”<ul>
+<li>搜索相关<strong>指定行政区</strong>的资产</li>
+<li>中国省会支持中文及英文描述搜索如subdivisions:”北京”subdivisions:”beijing”</li>
+</ul>
+</li>
+<li><code>city</code>:”changsha”<ul>
+<li>搜索<strong>相关城市资产</strong></li>
+<li>中国城市支持中文及英文描述搜索如city:”changsha”city:”长沙”</li>
+</ul>
+</li>
+</ul>
+<p><strong>证书搜索</strong>：</p>
+<ul>
+<li><code>ssl</code>:”google”<ul>
+<li>搜索ssl证书存在”google”字符串的资产</li>
+<li>常常用来<strong>提过产品名及公司名</strong>搜索对应目标</li>
+</ul>
+</li>
+<li><code>ssl.cert.availability</code>:1<ul>
+<li>搜索证书是否在有效期内</li>
+<li>证书在有效期内ssl.cert.availability:1</li>
+<li>证书不在有效期内ssl.cert.availability:0</li>
+</ul>
+</li>
+<li><code>ssl.cert.fingerprint</code>:”F3C98F223D82CC41CF83D94671CCC6C69873FABF”<ul>
+<li>搜索证书相关指纹资产</li>
+</ul>
+</li>
+<li><code>ssl.chain_count</code>:3<ul>
+<li>搜索<strong>ssl链计数资产</strong></li>
+</ul>
+</li>
+<li><code>ssl.cert.alg</code>:”SHA256-RSA”<ul>
+<li>搜索证书支持的<strong>签名算法</strong></li>
+</ul>
+</li>
+<li><code>ssl.cert.issuer.cn</code>:”pbx.wildix.com”<ul>
+<li>搜索用户证书签发者通用域名名称</li>
+</ul>
+</li>
+<li><code>ssl.cert.pubkey.rsa.bits</code>:2048<ul>
+<li>搜索rsa_bits证书公钥位数</li>
+</ul>
+</li>
+<li><code>ssl.cert.pubkey.ecdsa.bits</code>:256</li>
+<li>搜索ecdsa_bits证书<strong>公钥位数</strong></li>
+<li><code>ssl.cert.pubkey.type</code>:”RSA”<ul>
+<li>搜索证书的<strong>公钥类型</strong></li>
+</ul>
+</li>
+<li><code>ssl.cert.serial</code>:”18460192207935675900910674501”<ul>
+<li>搜索<strong>证书序列号</strong></li>
+</ul>
+</li>
+<li><code>ssl.cipher.bits</code>:”128”<ul>
+<li>搜索<strong>加密套件位数</strong></li>
+</ul>
+</li>
+<li><code>ssl.cipher.name</code>:”TLS_AES_128_GCM_SHA256”</li>
+<li>搜索加密套件名称</li>
+<li><code>ssl.cipher.version</code>:”TLSv1.3”</li>
+<li>搜索加密套件版本</li>
+<li><code>ssl.version</code>:”TLSv1.3”<ul>
+<li>搜索证书的ssl版本</li>
+</ul>
+</li>
+<li><code>ssl.cert.subject.cn</code>:”baidu.com”<ul>
+<li>搜索用户证书持有者通用域名名称</li>
+</ul>
+</li>
+</ul>
+<p><strong>ip及域名相关信息：</strong></p>
+<ul>
+<li><code>ip</code>:”8.8.8.8”<ul>
+<li>搜索指定<strong>IPv4地址</strong>相关资产</li>
+</ul>
+</li>
+<li><code>ip</code>:”2600:3c00::f03c:91ff:fefc:574a”<ul>
+<li>搜索指定<strong>IPv6地址</strong>相关资产</li>
+</ul>
+</li>
+<li><code>cidr</code>:52.2.254.36&#x2F;24<ul>
+<li>搜索<strong>IP的C段资产</strong></li>
+<li>cidr:52.2.254.36&#x2F;16 为IP的B段资产 cidr:52.2.254.36&#x2F;8 为IP的A段资产,如cidr:52.2.254.36&#x2F;16cidr:52.2.254.36&#x2F;8</li>
+</ul>
+</li>
+<li><code>org</code>:”北京大学” 或者organization:”北京大学”<ul>
+<li>搜索<strong>相关组织</strong>(Organization)的资产</li>
+<li>常常用来定位大学、结构、大型互联网公司对应IP资产</li>
+</ul>
+</li>
+<li><code>isp</code>:”China Mobile”<ul>
+<li>搜索相关<strong>网络服务提供商</strong>的资产</li>
+<li>可结合org数据相互补充</li>
+</ul>
+</li>
+<li><code>asn</code>:42893<ul>
+<li>搜索对应<strong>ASN（Autonomous system number）自治系统</strong>编号相关IP资产</li>
+</ul>
+</li>
+<li><code>port</code>:80<ul>
+<li>搜索相关<strong>端口资产</strong></li>
+<li>目前不支持同时开放多端口目标搜索</li>
+</ul>
+</li>
+<li><code>hostname</code>:google.com<ul>
+<li>搜索相关IP”主机名”的资产</li>
+</ul>
+</li>
+<li><code>site</code>:baidu.com<ul>
+<li>搜索<strong>域名相关</strong>的资产</li>
+<li>常常使用来搜索子域名匹配</li>
+</ul>
+</li>
+</ul>
+<p><strong>指纹相关：</strong></p>
+<ul>
+<li><code>app</code>:”Cisco ASA SSL VPN”<ul>
+<li>搜索<strong>思科ASA-SSL-VPN</strong>的设备</li>
+<li>更多的app规则请参考”导航”，在搜索框输入cisco等关键词会有相关app提示</li>
+</ul>
+</li>
+<li><code>service</code>:”ssh”<ul>
+<li>搜索<strong>对应服务协议</strong>的资产</li>
+<li>常见服务协议包括：http、ftp、ssh、telnet等等(其他服务可参考搜索结果域名侧栏聚合展示)</li>
+</ul>
+</li>
+<li><code>device</code>:”router”<ul>
+<li>搜索<strong>路由器相关</strong>的设备类型</li>
+<li>常见类型包括router(路由器)、switch(交换机)、storage-misc(存储设备)等等(其他类型可参考搜索结果域名侧栏聚合展示)</li>
+</ul>
+</li>
+<li><code>os</code>:”RouterOS”<ul>
+<li>搜索<strong>相关操作系统</strong></li>
+<li>常见系统包括Linux、Windows、RouterOS、IOS、JUNOS等等(其他系统可参考搜索结果域名侧栏聚合展示)</li>
+</ul>
+</li>
+<li><code>title</code>:”Cisco”<ul>
+<li>搜索html<strong>内容里标题</strong>中存在”Cisco”的数据</li>
+</ul>
+</li>
+<li><code>industry</code>:”政府”<ul>
+<li>搜索<strong>行业类型相关</strong>的资产</li>
+<li>常见的行业类型包括科技、能源、金融制造业等等（其他类型可结合org数据相互补充）</li>
+</ul>
+</li>
+</ul>
+<p><strong>时间节点：</strong></p>
+<ul>
+<li><code>after</code>:”2020-01-01” +port:”50050”<ul>
+<li>搜索更新时间为”2020-01-01”端口为”50050”以后的资产</li>
+<li>时间过滤器需组合其他过滤器使用</li>
+</ul>
+</li>
+<li><code>before</code>:”2020-01-01” +port:”50050”<ul>
+<li>搜索更新时间在”2020-01-01”端口为”50050”以前的资产</li>
+<li>时间过滤器需组合其他过滤器使用</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>实例</strong>：搜索中国2023年3月9日安装Linux系统的主机信息？</p>
+</blockquote>
+<p>使用检索指令：<code>os:&quot;Linux&quot;+after:&quot;2023-03-10&quot;+country:&quot;CN&quot;</code></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1678455015181.png"></p>
+<h1 id="工具3：Whois查询"><a href="#工具3：Whois查询" class="headerlink" title="工具3：Whois查询"></a>工具3：Whois查询</h1><blockquote>
+<p><strong>目的</strong>：可以获取到<strong>域名的注册资料</strong>等相关信息</p>
+</blockquote>
+<blockquote>
+<p><strong>两个网站</strong>：</p>
+</blockquote>
+<ol>
+<li>138搜索网（国际版）</li>
+<li><a target="_blank" rel="noopener" href="https://whois.domaintools.com/">https://whois.domaintools.com/</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/03/10/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF--%E4%BF%A1%E6%81%AF%E4%BE%A6%E5%AF%9F/" title="网络安全技术--信息侦察">https://danggeovo.github.io/2023/03/10/网络安全技术--信息侦察/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/26/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95-%E6%A6%82%E8%BF%B0/" rel="prev" title="从零开始学习算法-概述">
+                  <i class="fa fa-angle-left"></i> 从零开始学习算法-概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/25/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862--%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9B%B8%E5%85%B3/" rel="next" title="基础知识--激活函数相关">
+                  基础知识--激活函数相关 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="复习博客">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统安全复习">
+<meta property="og:url" content="https://danggeovo.github.io/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="复习博客">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677682112868.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677721588114.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677721876754.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677722221727.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677722965969.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677722570612.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677723021385.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677723843913.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677724655607.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736490368.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677725030529.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677726892851.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677727243599.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677727455658.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677727653268.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677728184197.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677728494430.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729012094.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729208660.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736437432.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729520874.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677730983906.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677730809985.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729830650.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729906390.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729937111.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731139172.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731161799.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731288772.jpg">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731318475.jpg">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736404227.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731751690.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731917366.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732098664.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732204353.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732264832.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736977670.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736817271.jpg">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736827635.jpg">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736613589.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732506771.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732528761.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732673967.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732791319.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677733123707.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677733251416.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734609618.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734948561.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734891082.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734913971.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735193336.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735518044.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735307524.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735319754.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735331038.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735347421.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735358657.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735945933.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735974160.png">
+<meta property="og:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735788767.png">
+<meta property="article:published_time" content="2023-11-08T10:22:49.785Z">
+<meta property="article:modified_time" content="2023-11-08T10:27:50.748Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="系统安全">
+<meta property="article:tag" content="复习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677682112868.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/","path":"2023/11/08/系统安全复习/","title":"系统安全复习"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>系统安全复习 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E4%BF%A1%E6%81%AF%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81"><span class="nav-number">1.</span> <span class="nav-text">第一章 信息系统安全威胁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E6%94%BB%E5%87%BB"><span class="nav-number">1.1.</span> <span class="nav-text">恶意代码攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AA%83%E5%90%AC"><span class="nav-number">1.2.</span> <span class="nav-text">窃听</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%89%AB%E6%8F%8F"><span class="nav-number">1.3.</span> <span class="nav-text">系统扫描</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E6%89%AB%E6%8F%8F"><span class="nav-number">1.3.1.</span> <span class="nav-text">地址扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">漏洞扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%A3%E4%BB%A4%E7%A0%B4%E8%A7%A3"><span class="nav-number">1.3.4.</span> <span class="nav-text">口令破解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AC%BA%E9%AA%97%E5%9E%8B%E6%94%BB%E5%87%BB"><span class="nav-number">1.4.</span> <span class="nav-text">欺骗型攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E6%AC%BA%E9%AA%97"><span class="nav-number">1.4.1.</span> <span class="nav-text">ARP欺骗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E6%AC%BA%E9%AA%97"><span class="nav-number">1.4.2.</span> <span class="nav-text">DNS欺骗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web%E6%AC%BA%E9%AA%97"><span class="nav-number">1.4.3.</span> <span class="nav-text">Web欺骗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%9E%8B%E6%94%BB%E5%87%BB"><span class="nav-number">1.5.</span> <span class="nav-text">数据驱动型攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB"><span class="nav-number">1.6.</span> <span class="nav-text">拒绝服务攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0%E4%B9%A0%E9%A2%98"><span class="nav-number">1.7.</span> <span class="nav-text">第一章习题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E4%BF%9D%E6%8A%A4"><span class="nav-number">2.</span> <span class="nav-text">第二章：数据安全保护</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%BA%E5%AF%86%E6%80%A7%E4%BF%9D%E6%8A%A4%E2%80%93%E5%AF%86%E7%A0%81%E5%AD%A6"><span class="nav-number">2.1.</span> <span class="nav-text">机密性保护–密码学</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E4%BD%93%E5%88%B6"><span class="nav-number">2.1.1.</span> <span class="nav-text">数据加密体制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8F%E5%AD%90%E5%AF%86%E7%A0%81"><span class="nav-number">2.1.2.</span> <span class="nav-text">量子密码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">密钥管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D%E4%B8%AD%E5%BF%83%EF%BC%88KDC%EF%BC%89%E5%88%86%E5%8F%91%E5%8D%95%E5%AF%86%E9%92%A5"><span class="nav-number">2.2.1.</span> <span class="nav-text">密钥分配中心（KDC）分发单密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E4%B8%AD%E5%BF%83%E7%9A%84%E5%8D%95%E9%92%A5%E5%88%86%E9%85%8D"><span class="nav-number">2.2.2.</span> <span class="nav-text">无中心的单钥分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B1%E5%85%AC%E9%92%A5%E7%AE%A1%E7%90%86%E6%9C%BA%E6%9E%84%E5%88%86%E5%8F%91%E5%85%AC%E9%92%A5"><span class="nav-number">2.2.3.</span> <span class="nav-text">由公钥管理机构分发公钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E8%AF%81%E4%B9%A6"><span class="nav-number">2.2.4.</span> <span class="nav-text">公钥证书</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E4%BF%9D%E6%8A%A4%E2%80%93%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81"><span class="nav-number">2.3.</span> <span class="nav-text">完整性保护–消息认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MAC%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.1.</span> <span class="nav-text">MAC函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.2.</span> <span class="nav-text">哈希函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0%E9%A2%98"><span class="nav-number">2.3.3.</span> <span class="nav-text">练习题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%90%A6%E8%AE%A4%E6%80%A7%E4%BF%9D%E6%8A%A4%E2%80%93%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">2.4.</span> <span class="nav-text">不可否认性保护–数字签名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">2.4.1.</span> <span class="nav-text">直接数字签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E4%BB%B2%E8%A3%81%E7%9A%84%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">2.4.2.</span> <span class="nav-text">有仲裁的数字签名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SET%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.5.</span> <span class="nav-text">SET实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6"><span class="nav-number">2.5.1.</span> <span class="nav-text">数字证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E9%87%8D%E7%AD%BE%E5%90%8D"><span class="nav-number">2.5.2.</span> <span class="nav-text">双重签名</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E4%B8%8E%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">第三章：身份认证与访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="nav-number">3.1.</span> <span class="nav-text">基于密钥分发的身份认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.1.1.</span> <span class="nav-text">公钥加密认证协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E9%92%A5%E5%8A%A0%E5%AF%86%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.1.2.</span> <span class="nav-text">单钥加密认证协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F%EF%BC%9A%E8%AE%A4%E8%AF%81%E3%80%81%E8%AE%A1%E8%B4%B9%E3%80%81%E5%AE%A1%E8%AE%A1"><span class="nav-number">3.1.3.</span> <span class="nav-text">Kerberos认证系统：认证、计费、审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%E7%9A%84%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="nav-number">3.2.</span> <span class="nav-text">基于数字证书的身份认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#X-509%E8%AF%81%E4%B9%A6%E6%A0%87%E5%87%86"><span class="nav-number">3.2.1.</span> <span class="nav-text">X.509证书标准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PKI%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.2.2.</span> <span class="nav-text">PKI介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">3.3.</span> <span class="nav-text">访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%90%86%E8%AE%BA"><span class="nav-number">3.3.1.</span> <span class="nav-text">基本理论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E9%81%93%E7%BB%83%E4%B9%A0%E9%A2%98"><span class="nav-number">3.3.2.</span> <span class="nav-text">一道练习题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E5%91%A8%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4"><span class="nav-number">4.</span> <span class="nav-text">第四周：数据安全防护</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">4.1.</span> <span class="nav-text">防火墙</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E8%AF%9D%E7%AE%80%E8%BF%B04%E5%A4%A7%E6%8A%80%E6%9C%AF"><span class="nav-number">4.1.1.</span> <span class="nav-text">用自己的话简述4大技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF"><span class="nav-number">4.1.2.</span> <span class="nav-text">未来趋势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">安全协议分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IPsec"><span class="nav-number">4.2.1.</span> <span class="nav-text">IPsec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSL%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.2.2.</span> <span class="nav-text">SSL协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.3.</span> <span class="nav-text">入侵检测系统</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="系统安全复习 | dangge の 小小世界">
+      <meta itemprop="description" content="复习博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统安全复习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-08 18:22:49 / 修改时间：18:27:50" itemprop="dateCreated datePublished" datetime="2023-11-08T18:22:49+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">复习博客</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="第一章-信息系统安全威胁"><a href="#第一章-信息系统安全威胁" class="headerlink" title="第一章 信息系统安全威胁"></a>第一章 信息系统安全威胁</h1><h2 id="恶意代码攻击"><a href="#恶意代码攻击" class="headerlink" title="恶意代码攻击"></a>恶意代码攻击</h2><blockquote>
+<p><strong>复习建议：这一节很重要，要对这三种攻击的概念、原理、比较等熟悉。</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677682112868.png"></p>
+<blockquote>
+<p>计算机病毒：基本概念、特征、分类、原理；案例</p>
+</blockquote>
+<ul>
+<li><strong>基本概念</strong>：利用软硬件缺陷，破坏计算机数据并影响计算机正常工作的一组<strong>指令集或程序代码</strong>。<br><strong>注</strong>：凡是能够引起计算机故障，破坏计算机数据的<strong>程序</strong>都可称为计算机病毒。</li>
+<li><strong>特性</strong>：<ul>
+<li><strong>非授权执行性与寄生性</strong></li>
+<li>传染性</li>
+<li>潜伏与隐蔽性</li>
+<li><strong>可触发性</strong></li>
+<li>破坏性</li>
+</ul>
+</li>
+<li><strong>分类</strong>：（以寄生位置）<ul>
+<li>引导型病毒：寄生在引导扇区</li>
+<li>文件病毒：寄生在文件</li>
+<li>引导兼文件病毒</li>
+<li>CMOS 病毒：寄生在CMOS空间（保存系统参数和配置）</li>
+</ul>
+</li>
+<li><strong>原理</strong>：计算机病毒的基本原理是通过<strong>自我复制</strong>来感染其他程序或系统。分为<code>潜伏、感染、触发、发作</code>四个状态。</li>
+<li><strong>防御措施</strong>：<ul>
+<li>强化安全管理</li>
+<li>计算机病毒检测</li>
+<li>计算机病毒的清除</li>
+<li>病毒防治软件</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>蠕虫：基本概念、特征、传播过程；案例</p>
+</blockquote>
+<ul>
+<li><p><strong>基本概念</strong>：可以<strong>独立存在</strong>并且从<strong>一个计算机传播到另一个计算机</strong>的程序。<br><strong>注</strong>：蠕虫是一种自我复制的恶意程序，它可以自动<strong>在网络上寻找漏洞</strong>并利用漏洞进行传播。以这个概念看，蠕虫也是广义病毒的一种。</p>
+</li>
+<li><p><strong>特征</strong>：</p>
+<ul>
+<li><strong>存在的独立性</strong></li>
+<li>攻击的对象是计算机</li>
+<li>攻击的主动性</li>
+<li>传染的反复性</li>
+<li>行踪的隐蔽性 </li>
+<li>破坏的严重性</li>
+</ul>
+</li>
+<li><p><strong>传播过程</strong>：</p>
+<p> 先探测、再扫描、再攻击、再感染、最后发挥作用（有效载荷）<br> <img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677721588114.png"></p>
+</li>
+<li><p><strong>案例</strong>：</p>
+<ul>
+<li>红色代码病毒：结合了病毒、木马、DDOS机制的蠕虫。</li>
+<li>熊猫烧香：被感染的用户系统中所有.exe可执行文件全部被改成熊猫举着三根香的模样</li>
+</ul>
+</li>
+</ul>
+<p><strong>比较一下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677721876754.png"></p>
+<p>病毒和蠕虫的区别可以从<strong>存在方式、传播方式、感染目标</strong>出发去记忆。</p>
+<blockquote>
+<p>木马：基本概念、特征、传播过程；案例</p>
+</blockquote>
+<ul>
+<li><strong>基本概念</strong>：特洛伊木马程序<strong>是一种恶意程序</strong>，它能提供一些有用的或者令人感兴趣的功能，但是还具有用户不知道的其他功能。</li>
+<li><strong>特征</strong>：<ul>
+<li>易传播性</li>
+<li>隐蔽性</li>
+<li>顽固性</li>
+<li>有效性</li>
+</ul>
+</li>
+<li>传播过程：<ul>
+<li>木马<strong>没有自传播</strong>功能，其传播的基本方式是<strong>植入</strong>。总体而言，木马可以采用<strong>手工植入和远程植入</strong>两种方式。</li>
+</ul>
+</li>
+<li><strong>案例</strong>：<ul>
+<li><strong>Zeus木马</strong>： Zeus是一种盗窃银行账户信息的木马程序。它通过社交工程的方式欺骗用户下载并安装木马，一旦感染成功，它会记录受害者在浏览器中输入的所有账户信息和密码，并将这些信息发送到攻击者的服务器上。</li>
+</ul>
+</li>
+</ul>
+<p><strong>比较一下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677722221727.png"></p>
+<p>重点关注下标红部分。</p>
+<blockquote>
+<p>陷门与黑客攻击（简单看下即可）</p>
+</blockquote>
+<p><strong>陷门</strong>（trap doors）也称“后门”， 是一种利用系统脆弱性进行重复攻击的技术，通常是一段非法的操作系统程序，通过它可以在一个程序模块中留下未被登记的秘密入口，使用户可以不按正常的访问步骤获得访问权。</p>
+<p>“<strong>黑客</strong>”对于网络攻击者的统称。一般说来，黑客是一个精通计算机技术的特殊群体。从攻击的动机看，可以把“黑客”分为3类：一类称为“侠客（Hackers）”，他们多是好奇者和爱出风头者；一类称为“骇客（Crackers）”，他们是一些不负责的恶作剧者；一类称为“入侵者（Intruder），他们是有目的的破坏者。</p>
+<h2 id="窃听"><a href="#窃听" class="headerlink" title="窃听"></a>窃听</h2><blockquote>
+<p><strong>复习建议：这一节不重要，了解一下简单的案例即可。</strong></p>
+</blockquote>
+<p>窃听攻击属于<strong>被动攻击</strong>，不会修改原有信息。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677722965969.png"></p>
+<h2 id="系统扫描"><a href="#系统扫描" class="headerlink" title="系统扫描"></a>系统扫描</h2><blockquote>
+<p><strong>复习建议：重点章节。知道概念、可以用自己的话说出来。</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677722570612.png"></p>
+<h3 id="地址扫描"><a href="#地址扫描" class="headerlink" title="地址扫描"></a>地址扫描</h3><blockquote>
+<p><strong>ping命令</strong>：利用<strong>ICMP报文</strong>进行主机探测</p>
+</blockquote>
+<blockquote>
+<p><strong>tracert命令</strong>：是<strong>路由跟踪</strong>实用程序，用于确定 IP数据包访问目标所<strong>采取的路径</strong>。</p>
+</blockquote>
+<blockquote>
+<p><strong>pathping命令</strong>：综合上两个指令。</p>
+</blockquote>
+<blockquote>
+<p><strong>netstat命令</strong>：访问<strong>网络连接状态及其相关信息</strong>的程序，一般用于检验本机<strong>各端口</strong>的网络连接情况</p>
+</blockquote>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677723021385.png"></p>
+<blockquote>
+<p><strong>全连接扫描</strong>（TCP connect扫描）：利用TCP三次握手全过程。这种扫描往往会被远程<strong>系统记入日志</strong>。</p>
+</blockquote>
+<blockquote>
+<p><strong>半连接扫描</strong>（TCP SYN扫描）：当客户端发出一个SYN连接请求报文后，如果收到了远程目标主机的ACK&#x2F;SYN确认，就说明远程主机的该端口是打开的。<strong>信息足够</strong>并且<strong>不会</strong>在目标主机的日志中<strong>留下记录</strong>。</p>
+</blockquote>
+<blockquote>
+<p><strong>TCP FIN 扫描</strong>：<strong>关闭端口</strong>会用适当的<strong>RST</strong>来回复FIN数据包，<strong>打开端口</strong>时会<strong>忽略</strong>对FIN数据包的回复。</p>
+</blockquote>
+<p><strong>注1</strong>：有的系统无论端口开放与否都会返回RST回复，<strong>不适用</strong>；</p>
+<p><strong>注2</strong>：该扫描方法比SYN扫描<strong>更隐蔽</strong>，不会记录日志，也叫秘密扫描</p>
+<p><strong>注3</strong>：该方法还可以<strong>区分系统</strong>（UNIX or WIN），因为该方法对WindowsNT无效，只适用于UNIX主机。</p>
+<blockquote>
+<p><strong>TCP NULL 扫描</strong> ：程序发送一个<strong>没有任何标志位</strong>的TCP包，<strong>关闭的端口</strong>将返回一个RST数据包。 </p>
+</blockquote>
+<blockquote>
+<p><strong>UDP ICMP端口不能到达扫描</strong>：使用的是<strong>UDP协议</strong>，而非TCP&#x2F;IP协议。由于UDP协议很简单，所以扫描变得相对比较困难。在向一个<strong>未打开的UDP端口发送数据包</strong>时，会<strong>返回一个ICMP_PORT_UNREACH错误</strong>，这样扫描者就能知道哪个端口是关闭的。</p>
+</blockquote>
+<h3 id="漏洞扫描"><a href="#漏洞扫描" class="headerlink" title="漏洞扫描"></a>漏洞扫描</h3><p>漏洞扫描是指<strong>基于漏洞数据库</strong>，通过扫描等手段对指定的远程或者本地计算机系统的<strong>安全脆弱性</strong>进行检测，发现可利用漏洞的一种安全检测（渗透攻击）行为。</p>
+<p>攻击者和防守者都可以利用。</p>
+<h3 id="口令破解"><a href="#口令破解" class="headerlink" title="口令破解"></a>口令破解</h3><blockquote>
+<p>口令机制是<strong>资源访问的第一道屏障</strong>。攻破了这到屏障，就获得了进入系统的第一道大门。 </p>
+</blockquote>
+<blockquote>
+<p><strong>字典攻击</strong>：攻击者基于某些知识，编写出口令字典，然后对字典进行<strong>穷举或猜测</strong></p>
+</blockquote>
+<p><strong>字典</strong>：一些单词或者字母和数字的组合</p>
+<p><strong>防止字典攻击的方法</strong>：使用带有特殊字符的密码，密码不是有规律的英语单词</p>
+<blockquote>
+<p><strong>社会工程学</strong>：通过对目标系统的人员进行<strong>游说、欺骗、利诱</strong>，获得口令或部分。</p>
+</blockquote>
+<blockquote>
+<p><strong>在线与离线</strong>：</p>
+</blockquote>
+<p><strong>在线</strong>：在线登录目标主机，通过程序循环输入密码尝试正确的密码输入。<strong>有日志记录</strong><br><strong>离线</strong>：取得目标主机的密码文件，然后在本地破解。<strong>花费时间长</strong>。</p>
+<h2 id="欺骗型攻击"><a href="#欺骗型攻击" class="headerlink" title="欺骗型攻击"></a>欺骗型攻击</h2><blockquote>
+<p><strong>复习建议：很重要，理解ARP欺骗、DNS欺骗的含义和流程。</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677723843913.png"></p>
+<h3 id="ARP欺骗"><a href="#ARP欺骗" class="headerlink" title="ARP欺骗"></a>ARP欺骗</h3><blockquote>
+<p><strong>ARP协议</strong>：将32位的IP地址翻译成48位MAC地址的协议</p>
+</blockquote>
+<blockquote>
+<p><strong>ARP欺骗的原理</strong>：因为ARP协议是一个<strong>无状态的协议</strong>，一旦收到ARP应答报文就会修改缓存表（IP-MAC映射表）。</p>
+</blockquote>
+<blockquote>
+<p><strong>ARP欺骗的流程</strong>：攻击者通过向已知IP地址的目标主机发送ARP应答报文（<strong>包含伪造的IP-MAC映射信息</strong>），以修改其缓存信息。</p>
+</blockquote>
+<blockquote>
+<p><strong>中间人攻击</strong>：使进行监听的主机插入到被监听主机和其他主机之间，利用ARP欺骗进行攻击，造成监听主机成为被监听主机和其他主机通信的中继。</p>
+</blockquote>
+<blockquote>
+<p><strong>防护措施</strong>：静态ARP（不会更新缓存）、ARP监听检测（检测缓存变化）、数据加密（防窃听）</p>
+</blockquote>
+<h3 id="DNS欺骗"><a href="#DNS欺骗" class="headerlink" title="DNS欺骗"></a>DNS欺骗</h3><blockquote>
+<p><strong>域名系统</strong>（Domain Name System, DNS）是一个将<strong>主机域名和IP地址互相映射</strong>的数据库系统。</p>
+</blockquote>
+<blockquote>
+<p><strong>DNS协议工作原理</strong> :<br>在<strong>DNS服务器</strong>中主要存放着计算机的<strong>域名和IP地址相关联的数据库</strong>。DNS服务器在收到传来的网址以后，首先查询本地的数据库，查看数据库中是否有和该网址对应的记录。</p>
+</blockquote>
+<blockquote>
+<p><strong>DNS欺骗流程</strong>：</p>
+</blockquote>
+<p>先伪造一个<strong>DNS请求</strong>—再伪造一个<strong>查询应答</strong>，以改变DNS服务器的高速缓存信息。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677724655607.png"></p>
+<h3 id="Web欺骗"><a href="#Web欺骗" class="headerlink" title="Web欺骗"></a>Web欺骗</h3><blockquote>
+<p>Web欺骗的攻击者会创建<strong>整个WWW世界的影像拷贝</strong>。用户进入该影像Web的入口，实际是进入到<strong>攻击者的Web服务器</strong>。此时，攻击者就可以肆意实施攻击。</p>
+</blockquote>
+<p><strong>三个基本原理</strong>：</p>
+<ul>
+<li>注册域名没有要求</li>
+<li>Cookie欺骗</li>
+<li>Session欺骗</li>
+</ul>
+<blockquote>
+<p>练习题：</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736490368.png"></p>
+<h2 id="数据驱动型攻击"><a href="#数据驱动型攻击" class="headerlink" title="数据驱动型攻击"></a>数据驱动型攻击</h2><blockquote>
+<p><strong>复习建议：简单了解一下即可</strong></p>
+</blockquote>
+<blockquote>
+<p>缓冲区溢出攻击</p>
+</blockquote>
+<p><strong>缓冲区</strong>（buffer）是内存中存放计算机正在处理数据的地方。</p>
+<p>当数据量超过缓冲区长度时，多出的数据就会破坏堆栈中的数据，从而导致<strong>系统故障</strong>；同时可以在溢出数据中加上<strong>精心构造的机器代码</strong>从而实现预订的攻击效果。</p>
+<blockquote>
+<p>格式化字符串攻击</p>
+</blockquote>
+<p><strong>格式化字符串攻击</strong>是利用程序中的一些需要<strong>指定用户输入格式</strong>，却没有严格制定用户格式的<strong>函数</strong>，通过提交特殊的格式字符串进行攻击。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677725030529.png"></p>
+<h2 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a>拒绝服务攻击</h2><blockquote>
+<p><strong>复习建议：重点部分，要理解含义和几个例子。</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>拒绝服务攻击</strong>（Denial of Service, DoS )通过堵塞网络、占用系统资源等方法，拒绝用户的服务访问，破坏系统的正常运行。   </p>
+</blockquote>
+<blockquote>
+<p><strong>分布式拒绝服务攻击</strong>：借助于客户机&#x2F;服务器技术，将多个计算机联合起来作为攻击平台，对一个或多个目标发动DoS攻击，从而成倍地提高拒绝服务攻击的威力。     </p>
+</blockquote>
+<p>所谓僵尸网络，就是黑客利用僵尸程序控制大量互联网用户的计算机，这些计算机就像“僵尸”一样被黑客所操纵，随时按照黑客的指令展开DDoS攻击或发送垃圾信息，而真正的用户却毫不知情，就仿佛没有自主意识的僵尸一般。</p>
+<blockquote>
+<p><strong>攻击流程</strong>：情报收集（IP情况、主机配置）-占领傀儡机（漏洞入侵，留后门）-实际攻击（发送大量数据包）</p>
+</blockquote>
+<blockquote>
+<p><strong>防御措施</strong>：发现漏洞；加强网络管理；利用网络设备如防火墙；应急策略</p>
+</blockquote>
+<p>以下是一些<strong>常见的DOS攻击方法</strong>：</p>
+<ol>
+<li><p><strong>IP碎片攻击</strong>:一种<strong>计算机程序重组</strong>的漏洞<br>数据链路层对于所传输的帧有一个长度限制，不允许超过最大传输单元MTU。数据部分大于这个值，就要进行分片（fragmentation）以满足在以太网中的传输要求。但是，数据被分片后，组成一个IP包的各分片都到达<strong>目的主机才进行重组</strong>。分片会导致<strong>传输效率降低</strong>。并且超大的包一旦出现，包当中的<strong>额外数据就会被写入其他正常区域</strong>，这很容易导致<strong>系统进入非稳定状态</strong>，是一种典型的缓存溢出攻击。</p>
+</li>
+<li><p><strong>泪滴攻击</strong>（teardrop）：发送<strong>含有重叠偏移的畸形数据分段</strong></p>
+</li>
+<li><p><strong>UDP“洪水</strong>”：<br>因为<strong>UDP是一种无连接</strong>的协议，它不需要用任何程序建立连接就可以传送数据。这样，攻击者只要开启一个端口提供相关的服务，就可以对攻击对象进行针对相关服务的攻击。常见的情况是利用<strong>大量UDP小包</strong>（程序），对DNS服务器、Radius认证服务器、流媒体服务器以及防火墙等发起攻击，<strong>造成网络瘫痪。</strong></p>
+</li>
+<li><p><strong>SYN“洪水”</strong>：利用TCP三次握手的缺陷<br>三次握手过程存在着漏洞：假设一个客户向服务器发送了SYN报文后突然死机或掉线，那么服务器在发出SYN+ACK应答报文后就无法收到客户端的ACK报文，使第三次握手无法完成。而服务器并不知道客户端发生了什么情况，于是就会重试，再次发送SYN+ACK给客户端，并等待一段时间——SYN Timeout（大约为30秒-2分钟）后丢弃这个半连接。<br>服务器端将为了维护一个非常大的半连接列表而消耗非常多的资源，即便是简单的保存并遍历也会消耗非常多的CPU时间和内存，何况还要不断对这个列表中的IP进行SYN+ACK的重试。这种情况下，若服务器的TCP&#x2F;IP栈不够强大，最后就会导致堆栈溢出使系统崩溃；即使服务器端的系统足够强大，服务器端也会因忙于处理攻击者伪造的TCP连接请求而无暇理睬客户的正常请求，使服务器无法再服务。 </p>
+</li>
+<li><p>Land也是利用<strong>三次握手的缺陷</strong>进行攻击。但它不是依靠伪造的地址，而是先发出一个特殊的SYN数据包，包中的<strong>源地址和目标地址都是目标主机</strong>。这样，就会让目标主机向自己回以SYN&#x2F;ACK包，导致<strong>自己又给自己回一个ACK</strong>并建立自己与自己的连接。大量这样的无效连接达到一定数量，将会拒绝新的连接请求。</p>
+</li>
+<li><p><strong>MAC Flood攻击</strong>：针对<strong>交换机</strong>的攻击<br>攻击者可以使用一个程序，伪造大量包含随机源MAC地址的数据帧发往交换机。由于有些攻击程序一分钟就可以发出十几万个伪造的MAC地址，而交换机一般<strong>MAC地址表</strong>就几千条，所以瞬间就会把交换机的<strong>MAC地址表</strong>填满。</p>
+</li>
+</ol>
+<h2 id="第一章习题"><a href="#第一章习题" class="headerlink" title="第一章习题"></a>第一章习题</h2><h1 id="第二章：数据安全保护"><a href="#第二章：数据安全保护" class="headerlink" title="第二章：数据安全保护"></a>第二章：数据安全保护</h1><h2 id="机密性保护–密码学"><a href="#机密性保护–密码学" class="headerlink" title="机密性保护–密码学"></a>机密性保护–密码学</h2><blockquote>
+<p><strong>复习建议：不会靠具体的算法实现，而是宏观上考。所以对于概念的理解记忆很重要。</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677726892851.png"></p>
+<h3 id="数据加密体制"><a href="#数据加密体制" class="headerlink" title="数据加密体制"></a>数据加密体制</h3><blockquote>
+<p><strong>公开密钥体制</strong>：非对称密钥，如RSA</p>
+</blockquote>
+<blockquote>
+<p><strong>对称密钥体制</strong>：如DES、AES等</p>
+</blockquote>
+<blockquote>
+<p><strong>分组密码</strong>：将一定长度的明文分成固定长度的<strong>分组进行加密</strong>，每个分组都独立地进行加密。</p>
+</blockquote>
+<blockquote>
+<p><strong>流密码</strong>：流密码(stream cipher)也称<strong>序列密码</strong>，以<strong>一位或者一个字节</strong>为单位，使用密钥流的随机密钥对明文进行加密。</p>
+</blockquote>
+<p>在流密码技术中，如果<strong>密钥流完全独立于明文流或密文流</strong>，则称这种流密码为<strong>同步流密码</strong>（synchronous stream cipher）；如果<strong>密钥流的产生与明文流或密文流有关</strong>，则称这种流密码为<strong>自同步流密码</strong>（self-synchronous stream cipher）。 </p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677727243599.png"></p>
+<h3 id="量子密码"><a href="#量子密码" class="headerlink" title="量子密码"></a>量子密码</h3><p>从理论上讲，应用量子通信技术加密的信息是绝对安全，<strong>不会被监听或截取</strong>的。量子通信所做的并不是加密，而是把<strong>密钥分配给需要加密通信的用户双方</strong>，密文的发送仍然可以通过标准的通信手段来完成。而这个过程要保证的就是能够在终端A、B两人之间实现密钥的分配，并且要保证分配过程中不会使未授权的第三方得到密钥的内容。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677727455658.png"><br><strong>量子密钥分发QKD</strong></p>
+<h2 id="密钥管理"><a href="#密钥管理" class="headerlink" title="密钥管理"></a>密钥管理</h2><blockquote>
+<p><strong>复习建议：理解密钥管理的4个方法流程</strong></p>
+</blockquote>
+<h3 id="密钥分配中心（KDC）分发单密钥"><a href="#密钥分配中心（KDC）分发单密钥" class="headerlink" title="密钥分配中心（KDC）分发单密钥"></a>密钥分配中心（KDC）分发单密钥</h3><p>其<strong>结构如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677727653268.png"><br><strong>KDC即密钥分配中心</strong>，用于响应用户请求分发密钥（是<strong>单密钥</strong>），其过程如下：</p>
+<ol>
+<li>A向KDC发出<strong>会话密钥请求</strong>：<code>IDA|| IDB||N1</code>；</li>
+<li>KDC对A的请求应答：<code>EKA[Ks||IDB||N1||EKB[&#123;Ks||IDA&#125;]]</code>；</li>
+<li>A存储Ks，并向B转发：<code>EKB[Ks||IDA]</code>。B得到：<br> Ks（还知道Ks来自KDC，因为只有KDC知道KB）；<br> IDA，并由此知道会话方是A；</li>
+<li>B向A回送报文：<code>EKs[N2]</code>；</li>
+<li>A向B回送报文：<code>EKs[f（N2）]</code>，确认B前次收到的报文不是回放。</li>
+</ol>
+<p><strong>分析</strong>：只有KDC知道AB密钥，所以分配给A的Ks需要使用Ka加密，以保证是KDC发出；而发送给B的是<code>Ekb[Ks||IDa]</code>，这样就保证B得到的密钥是A从DKC获取的。</p>
+<p>其中<strong>N2为会话标识</strong>，防止报文回放。因为都是通过Ks加密的信息。</p>
+<h3 id="无中心的单钥分配"><a href="#无中心的单钥分配" class="headerlink" title="无中心的单钥分配"></a>无中心的单钥分配</h3><p>其<strong>流程如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677728184197.png"></p>
+<p><strong>没有KDC了</strong>，由B确定密钥，A只需要确定该秘钥是B发的即可：</p>
+<ol>
+<li>A向B会话请求：N1。<strong>N1标识本次会话</strong>（可能是<strong>时间戳或随机数</strong>等一个他人难于猜测的现时值）；</li>
+<li>B对A的请求应答：<code>EMk [Ks||IDB||f(N1&#125;|| N2]]</code></li>
+<li>全部报文用A、B共享的主密钥Km加密：<br>  B选取的会话密钥<strong>Ks</strong>；<br>  A的请求报文（包括f(N1}，供A检验）；<br>  B的身份<strong>IDb</strong>；<br>  标识本次会话的<strong>N2</strong>；</li>
+<li>A存储Ks，并向B返回用Ks加密f(N2}，供B检验。</li>
+</ol>
+<p><strong>分析</strong>：使用N1、N2实现会话的认证.与上方法相比，少了KDC。</p>
+<h3 id="由公钥管理机构分发公钥"><a href="#由公钥管理机构分发公钥" class="headerlink" title="由公钥管理机构分发公钥"></a>由公钥管理机构分发公钥</h3><p>其<strong>流程如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677728494430.png"></p>
+<p>这里<strong>分配的是公钥</strong>，由公钥管理机构分别发给A和B：</p>
+<ol>
+<li>用户A向公钥管理机构<strong>发出请求报文</strong>：请求获取<strong>B的公钥</strong>；</li>
+<li>公钥管理机构对A应答PKB（<strong>用A的公钥加密，A用自己的私钥解密</strong>）；</li>
+<li>B用同1、2相同的方法，从公钥管理机构得到<strong>A的公钥PKA</strong>；</li>
+<li>A用PKB向B发送一个报文：包含<strong>随机标识号N1</strong>；</li>
+<li>B用PKA向A发送一个报文：包含与<strong>N1</strong>以及B的随机标识号<strong>N2</strong>；</li>
+<li>A用PKB将N2加密，返回B，<strong>供B确认</strong>。</li>
+</ol>
+<p><strong>分析</strong>：与前一致，在A、B获取到密钥后都要通过<strong>三次交互</strong>来进行验证。只是前面的是分配单密钥，这里是公钥，要使用对方公钥加密。</p>
+<p><strong>注</strong>：公钥管理机构、KDC等都<strong>没有自己的私钥和公钥</strong>，都是使用用户的密钥。</p>
+<h3 id="公钥证书"><a href="#公钥证书" class="headerlink" title="公钥证书"></a>公钥证书</h3><p>公钥证书是由<code>CA（Certificate Authority，证书授权中心或认证中心）</code>为用户发布的一种电子证书。例如用户A的证书内容形式为：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">CA</span>=ESKCA[T，IDA，PKA]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>IDA是用户A的标识。</li>
+<li>PKA是A的公钥。</li>
+<li>T是<strong>当前时间戳</strong>，用于表明证书的新鲜性，防止发送方或攻击者重放一旧证书。</li>
+<li>SKCA是<strong>CA的私钥</strong>。证书是用CA的私钥加密的，以便让任何用户都可以解密，并确认证书的颁发者。</li>
+</ul>
+<p><strong>分析</strong>：使用数字证书分发公钥，<strong>不需要通信双方进行验证</strong>，因此CA由公信力。</p>
+<h2 id="完整性保护–消息认证"><a href="#完整性保护–消息认证" class="headerlink" title="完整性保护–消息认证"></a>完整性保护–消息认证</h2><blockquote>
+<p><strong>复习建议：这里MAC和哈希是重点，但是也是在概念上，不会涉及具体算法。</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729012094.png"></p>
+<h3 id="MAC函数"><a href="#MAC函数" class="headerlink" title="MAC函数"></a>MAC函数</h3><blockquote>
+<p><strong>MAC函数的特点</strong>：（与一般加密的不同）</p>
+</blockquote>
+<ul>
+<li>加密算法要求可逆性，而MAC算法<strong>不要求可逆性</strong>；</li>
+<li>加密函数明文长度与密文长度一般相同，是一对一的函数，而MAC函数则是<strong>多对一的函数</strong>。</li>
+<li>MAC函数比加密函数<strong>更不容易攻破</strong>，因为即便攻破，也无法验证其正确性。</li>
+</ul>
+<blockquote>
+<p><strong>CBC-MAC</strong>（链式结构）：大体看下，基于DES</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729208660.png"></p>
+<h3 id="哈希函数"><a href="#哈希函数" class="headerlink" title="哈希函数"></a>哈希函数</h3><p>杂凑函数，也称<strong>hash函数、散列函数</strong>，它可以提供判断电子信息完整性的依据，是防止信息被篡改的一种有效方法。</p>
+<blockquote>
+<p>几个性质：特别是碰撞性</p>
+</blockquote>
+<ul>
+<li>H的输入可以是任意长，而<strong>输出是固定长</strong>；</li>
+<li>输入的微小变化会引起输出产生巨大变化，因此改变原始报文中的任意一位的值，将产生完全不同的杂凑码</li>
+<li><strong>单向性</strong>，正向计算H(M)很容易，但对于给定的杂凑码H(M) ，几乎无法找到M’使H(M’)&#x3D; H(M) 。（<strong>弱抗碰撞性</strong>）</li>
+<li>找到任意满足H(M)&#x3D; H(M’) 且M≠M’的报文对(M, M’)也是几乎不可能的。（<strong>强抗碰撞性</strong>）</li>
+<li>H函数的算法是公开的，杂凑码的安全性来自<strong>H产生单向杂凑</strong>的能力。</li>
+</ul>
+<blockquote>
+<p><strong>几个例子</strong>：MD5\SHA1</p>
+</blockquote>
+<h3 id="练习题"><a href="#练习题" class="headerlink" title="练习题"></a>练习题</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736437432.png"></p>
+<h2 id="不可否认性保护–数字签名"><a href="#不可否认性保护–数字签名" class="headerlink" title="不可否认性保护–数字签名"></a>不可否认性保护–数字签名</h2><blockquote>
+<p><strong>复习建议：重点部分，了解两种数字签名的方式及实例。</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729520874.png"></p>
+<h3 id="直接数字签名"><a href="#直接数字签名" class="headerlink" title="直接数字签名"></a>直接数字签名</h3><blockquote>
+<p>所谓直接方式，就是<strong>签名过程只与发送和接收参与</strong>。实施这种方法的前提是接收方可以通过某种方式验证发送方提交的凭证，也可以在发生争议时将该凭证交第三方仲裁。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677730983906.png"></p>
+<p><strong>DSA实例</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677730809985.png"><br><strong>分析</strong>：使用SHA生成摘要进行签名可以加快效率；使用发送方私钥进行签名公钥进行验证。</p>
+<h3 id="有仲裁的数字签名"><a href="#有仲裁的数字签名" class="headerlink" title="有仲裁的数字签名"></a>有仲裁的数字签名</h3><blockquote>
+<p>发送方完成签字后，不是直接发送给接收方，而是将报文和签字先发送给<strong>双方共同信任的第三方</strong>进行验证，第三方验证无误后，再附加一个“<strong>已经通过验证</strong>”的说明并注上日期，一同发送给接收方。由于第三方的介入，<strong>发方和接收方都无法抵赖</strong></p>
+</blockquote>
+<p>根据对第三方的信任程度，又可以分为以下三种方法：</p>
+<p>其中：<strong>T是时间戳、ID是身份标识、H是哈希，XY为通信双方、A是认证机构、M是报文</strong>、。</p>
+<blockquote>
+<p>方法1：对称密钥方式</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729830650.png"></p>
+<p><strong>分析</strong>：该方法建立在X和Y对A的<strong>高度信任基础</strong>上，同时没有对仲裁者进行约束（使用AX的共享密钥进行签名）；同时<strong>不提供保密性</strong>。</p>
+<blockquote>
+<p>方案2：对称密钥明文加密</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729906390.png"><br><strong>分析</strong>：该方法使用密钥加密了M，<strong>提供了保密性（即仲裁者无法获取M)<strong>；但是</strong>没有解决对仲裁者的约束(还是使用Eax签名）</strong>。</p>
+<blockquote>
+<p>方案3：公开密钥密文加密</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677729937111.png"><br><strong>分析</strong>：该方法在2的基础上解决了对仲裁方的约束。这种方法下A只能保证报文是X发送的，由Y进行签名的验证。</p>
+<h2 id="SET实例"><a href="#SET实例" class="headerlink" title="SET实例"></a>SET实例</h2><blockquote>
+<p><strong>主要掌握数字信封和双重签名</strong></p>
+</blockquote>
+<h3 id="数字证书"><a href="#数字证书" class="headerlink" title="数字证书"></a>数字证书</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731139172.png"></p>
+<h3 id="双重签名"><a href="#双重签名" class="headerlink" title="双重签名"></a>双重签名</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731161799.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731288772.jpg"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731318475.jpg"><br><strong>练习题</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736404227.png"></p>
+<h1 id="第三章：身份认证与访问控制"><a href="#第三章：身份认证与访问控制" class="headerlink" title="第三章：身份认证与访问控制"></a>第三章：身份认证与访问控制</h1><blockquote>
+<p><strong>身份认证的流程与前面的密钥管理的流程类似，但是在此基础上进行了扩展，增加了身份的认证环节。</strong></p>
+</blockquote>
+<h2 id="基于密钥分发的身份认证"><a href="#基于密钥分发的身份认证" class="headerlink" title="基于密钥分发的身份认证"></a>基于密钥分发的身份认证</h2><blockquote>
+<p><strong>复习建议：掌握公钥加密认证和单钥加密认证，每一个都有两种类型：单向、双向</strong></p>
+</blockquote>
+<h3 id="公钥加密认证协议"><a href="#公钥加密认证协议" class="headerlink" title="公钥加密认证协议"></a>公钥加密认证协议</h3><blockquote>
+<p>基于公钥加密认证体制<strong>分配会话密钥</strong>的过程实现的。</p>
+</blockquote>
+<blockquote>
+<p>相互认证协议</p>
+</blockquote>
+<p><strong>具体流程如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731751690.png"></p>
+<blockquote>
+<p>单向认证</p>
+</blockquote>
+<p>其<strong>流程如下</strong>：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677731917366.png"></p>
+<h3 id="单钥加密认证协议"><a href="#单钥加密认证协议" class="headerlink" title="单钥加密认证协议"></a>单钥加密认证协议</h3><blockquote>
+<p><strong>相互认证协议：N-S</strong>（关键知识点）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732098664.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732204353.png"></p>
+<p><strong>分析</strong>：这里的认证方法与前密钥管理时第一种方法一致，只是增加了时间戳，更加完善。</p>
+<blockquote>
+<p>单向认证协议</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732264832.png"></p>
+<h3 id="Kerberos认证系统：认证、计费、审计"><a href="#Kerberos认证系统：认证、计费、审计" class="headerlink" title="Kerberos认证系统：认证、计费、审计"></a>Kerberos认证系统：认证、计费、审计</h3><blockquote>
+<p>基本原理</p>
+</blockquote>
+<p>通过使用对称密钥系统为客户机&#x2F;服务器应用程序提供强大的第三方认证服务。</p>
+<ul>
+<li>每个用户或应用服务器与Kerberos<strong>分享一个对称密钥</strong>。</li>
+<li>允许一个用户通过交换加密消息在整个网络上与另一个用户或应用服务器<strong>互相证明身份</strong>，Kerberos给通讯双方提供对称密钥。</li>
+<li><strong>客户端用票据Ticket证明自己身份</strong>。</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736977670.png"></p>
+<blockquote>
+<p>同域认证：三阶段六步骤</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736817271.jpg"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736827635.jpg"></p>
+<blockquote>
+<p>异域认证：7步</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677736613589.png"></p>
+<h2 id="基于数字证书的身份认证"><a href="#基于数字证书的身份认证" class="headerlink" title="基于数字证书的身份认证"></a>基于数字证书的身份认证</h2><blockquote>
+<p><strong>复习建议：X509掌握，PKI基本概念</strong></p>
+</blockquote>
+<h3 id="X-509证书标准"><a href="#X-509证书标准" class="headerlink" title="X.509证书标准"></a>X.509证书标准</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732506771.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732528761.png"></p>
+<p><strong>那个练习题：</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732673967.png"></p>
+<h3 id="PKI介绍"><a href="#PKI介绍" class="headerlink" title="PKI介绍"></a>PKI介绍</h3><p>PKI是一种遵循一定标准的密钥管理基础平台，为所有网络应用提供加密和数字签名等密码服务所必需的密钥和证书管理。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677732791319.png"></p>
+<h2 id="访问控制"><a href="#访问控制" class="headerlink" title="访问控制"></a>访问控制</h2><blockquote>
+<p><strong>复习建议：掌握基本概念与练习题</strong></p>
+</blockquote>
+<h3 id="基本理论"><a href="#基本理论" class="headerlink" title="基本理论"></a>基本理论</h3><blockquote>
+<p><strong>自主访问控制</strong>：</p>
+</blockquote>
+<p><strong>资源的所有者可以对资源的访问进行控制</strong>，任意规定谁可以访问其资源，自主地直接或间接地将权限传给（分发给）主体。<br>通过访问控制矩阵来限定主体针对客体可以执行的操作类型。</p>
+<ul>
+<li><strong>优点</strong>：应用<strong>灵活与可扩展性</strong>，经常被用于商业系统。</li>
+<li><strong>缺点</strong>：权限传递很容易造成漏洞，<strong>安全级别比较低</strong>，不太适合网络环境，主要<strong>用于单个主机</strong>上。</li>
+</ul>
+<blockquote>
+<p>强制访问控制：</p>
+</blockquote>
+<p>系统事先给访问主体和受控客体分配不同的<strong>安全级别属性</strong>。<br>在实施访问控制时，系统先对访问主体和受控客体的安全级别属性<strong>进行比较</strong>，再决定访问主体能否访问该受控客体。</p>
+<ul>
+<li><strong>优点</strong>：具有<strong>高度的安全性</strong>和精确的控制，可以避免用户错误地授权给不恰当的人。</li>
+<li><strong>缺点</strong>：相对于自主访问控制，强制访问控制的<strong>灵活性和可扩展性较低</strong>，因为它是由系统管理员根据安全需求来限制访问控制的。</li>
+</ul>
+<blockquote>
+<p><strong>下读上写 与下读上写</strong></p>
+</blockquote>
+<ul>
+<li>下读：用户级别高于信息级别的读操作</li>
+<li>上读：用户级别低于信息级别的读操作</li>
+<li>下写：用户级别高于信息级别的写操作</li>
+<li>上写：用户级别低于信息级别的写操作</li>
+</ul>
+<p><strong>其中</strong>：</p>
+<ul>
+<li>上读下写 &#x3D;&#x3D; 保证数据完整性</li>
+<li>下读上写 &#x3D;&#x3D; 保证数据机密性</li>
+</ul>
+<blockquote>
+<p><strong>基于角色的访问控制</strong>：明确区分权限与职责，使得二者相互制约。</p>
+</blockquote>
+<p>角色Role的概念：一个Role是一个<strong>与特定工作活动相关联的行为与责任的集合</strong></p>
+<p>当将<strong>一个角色与一个组</strong>绑定，则这个组就拥有了该角色拥有的特定工作的行为能力和责任。</p>
+<p>组Group和用户User都可以看成是<strong>角色分配的单位和载体</strong>。</p>
+<p><strong>基本思想</strong>是将访问权限分配给一定的角色，用户通过饰演不同的角色获得角色所拥有的访问许可权。</p>
+<h3 id="一道练习题"><a href="#一道练习题" class="headerlink" title="一道练习题"></a>一道练习题</h3><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677733123707.png"></p>
+<p><strong>注</strong>：这里答案少了一个图。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677733251416.png"></p>
+<h1 id="第四周：数据安全防护"><a href="#第四周：数据安全防护" class="headerlink" title="第四周：数据安全防护"></a>第四周：数据安全防护</h1><blockquote>
+<p><strong>复习建议：防火墙的四大安全技术、IPsec与SSL、入侵检测系统相关概念</strong></p>
+</blockquote>
+<h2 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h2><h3 id="用自己的话简述4大技术"><a href="#用自己的话简述4大技术" class="headerlink" title="用自己的话简述4大技术"></a>用自己的话简述4大技术</h3><blockquote>
+<p><strong>包过滤技术</strong>通过设置一定的包过滤规则，以此控制数据包的允许与拒绝，达到安全防护的目的。</p>
+</blockquote>
+<p>只是对<strong>单个数据包</strong>的源地址、目标地址、TCP&#x2F;UDP源端口号、TCP&#x2F;UDP目的端口号、标志位、协议以及内容等进行检测。</p>
+<blockquote>
+<p><strong>代理服务技术</strong>：代理服务器位于客户与Internet上的服务器之间。请求由客户端向服务器发起，但是这个请求要首先被送到代理服务器。</p>
+</blockquote>
+<ul>
+<li><strong>应用级代理</strong>只有为特定的应用程序安装了代理程序代码，该服务是才会被支持，并建立相应的连接。</li>
+<li><strong>电路级代理</strong>也称电路级网关。在OSI模型中电路级网观工作在会话层，进行会话层的过滤。</li>
+</ul>
+<blockquote>
+<p><strong>状态检测技术</strong>是包过滤技术的延伸，结合了<strong>包过滤防火墙</strong>、<strong>应用代理防火墙</strong>的特点，作用于<strong>网络层、传输层和应用层</strong>。</p>
+</blockquote>
+<ul>
+<li>与包过滤防火墙一样能够在<strong>网络层和传输层</strong>上对通过数据包进行<strong>IP地址和端口的过滤</strong>；</li>
+<li>与应用代理防火墙一样<strong>检查应用层上数据的内容</strong>是否符合安全规则。</li>
+</ul>
+<p><strong>分析</strong>：包过滤防火墙使用规则表，状态检查防火墙使用规则表和状态表。</p>
+<h3 id="未来趋势"><a href="#未来趋势" class="headerlink" title="未来趋势"></a>未来趋势</h3><h2 id="安全协议分析"><a href="#安全协议分析" class="headerlink" title="安全协议分析"></a>安全协议分析</h2><h3 id="IPsec"><a href="#IPsec" class="headerlink" title="IPsec"></a>IPsec</h3><blockquote>
+<p><strong>协议介绍</strong>：是一套<strong>协议包</strong>，集成的多种安全技术(工作在IP层，是对IP协议的补充)</p>
+</blockquote>
+<ul>
+<li>IPSec（Internet Protocol Security）：IP安全协议标准 </li>
+<li>IPSec的功能：认证（Authentication）和保密（Confidentiality）。</li>
+<li>使用IPSec可以防范几种网络攻击：Sniffer、数据篡改、身份欺骗、重放攻击、拒绝服务攻击。</li>
+</ul>
+<blockquote>
+<p><strong>两种模式</strong>：传输模式与隧道模式</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734609618.png"><br><strong>传输模式的特点</strong>是：</p>
+<ul>
+<li>只保护数据，<strong>不保护IP头</strong>——IP地址是暴露的。</li>
+<li>用于<strong>两个主机</strong>之间。</li>
+</ul>
+<p><strong>隧道模式的特点</strong>是：</p>
+<ul>
+<li>既保护数据，<strong>又保护IP头</strong>。</li>
+<li>用于<strong>两个安全网关</strong>之间。</li>
+<li>无法控制来自内部的攻击</li>
+</ul>
+<blockquote>
+<p><strong>基本协议</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734948561.png"></p>
+<ul>
+<li><strong>ESP协议</strong>：<ul>
+<li>对IP数据报文<strong>实施加密</strong>和可选认证双重服务，提供了数据保密性、有限的数据流保密性、数据源认证、无连接的完整性以及抗重放攻击等服务。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734891082.png"></p>
+<ul>
+<li><strong>AH协议</strong>：<ul>
+<li>对IP数据报文实施<strong>认证服务</strong>，提供数据源认证、无连接的完整性以及一个可选的抗重放服务。</li>
+</ul>
+</li>
+<li>AH协议和ESP协议都支持认证功能，但二者的<strong>保护范围</strong>存在着一定的差异：</li>
+<li>AH的作用域是<strong>整个IP数据包</strong>，包括IP头和承载数据；</li>
+<li>ESP认证功能的作用域只是<strong>承载数据</strong>，不包括IP头</li>
+</ul>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677734913971.png"></p>
+<blockquote>
+<p><strong>Internet密钥交换协议</strong>:IKE</p>
+</blockquote>
+<p>（1）安全关联（（security associations，SA））的集中化管理，以减少连接时间。<br>（2）密钥的生成与管理。<br>IKE规定了验证IPSec对等实体、协商安全服务和生成会话密钥的方法。IKE将密钥协商结果保留在SA中，供AH和ESP以后通信时使用。</p>
+<h3 id="SSL协议"><a href="#SSL协议" class="headerlink" title="SSL协议"></a>SSL协议</h3><blockquote>
+<p>协议介绍</p>
+</blockquote>
+<p>SSL(Secure Sockets Layer 安全套接层)是Netscape公司提出的一种建构在<strong>TCP之上、应用层之下</strong>的Internet通信的安全标准。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735193336.png"></p>
+<blockquote>
+<p><strong>4步握手（很重要，每一步传递了什么东西）</strong></p>
+</blockquote>
+<p>客户机与服务器要建立一个会话，就必须采用<strong>握手协议</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735518044.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735307524.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735319754.png"></p>
+<p>建立安全能力。客户机向服务器发送client_hello消息，服务器向客户机回应server_hello消息。client_hello消息和server_hello消息建立如下的安全属性：协议版本、会话ID、密文族（CipherSuite）、压缩方法、同时生成并交换用于防止重放攻击的随机数。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735331038.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735347421.png"><br>客户收到server_done消息后，它根据需要检查服务器提供的证书，并判断server_hello的参数是否可以接受。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735358657.png"></p>
+<p>客户发送change_cipher_spec消息，并将挂起状态的CipherSpec复制到当前的CipherSpec。这个消息使用的是改变密码格式协议。然后，客户在新的算法、对称密钥和MAC秘密之下立即发送finished消息。finished消息验证密钥交换和鉴别过程是成功的</p>
+<h2 id="入侵检测系统"><a href="#入侵检测系统" class="headerlink" title="入侵检测系统"></a>入侵检测系统</h2><blockquote>
+<p><strong>复习建议：重概念，以测试题为主</strong>。</p>
+</blockquote>
+<blockquote>
+<p>入侵检测是防火墙的合理补充,被认为是防火墙之后的第二道安全闸门。</p>
+</blockquote>
+<p>从计算机网络系统中的若干关键点收集信息，并分析这些信息，从中发觉系统中是否有违反安全策略的行为和被攻击的迹象。</p>
+<blockquote>
+<p>基于网络与基于主机：</p>
+</blockquote>
+<ul>
+<li><strong>基于主机的入侵检测系统HIDS</strong><br>主要用于保护运行<strong>关键应用的服务器</strong>。它通过监视与分析主机的<strong>审计记录和日志文件</strong>来检测入侵。</li>
+<li><strong>基于网络的入侵检测系统NIDS</strong><br>主要用于实时<strong>监控网络关键路径</strong>的信息，它监听网络上的所有<strong>数据包和流量</strong>，分析可疑现象。</li>
+</ul>
+<p>混合型入侵检测系统集基于主机的IDS和基于网络的IDS的优点于一身，即可以发现网络中的攻击信息，也可以从系统日志中发现异常情况，从而大大提高了入侵检测系统的功能。 </p>
+<blockquote>
+<p>异常与误用</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735945933.png"></p>
+<blockquote>
+<p>主动和被动</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735974160.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1677735788767.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/" title="系统安全复习">https://danggeovo.github.io/2023/11/08/系统安全复习/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/" rel="tag"># 系统安全</a>
+              <a href="/tags/%E5%A4%8D%E4%B9%A0/" rel="tag"># 复习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/06/%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/" rel="prev" title="恶意代码整体分析流程总结">
+                  <i class="fa fa-angle-left"></i> 恶意代码整体分析流程总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">337k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:13</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>
