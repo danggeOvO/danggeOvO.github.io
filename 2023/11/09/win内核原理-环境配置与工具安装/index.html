@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"danggeovo.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="系列第二章，环境配置与工具安装">
+<meta property="og:type" content="article">
+<meta property="og:title" content="环境配置与工具安装">
+<meta property="og:url" content="https://danggeovo.github.io/2023/11/09/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="dangge の 小小世界">
+<meta property="og:description" content="系列第二章，环境配置与工具安装">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109105102577.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109105948788.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109110644024.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimageimage-20231109112451891.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110104940125.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110105102220.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110145731900.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//image379226_io7numcezhiisbt.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110151505255.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110154331052.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110165920120.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110172717930.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110173030930.png">
+<meta property="og:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110172548632.png">
+<meta property="article:published_time" content="2023-11-09T02:19:00.000Z">
+<meta property="article:modified_time" content="2023-11-13T02:27:20.120Z">
+<meta property="article:author" content="danggeOvO">
+<meta property="article:tag" content="内核">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109105102577.png">
+
+
+<link rel="canonical" href="https://danggeovo.github.io/2023/11/09/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://danggeovo.github.io/2023/11/09/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85/","path":"2023/11/09/win内核原理-环境配置与工具安装/","title":"环境配置与工具安装"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>环境配置与工具安装 | dangge の 小小世界</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dangge の 小小世界</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">心之所向，无问西东</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/home" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#win-sever2003%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">win sever2003安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WRK%E4%BB%8B%E7%BB%8D%E4%B8%8E%E7%BC%96%E8%AF%91%E6%89%A7%E8%A1%8C"><span class="nav-number">2.</span> <span class="nav-text">WRK介绍与编译执行</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFWRK"><span class="nav-number">2.1.</span> <span class="nav-text">什么是WRK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E6%A6%82%E8%BF%B0"><span class="nav-number">2.2.</span> <span class="nav-text">目录概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WRK%E7%BC%96%E8%AF%91"><span class="nav-number">2.3.</span> <span class="nav-text">WRK编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WRK%E5%90%AF%E5%8A%A8"><span class="nav-number">2.4.</span> <span class="nav-text">WRK启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WRK%E8%B0%83%E8%AF%95"><span class="nav-number">2.5.</span> <span class="nav-text">WRK调试</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WRK%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">WRK相关工具</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="danggeOvO"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">danggeOvO</p>
+  <div class="site-description" itemprop="description">记录生活与学习!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/danggeOvO" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;danggeOvO" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:95239002@qq.com" title="E-Mail → mailto:95239002@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/11/09/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="环境配置与工具安装 | dangge の 小小世界">
+      <meta itemprop="description" content="系列第二章，环境配置与工具安装">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          环境配置与工具安装
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-09 10:19:00" itemprop="dateCreated datePublished" datetime="2023-11-09T10:19:00+08:00">2023-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-13 10:27:20" itemprop="dateModified" datetime="2023-11-13T10:27:20+08:00">2023-11-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91Windows%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】Windows内核学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91Windows%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/Windows%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/" itemprop="url" rel="index"><span itemprop="name">Windows内核原理与实现</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">系列第二章，环境配置与工具安装</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><strong>写在前面</strong>：本篇文章记录内核学习中环境的配置与工具的安装，主要涉及Win 2003虚拟机安装、WRK编译执行、各种分析工具的安装。</p>
+</blockquote>
+<h1 id="win-sever2003安装"><a href="#win-sever2003安装" class="headerlink" title="win sever2003安装"></a>win sever2003安装</h1><p>选择使用VMWare安装Windows Server 2003作为基本实验环境，参考如下（含系统镜像）：</p>
+<p>[Windows Server 2003 安装教程 - 知乎 (zhihu.com)](<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/475627925#:~:text=1%E3%80%81%E6%89%93%E5%BC%80VMware">https://zhuanlan.zhihu.com/p/475627925#:~:text=1、打开VMware</a> Workstation虚拟机选择CD%2FDVD选项。 2、选择使用ISO映像文件，点击浏览选择Windows Server,2003 镜像。 3、确定使用镜像后点击开启虚拟机。 4、进入到安装界面后稍等系统加载。 5、按回车键进入安装。)</p>
+<h1 id="WRK介绍与编译执行"><a href="#WRK介绍与编译执行" class="headerlink" title="WRK介绍与编译执行"></a>WRK介绍与编译执行</h1><blockquote>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="https://blog.csdn.net/maomao171314/article/details/113474917">【精选】Windows 内核（WRK）编译-CSDN博客</a></p>
+</blockquote>
+<h2 id="什么是WRK"><a href="#什么是WRK" class="headerlink" title="什么是WRK"></a>什么是WRK</h2><p><code>WRK</code> 是微软于 2006 年针对教育和学术界开放的 <strong>Windows 内核的部分源码</strong>，<code>WRK（Windows Research Kernel）</code>也就是 Windows 研究内核。</p>
+<p><code>Windows Research Kernel（WRK）</code>是一个微软公司开发的用于研究和学术目的的操作系统内核。它是Windows操作系统的一个分支，旨在提供一个可<strong>用于实验和深入研究</strong>的内核代码库。</p>
+<p>在 WRK 中不仅仅只提供了 Windows 内核模块的部分代码，其还提供了编译工具，也就是通过这个编译工具，你可以<strong>将 WRK 编译成一个 EXE 文件</strong>，也就是内核可执行模块，然后你可以利用这个 EXE 文件来取代操作系统本身的内核，这样的话，下次开机的时候操作系统所加载的内核就是您编译的那个 EXE 了。   </p>
+<p><strong>下载地址</strong>：链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1B7AcR-Nwt5Fjl3dxgY7nFQ">https://pan.baidu.com/s/1B7AcR-Nwt5Fjl3dxgY7nFQ</a> 提取码：xhxh</p>
+<p> <strong>注</strong>：我在github上找了好多wrk资源，但是都在编译时出错了。所以现在上传一个可以成功编译的资源。（笔者编译环境：win11,2023-11-10）</p>
+<h2 id="目录概述"><a href="#目录概述" class="headerlink" title="目录概述"></a>目录概述</h2><p>在看WRK的目录之前，可以先去自己的主机上找一个文件：<code>ntoskrnl.exe</code>，这是一个内核模块文件，可以看做是 <strong>Windows</strong> 的内核，由执行体和微内核组成。我们的 <strong>WRK</strong> 编译后所得的结果应该也是一个内核模块文件，编译后的名称为<code>wrkx86.exe</code>。</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109105102577.png" alt="image-20231109105102577" style="zoom:50%;" />
+
+
+
+<p>WRK项目的<strong>目录内容</strong>如下：</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109105948788.png" alt="image-20231109105948788"></p>
+<p><strong>WS03SP1HALS</strong>目录：</p>
+<p><strong>WS03SP1HALS</strong>代表的意思即 <code>Windows Server 2003 SP1 HALS</code>，也就是在 Windows Server 2003 SP1 下的 <code>HAL（硬件抽象层）</code>。</p>
+<p>通过 <strong>HAL</strong> 可以实现<strong>隔离掉硬件的差异</strong>，也就是上层的模块无需考虑下层真实硬件之间的差异性，因为上层模块不能够直接访问硬件，而是<strong>通过 HAL 来访问硬件</strong>的，所以对于硬件的差异性，在 <strong>HAL</strong> 中即可以解决掉，而不需要上层模块来解决。</p>
+<p>只要提供针对不同的硬件的 <strong>HAL</strong> 即可以实现在不同的硬件上运转我们的上层模块。可以简单的将HAL 看作是DLL。</p>
+<p>当系统安装时会<strong>根据实际环境选择</strong>适配的HAL，并改名为hal.dll，这个文件也在系统目录下，如图：</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231109110644024.png" alt="image-20231109110644024" style="zoom:50%;" />
+
+<hr>
+<p><strong>PUBLIC目录</strong>：</p>
+<p>该目录下包含了<strong>公共的接口和头文件</strong>，用于与WRK内核进行交互和开发。</p>
+<hr>
+<p><strong>Base目录</strong>：</p>
+<p>其中的<code>ntos目录</code>是内核模块的<strong>主目录</strong>，包含以下子目录：</p>
+<ul>
+<li><p>build：WRK 只公开了部分源代码，那些未公开的则以二进制目标代码的形式存在于这个目录下。</p>
+</li>
+<li><p>cache：缓存管理器的实现的源文件。</p>
+</li>
+<li><p>config：注册表的实现的源文件。</p>
+</li>
+<li><p>dbgk：调试子系统的内核模式部分的源文件。</p>
+</li>
+<li><p>ex：执行体层函数(内核堆 , 同步 , 定时器等)的源文件。</p>
+</li>
+<li><p>fsrtl：文件系统运行库的源文件。</p>
+</li>
+<li><p>fstub：文件系统引导接口。</p>
+</li>
+<li><p>io：I&#x2F;O 管理器，不包括即插即用管理器和电源管理器部分。</p>
+</li>
+<li><p>ke：(微)内核，包括线程调度器，CPU 管理以及底层的同步语义</p>
+</li>
+<li><p>lpc：本地过程调用 (LPC) 机制的实现。</p>
+</li>
+<li><p>mm：内存管理器。</p>
+</li>
+<li><p>ob：内核对象管理器。</p>
+</li>
+<li><p>perf：内核的性能日志记录功能。</p>
+</li>
+<li><p>ps：进程和线程。</p>
+</li>
+<li><p>se：安全引用监视器。</p>
+</li>
+<li><p>wmi：Windows 管理规范。</p>
+</li>
+<li><p>inc：仅适用于 NTOS 部分的包含文件。</p>
+</li>
+<li><p>raw：RAW 文件系统驱动程序的实现的源文件。</p>
+</li>
+<li><p>rtl：内核运行时库支持。</p>
+</li>
+<li><p>init：内核启动部分的代码。</p>
+</li>
+<li><p>vdm：虚拟 DOS 机。</p>
+</li>
+<li><p>verifier：驱动程序检验器。</p>
+</li>
+</ul>
+<hr>
+<p><strong>Tools目录：</strong></p>
+<p>存放一些源码编译工具，后续编译WRK就会使用这里的工具。</p>
+<h2 id="WRK编译"><a href="#WRK编译" class="headerlink" title="WRK编译"></a>WRK编译</h2><p>先将tools下的<code>x86目录</code>写入环境变量：</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimageimage-20231109112451891.png" alt="image-20231109112451891" style="zoom:50%;" />
+
+<p>在<code>base\ntos目录下</code>打开终端，执行：<code>nmake -nologo x86=</code></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110104940125.png" alt="image-20231110104940125"></p>
+<p>最后在<code>base\ntos\BUILD\EXE目录下</code>看到编译后的文件：<code>wrkx86.exe</code>，这就是到 WRK 的内核可执行模块。</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110105102220.png" alt="image-20231110105102220" style="zoom:50%;" />
+
+
+
+<h2 id="WRK启动"><a href="#WRK启动" class="headerlink" title="WRK启动"></a>WRK启动</h2><p>得到 WRK 的内核可执行模块以后，可以在一台安装 了 <code>Windows Server 2003 SP1（x86）</code>或 <code>Windows XP Professional（AMD64）</code>的机器上启动 WRK。</p>
+<p>第一步已经安装完毕虚拟机，进行后续操作。</p>
+<hr>
+<p>首先将<code>wrkx86.exe</code>文件复制到<code>windows\system32</code>目录之下。</p>
+<p>打开<code>c:\windows\repair\setup.log</code> 文件，然后搜索Hal.dll，获取HAL类型。将<code>WS03SP1HALS\x86\halmacpi</code> 目录中将<code>halmacpi.dll</code> 文件复制到 <code>WINDOWS\system32</code>目录下。</p>
+<p>通过<code>工具-&gt;文件夹选项-&gt;</code>查看，取消<code>隐藏受保护的操作系统文件</code></p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110145731900.png" alt="image-20231110145731900" style="zoom:50%;" />
+
+
+
+<p>打开虚拟机系统的c盘下的<code>boot.ini</code>文件，记得取消只读，然后修改如下：在最后添加下述内容然后重新启动即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">multi(0)disk(0)rdisk(0)partition(1)\WINDOWS=&quot;WRK V1.2&quot; /kernel=wrkx86.exe /hal=halmacpi.dll</span><br><span class="line">multi(0)disk(0)rdisk(0)partition(1)\WINDOWS=&quot;WRK V1.2&quot; /kernel=wrkx86.exe /hal=halmacpi.dll /debug /debugport=com1 /baudrate=115200</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//image379226_io7numcezhiisbt.png" alt="img"></p>
+<p>使用<code>WINVER</code>查看版本：</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110151505255.png" alt="image-20231110151505255" style="zoom:50%;" />
+
+<h2 id="WRK调试"><a href="#WRK调试" class="headerlink" title="WRK调试"></a>WRK调试</h2><p>调试内核使用的调试器时windbg，一般配置有<strong>如下三种模式</strong>，其中第一种模式是在系统内部启动windbg，这种方式无法完全调试一个系统；第二种模式是使用两台物理主机，可以全面发挥windbg的调试能力，但是比较复杂；所以我们选择第三种模式，即物理主机运行windbg，通过<strong>命名管道的方式</strong>调试虚拟环境WRK。</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110154331052.png" alt="image-20231110154331052" style="zoom:67%;" />
+
+<p>还记得前面配置<code>boot.ini</code>时添加的语句吗，其中一条是：<code>multi(0)disk(0)rdisk(0)partition(1)\WINDOWS=&quot;WRK V1.2&quot; /kernel=wrkx86.exe /hal=halmacpi.dll /debug /debugport=com2 /baudrate=115200</code></p>
+<p>这句指令是：指定了在虚拟机中<strong>以调试模式</strong>引导 WRK 内核，并且还指定了引导参数“<code>/debug /debugport=com1</code>”，这说明一旦选择了此引导选项，内核模式的调试功能将被打开，并且<strong>允许远程内核调试器连接到 COM1 端口上</strong>。</p>
+<p><strong>具体配置</strong>：在VMWare界面修改虚拟机设置，添加一个<strong>串行端口</strong>并命名管道。这样宿主系统中的 windbg 可以通过命名管道连接到该 WRK 虚拟机的内核调试组件。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110165920120.png" alt="image-20231110165920120"></p>
+<p><strong>安装Windbg</strong>：<a target="_blank" rel="noopener" href="https://www.yycoding.xyz/post/2023/5/11/how-to-scientifically-install-the-latest-version-of-windbg">自行安装</a></p>
+<p><strong>配置符号路径</strong>：通过文件-&gt;setting配置symbol path，为<code>C:\Symbols; SRV\*C:\mysymbols\*http://msdl.microsoft.com/download/symbols</code>，同时把<code>wrkx86.pdb</code>,<code>halmacpi.pdb</code>符号文件放到笔记本中<code>C:\Symbols</code>目录下。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110172717930.png" alt="image-20231110172717930"></p>
+<p>配置管道连接：通过文件-&gt;Attach to kernel配置下图选项</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110173030930.png" alt="image-20231110173030930"></p>
+<p><strong>开始连接</strong>：先运行虚拟机，在点击OK，即可得到下图</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20231110172548632.png" alt="image-20231110172548632"></p>
+<blockquote>
+<p>到这里环境配置就基本over了，后续具体调试见其他博客。</p>
+</blockquote>
+<h1 id="WRK相关工具"><a href="#WRK相关工具" class="headerlink" title="WRK相关工具"></a>WRK相关工具</h1><p>除了要适用<code>windbg</code>这个内核调试器之外，还要用到以下工具：</p>
+<ul>
+<li><p><code>ProcMon</code>：进程和线程监视工具。老熟人了，在恶意代码分析中很常用，可以查看当前系统正在执行哪些进程线程，也可以自己过滤具体选项。在<code>第三章Windows进程与线程</code>会具体介绍</p>
+</li>
+<li><p><code>MemMon</code>：内存监视工具，查看系统内存空间和每一个进程的用户空间的内存布局。在<code>第四章内存管理</code>会具体介绍。</p>
+</li>
+<li><p><code>DPerLite</code>：一个揭示线程间同步关系的工具，可以在一个图形化界面观察这些与同步相关的内核操作。在<code>第五章Windows并发与同步</code>会介绍。</p>
+</li>
+<li><p><code>IRPMon</code>：IRP完成情况的监视工具，在内核中记录下每一个IO请求的完成操作，以列表形式查看。在<code>第六章WindowsIO请求</code>会具体介绍。</p>
+</li>
+<li><p><code>SdtViewer</code>：SDT(Servce Description Table，服务描述符表)，工具会访问系统的服务描述符表(SDT)数组，并解析系统SDT中的系统服务项。在<code>第八章windows系统服务</code>会具体介绍。</p>
+</li>
+<li><p><code>KInjectToolKit</code>：一个学生项目，提供了一种不同于设备驱动程序的内核代码注入方案。</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>写在最后</strong>：前文介绍了WRK的编译、执行与windbg这个重要工具的配置与启动。现在万事俱备，只欠东风，开始进入神秘而又朴素的内核世界吧。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>danggeOvO
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://danggeovo.github.io/2023/11/09/win%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85/" title="环境配置与工具安装">https://danggeovo.github.io/2023/11/09/win内核原理-环境配置与工具安装/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E6%A0%B8/" rel="tag"># 内核</a>
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/08/%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E5%A4%8D%E4%B9%A0/" rel="prev" title="系统安全复习">
+                  <i class="fa fa-angle-left"></i> 系统安全复习
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">danggeOvO</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">341k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:20</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

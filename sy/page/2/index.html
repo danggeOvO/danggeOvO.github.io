@@ -29,7 +29,7 @@
 <meta property="og:description" content="记录生活与学习!">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="danggeOvO">
-<meta property="article:tag" content="安全,攻防,样本,漏洞,卫星互联网">
+<meta property="article:tag" content="安全,攻防,对抗样本,漏洞,卫星互联网">
 <meta name="twitter:card" content="summary">
 
 
@@ -154,7 +154,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -193,6 +193,250 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/09/25/[%E2%88%9A]%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%8A%A0%E8%BD%BD%EF%BC%88%E6%8F%90%E9%AB%98%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/09/25/%5B%E2%88%9A%5D%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-PE%E6%96%87%E4%BB%B6%E4%B8%8E%E5%8A%A0%E8%BD%BD%EF%BC%88%E6%8F%90%E9%AB%98%EF%BC%89/" class="post-title-link" itemprop="url">PE文件与加载（提高）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-09-25 13:40:32" itemprop="dateCreated datePublished" datetime="2023-09-25T13:40:32+08:00">2023-09-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-06 15:03:04" itemprop="dateModified" datetime="2023-11-06T15:03:04+08:00">2023-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">【-专业知识-】逆向工程知识</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E4%B8%93%E4%B8%9A%E7%9F%A5%E8%AF%86-%E3%80%91%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E7%9F%A5%E8%AF%86/PE%E6%96%87%E4%BB%B6%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">PE文件基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="PE文件与加载（提高）"><a href="#PE文件与加载（提高）" class="headerlink" title="PE文件与加载（提高）"></a>PE文件与加载（提高）</h1><blockquote>
+<p><strong>写在最前面</strong>：本片文章不会细致介绍PE文件的基础知识，该内容详见博客。这篇文章主要是以书目录为主干，结合已有知识，梳理下PE文件相关知识，同时在学习的过程中整理下<strong>进程、DLL、内存</strong>的知识，与专业课博客结合，为后续学内核做铺垫。</p>
+<p><strong>目标</strong>：</p>
+<ol>
+<li>回顾<strong>PE文件格式</strong>，过一下重点，记忆。</li>
+<li>重点学习下一些常用的<strong>数据目录表</strong>，实践。</li>
+<li>理清PE文件<strong>加载的流程</strong>，要规范语言、对应内容。</li>
+<li>回顾<strong>操作系统</strong>博客，补充知识点，有话可说关于操作系统。</li>
+<li>会涉及到一些<strong>加壳脱壳</strong>的内容，找一两个实践下。</li>
+</ol>
+</blockquote>
+<p><strong>参考资料</strong>：</p>
+<ol>
+<li>《逆向工程核心原理》第二篇，PE文件格式。</li>
+<li>吾爱上的一篇精华：<a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1820306-1-1.html">https://www.52pojie.cn/thread-1820306-1-1.html</a></li>
+</ol>
+<hr>
+<h2 id="PE文件格式"><a href="#PE文件格式" class="headerlink" title="PE文件格式"></a>PE文件格式</h2><blockquote>
+<p>能不能用自己的话大概解释一下<strong>PE文件的相关知识</strong>？</p>
+</blockquote>
+<p>从下面<strong>四个方面</strong>介绍：</p>
+<ol>
+<li>PE文件的<strong>定义</strong></li>
+<li>PE文件的<strong>分类</strong></li>
+<li>PE文件的<strong>结构</strong>，总分介绍，大体意思即可</li>
+<li>PE文件的<strong>作用</strong></li>
+</ol>
+<p>下面<strong>具体说下</strong>：</p>
+<ol>
+<li><p><strong>PE文件的定义</strong>：</p>
+<p>PE文件是一种可执行文件格式，一般是指Win32下的可执行文件。</p>
+<p>可执行文件是一种<strong>包含可执行代码的二进制文件</strong>，它包含了计算机程序的机器指令和其他必要的数据，以便操作系统能够<strong>加载和执行该程序</strong>。</p>
+</li>
+<li><p><strong>PE文件分类</strong>：</p>
+<p>可以将PE文件分为四类：</p>
+<ul>
+<li><p><strong>可执行系列</strong>：如<code>exe文件</code>，是Windows操作系统中的<strong>可执行文件格式</strong>，通常是用C、C++、C#、Visual Basic等编程语言编写的应用程序的输出文件；又如<code>SCR文件</code>，是<code>exe文件</code>的一种特殊格式，即<strong>屏幕保护程序</strong>。</p>
+</li>
+<li><p><strong>库系列</strong>：如DLL动态链接库文件存储可重用的代码和数据、LIB静态链接库是文件编译时与应用程序静态链接的代码和数据集合。</p>
+</li>
+<li><p><strong>驱动程序系列</strong>：如SYS，驱动程序是用于<strong>与硬件设备进行交互的软件模块</strong>。</p>
+</li>
+<li><p><strong>对象文件系列</strong>：如OBJ文件，用于<strong>存储编译器生成的目标代码</strong>（Object Code）和相关的符号信息。OBJ文件通常是编译器生成的<strong>中间文件</strong>，用于在链接器（Linker）的过程中将多个目标文件和库文件合并成可执行文件。</p>
+</li>
+</ul>
+<p><strong>注意</strong>：无论是可执行文件、动态链接库还是其他类型的PE文件，它们都遵循<strong>PE文件格式的规范</strong>，以便在Windows操作系统中<strong>正确加载和执行</strong>。</p>
+</li>
+<li><p><strong>PE文件格式：</strong></p>
+<p>学习PE文件结构就是<strong>学习PE头里的结构体</strong>，关于这些结构体的分类、各个字段的含义在另一篇博客详细介绍过，这里不再赘述。我们说下没有涉及的点。</p>
+<ul>
+<li><p>首先是<strong>DOS头</strong>，该头部主要是<strong>考虑对DOS文件的兼容</strong>，即在DOS模式下也可以执行该文件，只是会根据DOS存根进行执行，比如一般会输出字符串提示：<code>This is  progarm cannot be run in DOS mode</code>；同时在DOS头里要注意两个字段：<code>e_magic</code>和<code>e_ifanew</code>，前者是双字节，存储”MZ”即<strong>DOS签名</strong>，后者是Long，存储<strong>PE标识的偏移</strong>。</p>
+</li>
+<li><p>然后是<strong>PE头</strong>，该头部由三部分组成：<code>PE标识</code>、<code>文件头</code>、<code>可选头</code>。</p>
+<p><code>PE标识</code>就是前面DOS头里的<code>ifanew字段</code>指向的数据，4个字节-<code>“PE”00</code>，属于文件签名。</p>
+<p><code>PE文件头</code>存储文件<strong>本身的一些基本信息</strong>，如机器架构(machine)、文件信息（0002h为exe文件、2000h为DLL文件）、可选头大小、节表数量、创建时间等。</p>
+<p><code>PE可选头</code>描述文件<strong>加载过程的相关信息</strong>，虽说是可选头，其实是必须具备的，甚至可以说是最重要的头部。有几个需要重点关注的字段：<code>magic</code>&#x3D;文件类型（10B是32位，20B是64位）、EP&#x3D;<code>入口地址的</code>RVA、<code>ImageBase</code>&#x3D;加载的基址、<code>Alignment</code>&#x3D;文件、内存的对其粒度即节区的最小单位、<code>SizeOfImage</code>&#x3D;内存中文件镜像的大小、<code>SizeOfHeader</code>&#x3D;PE头的大小，还有<code>数据目录</code>的大小与数据目录表。</p>
+<p>关于数据目录，需要重点关注<code>导入、导出、重定向、资源、调试、TLS</code>这几个即可。</p>
+</li>
+<li><p>接着是<strong>节表</strong>，每一个节表对应一个节区，其中包含节区的<code>名称、大小、RVA、FOA、属性</code>等。注意<strong>以虚拟大小确定节区数据的实际大小</strong>。</p>
+</li>
+</ul>
+<p>OK，到这里就算是简单了解了<strong>PE文件的基本格式</strong>，在实际使用中，可以提高<strong>PE文件工具</strong>查看PE文件的具体信息，如下：</p>
+<img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20230918165444418.png" alt="image-20230918165444418" style="zoom: 67%;" />
+
+
+</li>
+<li><p><strong>PE文件的作用</strong>：</p>
+<p>PE文件为所有的WIN32下可执行文件<strong>设置统一的结构和格式</strong>，以便操作系统能够正确地<strong>加载和执行程序</strong>。同时保证文件的兼容性、可移植性。</p>
+</li>
+</ol>
+<p><strong>歌曰</strong>：在你向别人描述你对于PE文件的理解时，重点在<strong>整体宏观</strong>，而不是某个细节的字段；在进行具体的分析调试时，很多字段也没什么用，关键在于理解<strong>内存中的布局</strong>以及<strong>各个区域的作用</strong>。</p>
+<h2 id="几个重要的数据目录"><a href="#几个重要的数据目录" class="headerlink" title="几个重要的数据目录"></a>几个重要的数据目录</h2><blockquote>
+<p>了解基本的PE文件格式只是基础，在实际分析中，需要重点关注下面几个重要的数据结构。<strong>导入、导出表</strong>已经学习过了，这里重点放在<code>重定位表</code>。</p>
+</blockquote>
+<h3 id="导入表"><a href="#导入表" class="headerlink" title="导入表"></a>导入表</h3><p>导入表的具体结构不再赘述，理解之后就很好记忆了。这里主要强调一下，<strong>导入表与IAT表是关联在一起的</strong>，在载入时会通过导入表信息解析得到需要导入的DLL和函数，然后将函数的实际地址写入IAT里。</p>
+<p><strong>具体的解析过程</strong>如下：</p>
+<ol>
+<li>读取IID的<code>Name成员</code>，获取库名称字符串</li>
+<li>装载相应库–使用<code>Loadlibrary</code>函数</li>
+<li>读取IID的<code>OriginalFirstThunk成员</code>，获取INT地址（也就是导入函数名称表）</li>
+<li>逐一读取INT数组的值，获取<code>IMAGE_IMPORT_NAME</code>地址</li>
+<li>根据上地址的内容使用<code>GetProcAddress</code>获取该函数的实际地址</li>
+<li>读取IID的<code>FirstThunk</code>内容，获取<code>IAT</code>的地址（IAT就是导入地址表）</li>
+<li>将5的地址填入<code>IAT数组</code>里。</li>
+<li>重复<strong>4~7步骤</strong>，直到<strong>INT</strong>结束。</li>
+</ol>
+<h3 id="重定位表"><a href="#重定位表" class="headerlink" title="重定位表"></a>重定位表</h3><blockquote>
+<p> 先说说为什么要有重定位表？</p>
+</blockquote>
+<p>原因很简单，有些可执行文件在加载到内存后，其镜像基址并没有遵循PE头中的默认位置，比如<code>exe的400000h</code>，又或者<code>DLL的10000000h</code>。但是在这个可执行文件内部，有很多地方都是<strong>使用硬编码地址</strong>进行代码的指向或者数据的引用。（这个硬编码地址就是VA &#x3D; RVA+IB)  </p>
+<p>所以一旦这些文件的加载基址发生了变化，这些硬编码的地址也就失去了作用，这时候就需要<strong>对硬编码地址进行修正</strong>。如何修正呢？<strong>使用重定位表</strong>！</p>
+<p>换句话说，<strong>修正硬编码地址的过程就是重定位</strong>。</p>
+<blockquote>
+<p><strong>重定位表的结构</strong>是什么样的？</p>
+</blockquote>
+<p>重定位表的结构如下，主要有两个字段：<code>VirtualAddress</code>、<code>TypeOffset[1]</code>和<code>sizeOfBlock</code>。具体介绍如下：</p>
+<ul>
+<li><code>VirtualAddress</code>：4字节，是一个页面的起始地址，也就是基址。</li>
+<li><code>sizeOfBlock</code>：重定位块的大小。</li>
+<li><code>TypeOffset[1]</code>：需要修正数据的地址偏移。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_BASE_RELOCATION</span> &#123;</span></span><br><span class="line">    DWORD   VirtualAddress; <span class="comment">// 重定位数据页面起始地址</span></span><br><span class="line">    DWORD   SizeOfBlock;        <span class="comment">// 重定位块的长度</span></span><br><span class="line"><span class="comment">//WORD    TypeOffset[1];        // 重定位项数组</span></span><br><span class="line">    <span class="comment">//该数组每个元素占2字节,加上VirtualAddress后才是真实地址</span></span><br><span class="line">&#125; IMAGE_BASE_RELOCATION;</span><br><span class="line"><span class="comment">//最后一个块的值全为0</span></span><br><span class="line"><span class="keyword">typedef</span> IMAGE_BASE_RELOCATION*,PIMAGE_BASE_RELOCATION;</span><br></pre></td></tr></table></figure>
+
+<p><strong>歌曰</strong>：每一个重定位块都是<strong>以一个页为单位</strong>进行指向的，而一个页的大小一般为<code>4K</code>，也就是说只需要<code>12位</code>就可以表示，所以<code>TypeOffset[1]</code>的16位用不完。实际处理是：将<strong>前4位作为标志位</strong>，当其为<code>0011</code>时表示需要修改；而后12位作为偏移位，与<code>VirtualAddress</code>相加得到具体的<code>RVA</code>，从而定位到<strong>硬编码地址</strong>处。</p>
+<p>**<a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1820306-1-1.html#47641558_%E5%AF%BC%E5%87%BA%E8%A1%A8">借一个图</a>**：</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20230925143421304.png" alt="image-20230925143421304"></p>
+<blockquote>
+<p><strong>什么时候要进行重定位</strong>嘞？</p>
+</blockquote>
+<p>答案也很明确，可执行文件加载时进行。一般来说是先将文件映射到虚拟内存空间而后检查重定位表进行重定位操作。</p>
+<p><strong>歌曰</strong>：重定位操作修正的<strong>已经加载到内存中的数据</strong>，不会对原始DLL造成影响。</p>
+<p><strong>歌曰</strong>：并不是只有DLL才进行重定位，现在系统都会采用<strong>ASLR机制</strong>即随机空间布局随机化，每一次可执行文件的加载都会有不同的基址。</p>
+<blockquote>
+<p><strong>如何进行重定位</strong>呢？</p>
+</blockquote>
+<ul>
+<li><strong>定位数据</strong>：加载后会先把文件数据映射到虚拟内存空间，之后会根据PE头的数据定位到重定位表，每一个重定位块对应一个页，根据<code>Vir+off = RVA</code>得到某个硬编码数据的地址，将该地址与IB相加后得到VA，也就可以精确定位到该硬编码数据；</li>
+<li><strong>修改数据</strong>：将<code>原始数据-原始IB+现在IB</code>即可</li>
+<li><strong>循环执行</strong>：直到把<strong>需要修改的硬编码数据</strong>修改完毕</li>
+</ul>
+<blockquote>
+<p>下面是<strong>一个小小的实践</strong>！</p>
+</blockquote>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20230925150648365.png" alt="image-20230925150648365"></p>
+<p>如上图所示，该重定位块标注了第一个页里需要修改的数据RVA。我们以第一个地址为例，其<code>RVA=1000h+420h=1420h</code>，该地址处的数据为 <code>010010C4h</code>（见<strong>下图ida数据</strong>）；而将其加载到内存后该硬编码地址为 <code>00481420h</code>（见<strong>下OD图</strong>），可以看到数据变了，也可以借此计算出本次的基址为<code>00480000h</code>。</p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20230925152208255.png" alt="image-20230925152208255"></p>
+<p><img src="http://image-blog-danggeovo.oss-cn-beijing.aliyuncs.com//imageimage-20230925152551871.png" alt="image-20230925152551871"></p>
+<h2 id="PE文件的加载流程"><a href="#PE文件的加载流程" class="headerlink" title="PE文件的加载流程"></a>PE文件的加载流程</h2><blockquote>
+<p>下面我们来简单整理下<strong>PE文件的加载流程</strong>，经过前面的学习与积累，这一步总结就很简单了。</p>
+</blockquote>
+<ol>
+<li><strong>定位文件</strong>：操作系统根据应用程序的路径或者相对路径，通过文件系统定位到PE文件的位置。</li>
+<li><strong>解析PE头</strong>：操作系统读取PE文件的头部信息，即PE头。PE头包含了文件的基本信息，如文件格式版本、入口点地址、节表等。</li>
+<li><strong>加载PE文件</strong>：操作系统根据PE头中的信息，为PE文件分配内存空间。这包括分配可执行代码的内存区域、数据区域和导入表等。同时，操作系统会<strong>建立PE文件与内存空间的映射关系</strong>。</li>
+<li><strong>进行重定位</strong>：如果当前加载到内存当中的基址与op的IB一样，则无需要重定位。否则获取到重定位表的块数据后，根据他的(块长度-8)&#x2F;2得到该块的地址数量，前8字节存放着该块的偏移和大小，每个占4字节，一个重定位地址占2字节，通过块地址+8+(2i)取出需要重定位的地址，与0x3000进行异或，如果首位为3，则后12位为地址偏移，则重定位地址&#x3D;后12位(块中偏移)+块的起始位置+内存起始位置 重定位则为重定位地址&#x3D;重定位地址+(理想基址和实际基址的偏移) 即*重定位地址+&#x3D;(实际基址-理想基址)。如果首位为0，则说明该偏移为对齐使用，遍历下一个(当前块基址+当前块长度)。将全部块遍历重定位完后，将op的IB也替换成当前加载到内存的基址。</li>
+<li><strong>解析导入表</strong>：PE文件中包含有关其依赖的其他模块（如DLL）的导入表。操作系统会解析导入表，对每个依赖的模块进行<strong>加载和链接</strong>。</li>
+<li><strong>执行入口点</strong>：找到PE文件的入口点地址，即程序的起始执行地址。操作系统将控制权转移给PE文件的入口点，开始执行应用程序的代码。</li>
+</ol>
+<blockquote>
+<p>先到这里吧，后面又新的学习成果再进行补充。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -720,210 +964,6 @@
 
 <p>指数衰减学习率：指数衰减学习率可在训练初期赋予网络较大学习率，并在训练过程中逐步减小，可有效增加网络收敛速度。<br>在 tensorflow 中对应函数为<br><code>tf.compat.v1.train.exponential_decay(learning_rate_base,global_step,decay_step,deca y_rate,staircase =True(False),name)</code>，当 staircase 为 True 时，学习率呈现阶梯状递减。</p>
 <p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1649074920083.png" alt="学习率"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0--ch5%20%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="danggeOvO">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dangge の 小小世界">
-      <meta itemprop="description" content="记录生活与学习!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dangge の 小小世界">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0--ch5%20%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">TensorFlow笔记--ch5 卷积神经网络</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-05-01 13:26:32" itemprop="dateCreated datePublished" datetime="2023-05-01T13:26:32+08:00">2023-05-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:18:55" itemprop="dateModified" datetime="2023-11-08T18:18:55+08:00">2023-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】人工智能</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/TensorFlow%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">TensorFlow实践</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>写在前面</p>
-<blockquote>
-<p>由于种种原因，关于本章的部分内容不会很详细，旨在了解大体过程，为下面的循环神经网络的重点学习做铺垫。</p>
-</blockquote>
-</blockquote>
-<h1 id="卷积计算过程"><a href="#卷积计算过程" class="headerlink" title="卷积计算过程"></a>卷积计算过程</h1><h2 id="全连接神经网络回顾"><a href="#全连接神经网络回顾" class="headerlink" title="全连接神经网络回顾"></a>全连接神经网络回顾</h2><blockquote>
-<p>全连接NN：每个神经元与前后相邻层的每一个神经元都有<strong>连接关系</strong>，输入是特征，输出为预测的结果</p>
-</blockquote>
-<p>以MNIST数据集为例：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727461.png"></p>
-<p>仅仅是输入黑白灰度值数据就有10万多个待优化参数，我们在实际项目中多是高分辨率彩色图，待优化的参数会更多，很容易造成过拟合。</p>
-<p>如下是图像对比：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727554.png" alt="图像对比"></p>
-<h2 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h2><blockquote>
-<p>实际应用时会先对原始图像进行<strong>特征提取</strong>再把提取到的特征送给<strong>全连接网络</strong></p>
-</blockquote>
-<p>下图是过程实例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727542.png" alt="特征提取"></p>
-<blockquote>
-<p>卷积计算可认为是一种有效<strong>提取图像特征</strong>的方法</p>
-</blockquote>
-<p>一般会用一个正方形的<strong>卷积核</strong>，按<strong>指定步长</strong>，在输入特征图上<strong>滑动</strong>，<strong>遍历</strong>输入特征图中的每个像素点。每一个步长，卷积核会与输入特征图出现<strong>重合区域</strong>，重合区域对应元素相乘、求和再加上偏置项得到<strong>输出特征</strong>的一个像素点。</p>
-<ul>
-<li>输入特征图的<strong>深度</strong>（channel数），决定了当前层卷积核的<strong>深度</strong>；</li>
-<li>当前层<strong>卷积核</strong>的个数，决定了当前层<strong>输出特征图</strong>的深度。</li>
-</ul>
-<p>下图是卷积计算过程：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727544.png"></p>
-<p>经过卷积核的特征提取，我们的输入特征就会十分精简，利于优化，减少过拟合。</p>
-<h1 id="感受野（Receptive-Field）"><a href="#感受野（Receptive-Field）" class="headerlink" title="感受野（Receptive Field）"></a>感受野（Receptive Field）</h1><blockquote>
-<p>卷积神经网络各<strong>输出特征图</strong>中的每个像素点，在<strong>原始输入图</strong>片上映射区域的大小。</p>
-</blockquote>
-<p>下图是感受野的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727545.png"></p>
-<p>可知，对于多次卷积核得到的输出特征图的感受野也是与最原始的特征图比较的。<br>同时通过图最下方的计算，可以知道对于x大于10的特征图，选择两层3x3的卷积核更好。</p>
-<h1 id="全零填充（Padding）"><a href="#全零填充（Padding）" class="headerlink" title="全零填充（Padding）"></a>全零填充（Padding）</h1><blockquote>
-<p>前面我们知道，在经过特征提取后的输出特征图的维度要比原始特征图小，如果<strong>不想改变特征图的维度</strong>，可以使用全零填充，即在原始特征图的一周添加0，再使用卷积核滑过。</p>
-</blockquote>
-<p>下图是<strong>全零填充</strong>的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727459.png"></p>
-<p>下面给出输出特征图的<strong>边长计算公式</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727457.png"></p>
-<p><strong>TensorFlow</strong>的使用：</p>
-<ul>
-<li>用参数<code>padding=‘SAME’</code>或<code>padding=‘VALID’</code>表示</li>
-</ul>
-<p>下图给出了边长的<strong>计算过程</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727448.png"></p>
-<h1 id="TF描述卷积层"><a href="#TF描述卷积层" class="headerlink" title="TF描述卷积层"></a>TF描述卷积层</h1><blockquote>
-<p>前面我们已经了解了卷积神经网络的计算过程，下面我们就要使用TensorFlow实现上述计算过程，这个过程不需要复杂的底层运算，只需要我们给出需要的<strong>参数</strong>即可。</p>
-</blockquote>
-<p>下面是定义卷积层的代码规范：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tf.keras.layers.Conv2D (</span><br><span class="line">filters= 卷积核个数, </span><br><span class="line">kernel_size= 卷积核尺寸, <span class="comment">#正方形写核长整数，或（核高h，核宽w）</span></span><br><span class="line">strides= 滑动步长, <span class="comment">#横纵向相同写步长整数，或(纵向步长h，横向步长w)，默认1 </span></span><br><span class="line">padding= “same” <span class="keyword">or</span> “valid”, <span class="comment">#使用全零填充是“same”，不使用是“valid”（默认）</span></span><br><span class="line">activation= “ relu” <span class="keyword">or</span> “ sigmoid ” <span class="keyword">or</span> “ tanh ” <span class="keyword">or</span> “ softmax”等, <span class="comment">#如有BN此处不写</span></span><br><span class="line">input_shape= (高, 宽, 通道数)      <span class="comment">#输入特征图维度，可省略</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>上述代码为tf.keras.models.Sequential()的一部分，写在全连接层之前。</p>
-<h1 id="批标准化（Batch-Normalization，BN）"><a href="#批标准化（Batch-Normalization，BN）" class="headerlink" title="批标准化（Batch Normalization，BN）"></a>批标准化（Batch Normalization，BN）</h1><blockquote>
-<p>神经网络对0附近的数据更加敏感，但是随着网络层数的增加，特征数据会出现偏离0均值的情况。这时候就需要进行标准化处理。</p>
-</blockquote>
-<ul>
-<li><strong>标准化</strong>：使数据符合0均值，1为标准差的分布。</li>
-<li><strong>批标准化</strong>：对一小批数据（<strong>batch</strong>），做标准化处理。</li>
-</ul>
-<p>批标准化后，第k个卷积核的输出特征图（feature map）中第i个像素点：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727458.png"></p>
-<p>上图给出了标准化的计算公式，以一个batch为单位进行数据的处理，使得数据回归到0为均值的状态。</p>
-<p>我们来看一下标准化过后的数据偏移情况：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727243.png"></p>
-<p>可见，经过标准化后的数据分布在计划函数的<strong>线性区</strong>，使得输入数据的<strong>微小变化</strong>更明显的体现到激活函数的输出，提升了激活函数对输入数据的区分力。</p>
-<p>但是，上面那种简单的标准化处理使得数据完全满足正态分布，让数据分布在线性区，使得激活函数丧失了非线性特性，因此我们在BN操作上为每一个卷积核引入了<strong>两个可训练参数</strong>，这两个参数也是与其余参数一同优化，通过这两个参数实现数据的<strong>缩放和偏移</strong>，保证了网络的<strong>非线性表达力</strong>。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727455.png"></p>
-<hr>
-<blockquote>
-<p>批标准化的代码实现：</p>
-</blockquote>
-<p>批标准化位于卷积层和激活函数层之间，在TensorFlow中以下面的代码进行描述：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727437.png"></p>
-<h1 id="池化（Pooling）"><a href="#池化（Pooling）" class="headerlink" title="池化（Pooling）"></a>池化（Pooling）</h1><blockquote>
-<p>所谓池化，就是通过池化核减少特征数量。</p>
-</blockquote>
-<ul>
-<li>最大池化：MaxPool2D：提取图片纹理</li>
-<li>均值池化：.AveragePooling2D:保留图片背景</li>
-</ul>
-<p>下图给出了池化的过程：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727462.png"></p>
-<p>可以看到，特征数据的数量变少了，同时二种池化方式的原理也很清楚。</p>
-<hr>
-<blockquote>
-<p>池化的代码实现：</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tf.keras.layers.MaxPool2D(</span><br><span class="line">pool_size = 池化核尺寸,</span><br><span class="line">strides = 池化步长,</span><br><span class="line">padding = ‘SAME’ <span class="keyword">or</span> ‘VALID’ )</span><br><span class="line">tf.keras.layers.AveragePooling2D(</span><br><span class="line">pool_size = 池化核尺寸,</span><br><span class="line">strides = 池化步长,</span><br><span class="line">padding = ‘SAME’ <span class="keyword">or</span> ‘VALID’ )</span><br></pre></td></tr></table></figure>
-
-<h1 id="舍弃（Dropout"><a href="#舍弃（Dropout" class="headerlink" title="舍弃（Dropout)"></a>舍弃（Dropout)</h1><blockquote>
-<p>在神经网络<strong>训练时</strong>，将一部分神经元按照一定概率从神经网络中暂时舍弃。神经网络<strong>使用时</strong>，被舍弃的神经元恢复链接。</p>
-</blockquote>
-<p>下图给出了舍弃操作的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727460.png"></p>
-<hr>
-<blockquote>
-<p>舍弃操作的代码实现：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727456.png"></p>
-</blockquote>
-<h1 id="卷积神经网络"><a href="#卷积神经网络" class="headerlink" title="卷积神经网络"></a>卷积神经网络</h1><blockquote>
-<p>经过上述内容的学习，我们已经对卷积神经网络有了清晰的认识，下面我们来回顾梳理一下。</p>
-</blockquote>
-<p><strong>卷积神经网络</strong>：借助卷积核提取特征后，送人全连接神经网络。</p>
-<p><strong>主要模块</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727463.png"></p>
-<hr>
-<p>W：卷积是什么？<br>D：特征提取器，CBAPD.<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727438.png"></p>
-<blockquote>
-<p>写在最后</p>
-</blockquote>
-<p>关于卷积神经网络的部分内容就先到这里，课程内还要一些示例与扩展，这里先不进行。以后在系统学习机器学习时会再详细进行，并附上链接。</p>
-<p>最后，再默念一句：特征提取器，CBAPD。</p>
 
       
     </div>
@@ -1869,6 +1909,210 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0--ch5%20%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/01/TensorFlow%E7%AC%94%E8%AE%B0--ch5%20%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">TensorFlow笔记--ch5 卷积神经网络</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-01 13:26:32" itemprop="dateCreated datePublished" datetime="2023-05-01T13:26:32+08:00">2023-05-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 18:18:55" itemprop="dateModified" datetime="2023-11-08T18:18:55+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】人工智能</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/TensorFlow%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">TensorFlow实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>写在前面</p>
+<blockquote>
+<p>由于种种原因，关于本章的部分内容不会很详细，旨在了解大体过程，为下面的循环神经网络的重点学习做铺垫。</p>
+</blockquote>
+</blockquote>
+<h1 id="卷积计算过程"><a href="#卷积计算过程" class="headerlink" title="卷积计算过程"></a>卷积计算过程</h1><h2 id="全连接神经网络回顾"><a href="#全连接神经网络回顾" class="headerlink" title="全连接神经网络回顾"></a>全连接神经网络回顾</h2><blockquote>
+<p>全连接NN：每个神经元与前后相邻层的每一个神经元都有<strong>连接关系</strong>，输入是特征，输出为预测的结果</p>
+</blockquote>
+<p>以MNIST数据集为例：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727461.png"></p>
+<p>仅仅是输入黑白灰度值数据就有10万多个待优化参数，我们在实际项目中多是高分辨率彩色图，待优化的参数会更多，很容易造成过拟合。</p>
+<p>如下是图像对比：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727554.png" alt="图像对比"></p>
+<h2 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h2><blockquote>
+<p>实际应用时会先对原始图像进行<strong>特征提取</strong>再把提取到的特征送给<strong>全连接网络</strong></p>
+</blockquote>
+<p>下图是过程实例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727542.png" alt="特征提取"></p>
+<blockquote>
+<p>卷积计算可认为是一种有效<strong>提取图像特征</strong>的方法</p>
+</blockquote>
+<p>一般会用一个正方形的<strong>卷积核</strong>，按<strong>指定步长</strong>，在输入特征图上<strong>滑动</strong>，<strong>遍历</strong>输入特征图中的每个像素点。每一个步长，卷积核会与输入特征图出现<strong>重合区域</strong>，重合区域对应元素相乘、求和再加上偏置项得到<strong>输出特征</strong>的一个像素点。</p>
+<ul>
+<li>输入特征图的<strong>深度</strong>（channel数），决定了当前层卷积核的<strong>深度</strong>；</li>
+<li>当前层<strong>卷积核</strong>的个数，决定了当前层<strong>输出特征图</strong>的深度。</li>
+</ul>
+<p>下图是卷积计算过程：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727544.png"></p>
+<p>经过卷积核的特征提取，我们的输入特征就会十分精简，利于优化，减少过拟合。</p>
+<h1 id="感受野（Receptive-Field）"><a href="#感受野（Receptive-Field）" class="headerlink" title="感受野（Receptive Field）"></a>感受野（Receptive Field）</h1><blockquote>
+<p>卷积神经网络各<strong>输出特征图</strong>中的每个像素点，在<strong>原始输入图</strong>片上映射区域的大小。</p>
+</blockquote>
+<p>下图是感受野的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727545.png"></p>
+<p>可知，对于多次卷积核得到的输出特征图的感受野也是与最原始的特征图比较的。<br>同时通过图最下方的计算，可以知道对于x大于10的特征图，选择两层3x3的卷积核更好。</p>
+<h1 id="全零填充（Padding）"><a href="#全零填充（Padding）" class="headerlink" title="全零填充（Padding）"></a>全零填充（Padding）</h1><blockquote>
+<p>前面我们知道，在经过特征提取后的输出特征图的维度要比原始特征图小，如果<strong>不想改变特征图的维度</strong>，可以使用全零填充，即在原始特征图的一周添加0，再使用卷积核滑过。</p>
+</blockquote>
+<p>下图是<strong>全零填充</strong>的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727459.png"></p>
+<p>下面给出输出特征图的<strong>边长计算公式</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727457.png"></p>
+<p><strong>TensorFlow</strong>的使用：</p>
+<ul>
+<li>用参数<code>padding=‘SAME’</code>或<code>padding=‘VALID’</code>表示</li>
+</ul>
+<p>下图给出了边长的<strong>计算过程</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727448.png"></p>
+<h1 id="TF描述卷积层"><a href="#TF描述卷积层" class="headerlink" title="TF描述卷积层"></a>TF描述卷积层</h1><blockquote>
+<p>前面我们已经了解了卷积神经网络的计算过程，下面我们就要使用TensorFlow实现上述计算过程，这个过程不需要复杂的底层运算，只需要我们给出需要的<strong>参数</strong>即可。</p>
+</blockquote>
+<p>下面是定义卷积层的代码规范：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tf.keras.layers.Conv2D (</span><br><span class="line">filters= 卷积核个数, </span><br><span class="line">kernel_size= 卷积核尺寸, <span class="comment">#正方形写核长整数，或（核高h，核宽w）</span></span><br><span class="line">strides= 滑动步长, <span class="comment">#横纵向相同写步长整数，或(纵向步长h，横向步长w)，默认1 </span></span><br><span class="line">padding= “same” <span class="keyword">or</span> “valid”, <span class="comment">#使用全零填充是“same”，不使用是“valid”（默认）</span></span><br><span class="line">activation= “ relu” <span class="keyword">or</span> “ sigmoid ” <span class="keyword">or</span> “ tanh ” <span class="keyword">or</span> “ softmax”等, <span class="comment">#如有BN此处不写</span></span><br><span class="line">input_shape= (高, 宽, 通道数)      <span class="comment">#输入特征图维度，可省略</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>上述代码为tf.keras.models.Sequential()的一部分，写在全连接层之前。</p>
+<h1 id="批标准化（Batch-Normalization，BN）"><a href="#批标准化（Batch-Normalization，BN）" class="headerlink" title="批标准化（Batch Normalization，BN）"></a>批标准化（Batch Normalization，BN）</h1><blockquote>
+<p>神经网络对0附近的数据更加敏感，但是随着网络层数的增加，特征数据会出现偏离0均值的情况。这时候就需要进行标准化处理。</p>
+</blockquote>
+<ul>
+<li><strong>标准化</strong>：使数据符合0均值，1为标准差的分布。</li>
+<li><strong>批标准化</strong>：对一小批数据（<strong>batch</strong>），做标准化处理。</li>
+</ul>
+<p>批标准化后，第k个卷积核的输出特征图（feature map）中第i个像素点：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727458.png"></p>
+<p>上图给出了标准化的计算公式，以一个batch为单位进行数据的处理，使得数据回归到0为均值的状态。</p>
+<p>我们来看一下标准化过后的数据偏移情况：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727243.png"></p>
+<p>可见，经过标准化后的数据分布在计划函数的<strong>线性区</strong>，使得输入数据的<strong>微小变化</strong>更明显的体现到激活函数的输出，提升了激活函数对输入数据的区分力。</p>
+<p>但是，上面那种简单的标准化处理使得数据完全满足正态分布，让数据分布在线性区，使得激活函数丧失了非线性特性，因此我们在BN操作上为每一个卷积核引入了<strong>两个可训练参数</strong>，这两个参数也是与其余参数一同优化，通过这两个参数实现数据的<strong>缩放和偏移</strong>，保证了网络的<strong>非线性表达力</strong>。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727455.png"></p>
+<hr>
+<blockquote>
+<p>批标准化的代码实现：</p>
+</blockquote>
+<p>批标准化位于卷积层和激活函数层之间，在TensorFlow中以下面的代码进行描述：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727437.png"></p>
+<h1 id="池化（Pooling）"><a href="#池化（Pooling）" class="headerlink" title="池化（Pooling）"></a>池化（Pooling）</h1><blockquote>
+<p>所谓池化，就是通过池化核减少特征数量。</p>
+</blockquote>
+<ul>
+<li>最大池化：MaxPool2D：提取图片纹理</li>
+<li>均值池化：.AveragePooling2D:保留图片背景</li>
+</ul>
+<p>下图给出了池化的过程：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727462.png"></p>
+<p>可以看到，特征数据的数量变少了，同时二种池化方式的原理也很清楚。</p>
+<hr>
+<blockquote>
+<p>池化的代码实现：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">tf.keras.layers.MaxPool2D(</span><br><span class="line">pool_size = 池化核尺寸,</span><br><span class="line">strides = 池化步长,</span><br><span class="line">padding = ‘SAME’ <span class="keyword">or</span> ‘VALID’ )</span><br><span class="line">tf.keras.layers.AveragePooling2D(</span><br><span class="line">pool_size = 池化核尺寸,</span><br><span class="line">strides = 池化步长,</span><br><span class="line">padding = ‘SAME’ <span class="keyword">or</span> ‘VALID’ )</span><br></pre></td></tr></table></figure>
+
+<h1 id="舍弃（Dropout"><a href="#舍弃（Dropout" class="headerlink" title="舍弃（Dropout)"></a>舍弃（Dropout)</h1><blockquote>
+<p>在神经网络<strong>训练时</strong>，将一部分神经元按照一定概率从神经网络中暂时舍弃。神经网络<strong>使用时</strong>，被舍弃的神经元恢复链接。</p>
+</blockquote>
+<p>下图给出了舍弃操作的示例：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727460.png"></p>
+<hr>
+<blockquote>
+<p>舍弃操作的代码实现：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727456.png"></p>
+</blockquote>
+<h1 id="卷积神经网络"><a href="#卷积神经网络" class="headerlink" title="卷积神经网络"></a>卷积神经网络</h1><blockquote>
+<p>经过上述内容的学习，我们已经对卷积神经网络有了清晰的认识，下面我们来回顾梳理一下。</p>
+</blockquote>
+<p><strong>卷积神经网络</strong>：借助卷积核提取特征后，送人全连接神经网络。</p>
+<p><strong>主要模块</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727463.png"></p>
+<hr>
+<p>W：卷积是什么？<br>D：特征提取器，CBAPD.<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1648350727438.png"></p>
+<blockquote>
+<p>写在最后</p>
+</blockquote>
+<p>关于卷积神经网络的部分内容就先到这里，课程内还要一些示例与扩展，这里先不进行。以后在系统学习机器学习时会再详细进行，并附上链接。</p>
+<p>最后，再默念一句：特征提取器，CBAPD。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/05/01/iptables%E6%8C%87%E4%BB%A4%E8%AF%A6%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2049,121 +2293,6 @@
 </ol>
 <h1 id="几个实例"><a href="#几个实例" class="headerlink" title="几个实例"></a>几个实例</h1><p><a target="_blank" rel="noopener" href="https://www.w3cschool.cn/linuxc/linuxc-6ghl3lgn.html">https://www.w3cschool.cn/linuxc/linuxc-6ghl3lgn.html</a>  最下面</p>
 <p>万变不离其宗，按照使用规则一步步匹配，对应参数即可。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/04/10/Anaconda%E4%B8%8Econda/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="danggeOvO">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dangge の 小小世界">
-      <meta itemprop="description" content="记录生活与学习!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dangge の 小小世界">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/04/10/Anaconda%E4%B8%8Econda/" class="post-title-link" itemprop="url">Anaconda与conda</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-04-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-04-10T13:48:32+08:00">2023-04-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 18:14:45" itemprop="dateModified" datetime="2023-11-08T18:14:45+08:00">2023-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】编程语言学习</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/python%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">python学习</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>371</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="anaconda的安装"><a href="#anaconda的安装" class="headerlink" title="anaconda的安装"></a>anaconda的安装</h1><blockquote>
-<p>安装的流程很简单，但是在启动Anaconda Navigator时要有点耐心，不要乱点，否则可能会无法显示。</p>
-</blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/58033789">https://www.zhihu.com/question/58033789</a></p>
-<h1 id="conda的基本命令"><a href="#conda的基本命令" class="headerlink" title="conda的基本命令"></a>conda的基本命令</h1><blockquote>
-<p>Conda是一个管理版本和Python环境的工具，有很多相关的命令。这部分内容也会在百宝盒里进行加入</p>
-</blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/chenxy_bwave/article/details/119996001">https://blog.csdn.net/chenxy_bwave&#x2F;article&#x2F;details&#x2F;119996001</a></p>
-<h1 id="Conda：误解与迷思"><a href="#Conda：误解与迷思" class="headerlink" title="Conda：误解与迷思"></a>Conda：误解与迷思</h1><blockquote>
-<p>这篇文章很有意思，对anaconda和conda的很多概念进行解释。不过可能是译文，读起来有些地方难以理解。但是绝对是一篇让人收获满满的文章。</p>
-</blockquote>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1035806">https://cloud.tencent.com/developer/article/1035806</a></p>
 
       
     </div>
@@ -2518,7 +2647,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2023</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -2529,13 +2658,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">337k</span>
+    <span title="站点总字数">341k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:13</span>
+    <span title="站点阅读时长">10:20</span>
   </span>
 </div>
 

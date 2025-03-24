@@ -29,7 +29,7 @@
 <meta property="og:description" content="记录生活与学习!">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="danggeOvO">
-<meta property="article:tag" content="安全,攻防,样本,漏洞,卫星互联网">
+<meta property="article:tag" content="安全,攻防,对抗样本,漏洞,卫星互联网">
 <meta name="twitter:card" content="summary">
 
 
@@ -154,7 +154,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -193,6 +193,265 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%EF%BC%88B%E7%AB%99%EF%BC%89.md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%EF%BC%88B%E7%AB%99%EF%BC%89.md/" class="post-title-link" itemprop="url">计算机基础——计算机组成原理（b栈视频版）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-15 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-15T13:48:32+08:00">2023-01-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:55:23" itemprop="dateModified" datetime="2023-11-08T17:55:23+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>写在最前面：本篇文章会分章节简要介绍一下计算机组成原理的相关知识，从计算机硬件依次进行介绍，并最终在xxxx中动手制作一台计算机。（以描线的方式）</p>
+</blockquote>
+<blockquote>
+<p>前情提要：需要先了解二进制与编码相关知识，对于逻辑运算和逻辑门等要知晓，对于算术逻辑单元ALU的组成和功能有所了解。</p>
+</blockquote>
+<h1 id="寄存器-内存"><a href="#寄存器-内存" class="headerlink" title="寄存器 &amp; 内存"></a>寄存器 &amp; 内存</h1><blockquote>
+<p>前面已经：学习了ALU，下面就要学习使用ALU制作CPU。但是在此之前，计算机还需要一些“记忆”，也就是内存。</p>
+</blockquote>
+<h2 id="锁存器"><a href="#锁存器" class="headerlink" title="锁存器"></a>锁存器</h2><blockquote>
+<p>一个基础的电路抽象，可以存储单bit数据，相当于<code>造房子的砖头</code>。下面会从最基础的单门电路进行介绍，而后进行组合、简化、封装得到需要的原件。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657875521928.png"></p>
+<p>上述OR电路可以<strong>永久存储1</strong>，无论输入怎么变都不会改变输出。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657875638393.png"></p>
+<p>上述AND电路可以<strong>永久记录0</strong>，无论输入怎么改变都不会改变输出。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657875756599.png"></p>
+<p>将<code>OR和AND结合起来</code>就可以设计出锁存器：<code>一个可以存储单bit的电路</code>。<br>其中：<strong>如果“设置”为1，“复位”为0，则输出为1</strong>；<strong>如果“复位”为1，则输出为0</strong>；<strong>如果二者都是0，则输出为最后放入的内容</strong>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657876259565.png"></p>
+<p>将输入线简化为一条，即可得到上图所示：“允许写入”为1，存储的值会<strong>以输入为准</strong>；“允许写入”为0,则<strong>输出为固定值</strong>，不会受到输入的影响。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657876419746.png"></p>
+<p>再次进行抽象：将复杂的逻辑电路封装为一个box，只<strong>关注其功能</strong>，而不关心其实现，即可得到一个<code>可以存储单bit数据的锁存器</code>。</p>
+<h2 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h2><blockquote>
+<p>一个只可以存储单bit数据的锁存器是没有用的，但是将多个锁存器组合就可以存储多bit数据，组合后的锁存器叫做寄存器。</p>
+</blockquote>
+<h4 id="位宽"><a href="#位宽" class="headerlink" title="位宽"></a>位宽</h4><p>寄存器可以存储多少数据取决于其由多少锁存器组合，我们将其叫做<code>位宽</code>。现如今我们使用的个人笔记本多为64位位宽，也就是说寄存器有64个锁存器组合获得。</p>
+<h4 id="组成原理"><a href="#组成原理" class="headerlink" title="组成原理"></a>组成原理</h4><blockquote>
+<p>下面我们将介绍一下寄存器的<strong>组成原理</strong>与<strong>优化方案</strong></p>
+</blockquote>
+<p>一个简单的<strong>8位寄存器</strong>的组成如下：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657876901521.png"></p>
+<p>如图所示，通过八个<strong>并列排放</strong>锁存器即可实现<strong>寄存器的功能</strong>：首先将所有的E置1用于数据存入，而后通过线连接D、Q端获取输入输出。</p>
+<p><strong>但是</strong>，只是存储一个8bits数据就要17根线（E口只需要一条线即可），如果要存储更多位数据就需要更多的线，这显然不符合我们设计预期。<br>当然，解决方法也很简单：<code>矩阵</code>！</p>
+<blockquote>
+<p>优化方案：矩阵</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657877395972.png"></p>
+<p>如图所示，锁存器不再并列排布，而是通过矩阵的方式进行。要启动某个寄存器就只需要打开对应的<strong>行线和列线</strong>即可。</p>
+<p>我们来细看其<strong>实现原理</strong>：<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657877547245.png"></p>
+<p>通过一个<strong>AND门</strong>实现启动功能，只有当<strong>行线和列线都为1</strong>时才<strong>启动此锁存器</strong>。<br>而后通过<strong>一条</strong>允许写入线连接所有锁存器，<strong>一根</strong>数据传入线来传输数据，<strong>一根</strong>数据传出先来获取数据。<br>通过矩阵处理后，原本存储256bits数据需要513条线，而现在只需要35根线（3+32）</p>
+<h4 id="多路复用器"><a href="#多路复用器" class="headerlink" title="多路复用器"></a>多路复用器</h4><blockquote>
+<p>将地址转换为行和列，已确定正确的存储地址。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657886583504.png"></p>
+<p>如上图所示，即为多路复用器。其作用就是把给定的地址转换为具体的坐标，以定位到确定的锁存器。</p>
+<p>此图看起来比较复杂，所以我们需要进一步抽象，得到更加直观的模型。抽象后的模型如下：</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657886811513.png"></p>
+<p>将256位内存看作一个整体，而后给出具体的判断条件即可。</p>
+<h2 id="内存（RAM：随时存取存储器）"><a href="#内存（RAM：随时存取存储器）" class="headerlink" title="内存（RAM：随时存取存储器）"></a>内存（RAM：随时存取存储器）</h2><blockquote>
+<p>上文讲到了256位的存储器，通过矩阵排列的锁存器得到。但是256位也太小了，为了扩大存储容量，就需要继续进行组合。下面我们具体进行介绍。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657887419036.png"></p>
+<p>将前面所抽象得到的256位存储器进行排列，并通过线将其连接即可构成一个新的存储空间。</p>
+<blockquote>
+<p>我们先来介绍一下使用的线：</p>
+</blockquote>
+<p>首先需要8位的<strong>地址线</strong>，用于定位到具体的锁存器；之后是<strong>允许写入线</strong>和<strong>允许读取线</strong>各1条，控制此存储器的读写性；最后是<strong>8条数据线</strong>，用于写入和读取数据。</p>
+<blockquote>
+<p>继续进行抽象</p>
+</blockquote>
+<p>由于上图过于复杂，虽然可以清晰的表示出数据的存储方式与位置，但是却不契合人类的思维方式，而人类更加适应的数据获取方式当然就是：<code>将内存地址从小到大标号，通过此标号来标明位置</code>。因此，一个整体的<strong>可寻址内存</strong>就出来了。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657887855297.png"></p>
+<p>如图所示，不再考虑内部实现方式，而是将其转换为了符合人类思维方式的表示方法。</p>
+<blockquote>
+<p>继续扩展</p>
+</blockquote>
+<p>现代计算机的内存已经扩展到了MB、GB的方式，但是其实现方式大同小异：<strong>不断把内存打包到更大规模而后使用一个直观的模型表示即可</strong>。</p>
+<p>当然，随着内存规模的不断扩大，需要的内存地址也要增加。原先的8位内存地址最多可以表达256个内存地址（<code>以字节为单位，因为前面8个并排的256存储器接收到的内存地址是一样的，所以内存地址的最大值就是矩阵中锁存器数目</code>）而要给更多的内存寻址，就需要更大的内存地址，现在比较通用的是32位和64位。</p>
+<blockquote>
+<p>补充知识：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/88202063#:~:text=RAM%E6%98%AF%20%E9%9A%8F%E6%9C%BA%E5%AD%98%E5%8F%96%E5%AD%98%E5%82%A8%E5%99%A8%20%EF%BC%88random%20access%20memory%EF%BC%89%EF%BC%8C%E6%98%AF%E8%AE%A1%E7%AE%97%E6%9C%BA,%E5%86%85%E9%83%A8%E5%AD%98%E5%82%A8%E5%99%A8%20%E4%B8%AD%E7%9A%84%E4%B8%80%E7%A7%8D%EF%BC%8C%E4%B9%9F%E6%98%AF%E5%85%B6%E4%B8%AD%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%EF%BC%8C%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%92%8C%E6%89%8B%E6%9C%BA%E4%B8%AD%E4%B8%80%E8%88%AC%E6%8A%8A%E5%85%B6%E5%8F%AB%E5%81%9A%20%EF%BC%88%E8%BF%90%E8%A1%8C%EF%BC%89%E5%86%85%E5%AD%98%20%EF%BC%8C%E5%AE%83%E7%9A%84%E9%80%9F%E5%BA%A6%E8%A6%81%E6%AF%94%E7%A1%AC%E7%9B%98%E5%BF%AB%E5%BE%97%E5%A4%9A%EF%BC%8C%E6%89%80%E4%BB%A5%E7%94%A8%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F%E5%9C%A8RAM%E4%B8%AD%EF%BC%8C%E8%80%8C%E5%AD%98%E6%94%BE%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%8D%E7%94%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E5%88%99%E5%9C%A8%E7%A1%AC%E7%9B%98%E4%B8%AD%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E9%9C%80%E8%A6%81%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%BE%BF%E6%8A%8A%E6%95%B0%E6%8D%AE%E4%BB%8E%E7%A1%AC%E7%9B%98%E4%B8%AD%E6%8B%BF%E5%88%B0%E5%86%85%E5%AD%98%EF%BC%8C%E4%BD%86%E5%90%8C%E6%97%B6RAM%E6%96%AD%E7%94%B5%E4%BC%9A%E4%B8%A2%E5%A4%B1%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E7%94%B5%E8%84%91%E5%A6%82%E6%9E%9C%E6%96%AD%E7%94%B5%E4%BA%86%E5%B0%B1%E4%BC%9A%E4%B8%A2%E5%A4%B1%E5%8E%9F%E6%9D%A5%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84%E6%95%B0%E6%8D%AE%E3%80%82.%20%E6%89%80%E4%BB%A5%EF%BC%8C%E6%89%8B%E6%9C%BA%E4%B8%AD%E7%9A%84RAM%E5%92%8C%E7%94%B5%E8%84%91%E4%B8%AD%E7%9A%84RAM%E7%9A%84%E6%A6%82%E5%BF%B5%E6%98%AF%E7%9B%B8%E5%90%8C%E7%9A%84%EF%BC%8CRAM%E5%8D%B3%E5%86%85%E5%AD%98%E8%B6%8A%E5%A4%A7%EF%BC%8C%E8%83%BD%E5%90%8C%E6%97%B6%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E6%89%A7%E8%A1%8C%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%B0%B1%E8%B6%8A%E5%A4%9A%EF%BC%8C%E6%80%A7%E8%83%BD%E4%B8%80%E8%88%AC%E6%98%AF%E8%B6%8A%E5%A5%BD%E7%9A%84%E3%80%82.">RAM和ROM的区别（转）</a></p>
+</blockquote>
+<blockquote>
+<p>我的思考：</p>
+</blockquote>
+<p>通过对计算机内存的学习，我越发感到其中的精妙与博大精深。<br>从最底层的门电路出发，构造可以存储单bit的电路，之后组成锁存器。<br>之后通过对多个锁存器的不同排列得到可以存储多bit的存储器。这其中利用矩阵的方式，借助多路复用器寻址。<br>构成的多bit单元又可以继续进行组合得到可以存储更多数据的存储器。</p>
+<p>如果单独查看每一个存储单元，会发生其结构很简单；难的是巧妙的抽象，由小及大、层层递进，每一层不需要关注底层的具体结构。<br>其实如果对计算机的基础知识进行学习，会发现这种分层思想无处不在，不仅仅是在这种硬件的排布封装上，操作系统的层次结构、计算机网络的层次结构等都有体现。</p>
+<hr>
+<h1 id="中央处理器"><a href="#中央处理器" class="headerlink" title="中央处理器"></a>中央处理器</h1><blockquote>
+<p>CPU：central precessing unit</p>
+<blockquote>
+<p>前面我们学习了ALU、寄存器、RAM，现在要把这些进行组合，得到：计算机的心脏——CPU.</p>
+</blockquote>
+</blockquote>
+<h2 id="CPU的功能"><a href="#CPU的功能" class="headerlink" title="CPU的功能"></a>CPU的功能</h2><p><code>执行程序</code>：指令和数据。<br>指令包括<strong>数据的运算</strong>、<strong>数据的读取</strong>等。</p>
+<p>其中指令由操作码和地址组成，前者告知要执行什么操作、后者告知操作的数据来自哪里（寄存器或者内存）</p>
+<h2 id="CPU的工作流程"><a href="#CPU的工作流程" class="headerlink" title="CPU的工作流程"></a>CPU的工作流程</h2><blockquote>
+<p> 下面我们以一个简单的程序为例来介绍一下CPU的工作流程。</p>
+<blockquote>
+<p>将以功能为主线进行介绍，而不是一根根线具体怎么练（具体的连线会在笔记中介绍）</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>先来看一下要是使用的指令</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657976429807.png" alt="enter description here"></p>
+<p>一个有4个基础指令，需要记住其操作码和功能。</p>
+<blockquote>
+<p>下面给出CPU的基本结构（简化版）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657976642520.png"></p>
+<p>大概分为3个部分：<strong>寄存器</strong>、<strong>控制单元</strong>和<strong>算术逻辑单元</strong></p>
+<ul>
+<li>寄存器：用于存储数据，这里以8位寄存器为例。</li>
+<li>控制单元：由指令寄存器和指令地址寄存器组成，其中指令寄存器存放当前指令，指令地址寄存器存储指令地址。</li>
+<li>算术逻辑单元：即ALU，用于运算和逻辑处理。</li>
+</ul>
+<blockquote>
+<p>接下来介绍一下cpu执行指令的三个阶段</p>
+</blockquote>
+<ol>
+<li><p><code>取指令阶段</code>：指令地址寄存器中存储指令地址，会根据此地址找到对应的内存位置并将此位置存储的数据放到指令寄存器里。</p>
+</li>
+<li><p><code>指令解码阶段</code>：由控制单元解析指令寄存器里的指令，解析的方法是通过电路实现的，具体见下图。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657977186524.png"><br>通过将前4位数据传入逻辑门电路而后根据结果即可判断其指令。</p>
+</li>
+<li><p><code>指令执行阶段</code>：根据解码的结果进行指令的具体实现即可。我们下面使用到的指令大概分为以下3个类型<br>1）<strong>RAM到寄存器</strong>：如LOAD_A&#x3D;0010,就是将对应内存地址中的数据存储到寄存器A中。<br>2）<strong>寄存器到RAM</strong>：如STORE_A&#x3D;0100，就是将A寄存器里的数据放到对应内存空间。<br>3）<strong>寄存器到寄存器</strong>：如ADD&#x3D;1000，就是将两个寄存器中的数据进行相加。</p>
+</li>
+</ol>
+<blockquote>
+<p>指令解析过程中的注意事项</p>
+</blockquote>
+<p>指令解析是由CPU通过配置的检测电路来进行的，具体实现是将指令前4位数据传入所有的检测电路，而后输出为1的电路即为检测结果。</p>
+<p><code>注：所谓解码并不是指让CPU知道这个指令的作用，而是会在解码电路之后通过线连接RAM和寄存器，通过控制这两个部分的允许写入和允许读取来进行具体功能的实现</code>。</p>
+<blockquote>
+<p>指令执行过程中的注意事项</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657977679993.png"></p>
+<p>上图给出了指令执行过程的流程图，注意你标黄的线。</p>
+<ol>
+<li><p>首先会根据指令的解析结果将<strong>RAM的允许读取</strong>打开，而后通过<strong>指令寄存器</strong>中存储的<strong>后4位数据</strong>找到对应内存位置。</p>
+</li>
+<li><p>检查电路启用寄存器A的“<strong>允许写入线</strong>”，然后RAM通过<strong>data线</strong>将数据传入寄存器（<code>所以的寄存器都会接收到，但是只有允许写入的才会修改内容</code>）</p>
+</li>
+<li><p>指令执行完毕后可以<strong>关掉所有的线路</strong>。</p>
+</li>
+</ol>
+<blockquote>
+<p>时钟信号</p>
+</blockquote>
+<p>上文我们介绍了cpu执行指令的流程，我们将每一个流程的实现看作一个周期，而cpu执行指令的快慢可以根据1秒钟的周期数来看。所以CPU引入一个时钟信号，控制单元会使用这个信号推动CPU内部操作。</p>
+<p>时钟信号的单位是赫兹，1赫兹表示1秒1个周期。</p>
+<h2 id="高级CPU的设计"><a href="#高级CPU的设计" class="headerlink" title="高级CPU的设计"></a>高级CPU的设计</h2><blockquote>
+<p>上文介绍了CPU的简单执行流程，其中涉及到了时钟信号，用于表示执行指令的快慢。随着技术的不断发展，时钟信号也在不断加快。下面我就介绍一下CPU为了实现高速、稳定运转而实现的高级设计吧。</p>
+</blockquote>
+<h4 id="指令数目的不断提升"><a href="#指令数目的不断提升" class="headerlink" title="指令数目的不断提升"></a>指令数目的不断提升</h4><p>我们前面介绍了4条基础指令，但是一个CPU中的指令不仅仅只有这4条。<br>第一个集成cpu就拥有46条指令，并且随着技术发展这个数目越来越多，到如今一个现代处理器往往有上千条指令。</p>
+<p>指令的增多虽然可以实现更多功能，但是也带来了很多问题，包括：<strong>时钟信号的不断加快</strong>、<strong>RAM读取数据的延迟</strong>等。</p>
+<h4 id="高速缓存"><a href="#高速缓存" class="headerlink" title="高速缓存"></a>高速缓存</h4><p>前面我们讲过，cpu通过总线与RAM进行交互以读取学习，但是即便是总线很短、信号传输很快，在每秒数10亿的指令面前很小的延迟也会带来大问题。</p>
+<p>解决延迟的一个方法就是给CPU加一点RAM——<code>缓存</code>。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657980349357.png"></p>
+<p>缓存不会很大，往往是以KB、MB为单位，而RAM都是GB为单位。</p>
+<p><code>缓存的作用</code>就是在cpu从RAM取数据时不会只拿一个，而是<strong>拿一批</strong>。因为数据常常是顺序处理，所以缓存的机制可以提高cpu的执行效率，因为缓存与CPU很近，一个时钟周期就可以给数据。同时在存储数据时也不会直接存储到RAM，而是先<strong>存储在缓存里</strong>。</p>
+<p>缓存中每一个存储空间会有一个标记：<code>脏位</code>，用于<strong>标记此空间内容是否被修改</strong>。当缓存满时要清空缓存，此时会先检查脏位，将有改动的数据线<strong>同步到RAM</strong>后再进行清除。</p>
+<h4 id="指令流水线"><a href="#指令流水线" class="headerlink" title="指令流水线"></a>指令流水线</h4><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657980765656.png"></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1657980936161.png"></p>
+<p>观察上述图片，比较其不同之处：指令的并行操作。在cpu执行指令时进行下一条指令的解码和下下条指令的读取。</p>
+<blockquote>
+<p>写在最后：本次计算机组成原理部分到此结束。主要对CPU和RAM进行了介绍，更多涉及到底层实现和功能流程，还有很多内容内容没有介绍。在笔记中会以连线的方式从另一个角度介绍计算机组成原理。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -415,6 +674,319 @@
 <p>（4）根据根服务器返回的结果，本地服务器向对应的顶级服务器发起请求；</p>
 <p>（5）根据顶级服务器返回结果，本地服务器向权威服务器发起请求；</p>
 <p>（6）本地服务器将解析记录告知主机，并保存在本地缓存，以供下次使用。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="danggeOvO">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dangge の 小小世界">
+      <meta itemprop="description" content="记录生活与学习!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dangge の 小小世界">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">从零开始的计网学习-链路层习题整理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-10T13:48:32+08:00">2023-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-08 17:56:10" itemprop="dateModified" datetime="2023-11-08T17:56:10+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p><strong>写在最前面</strong>：本篇文章是计算机网络中数据链路层的习题汇总，会给出问题和答案，但是在看答案之前建议先自己思考一下你的回答，再与答案对比。<br><strong>习题参考</strong>：<a target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1413289786211373056?utm_source=qq&utm_medium=social&utm_oi=1268627816133816320">https://www.zhihu.com/column/c_1413289786211373056?utm_source=qq&amp;utm_medium=social&amp;utm_oi=1268627816133816320</a><br><strong>说明</strong>：会在原习题的基础上加上自己的理解，同时会将原本的题目进行分类，便于学习理解。</p>
+</blockquote>
+<ul>
+<li><a href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E7%AD%94%E6%95%B4%E7%90%86">一些必须要懂的常见问题与解答整理</a></li>
+<li><a href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E9%87%8D%E9%9A%BE%E7%82%B9%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86">一些必须要懂的重难点课后习题整理</a><ul>
+<li><a href="#%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3%E9%A2%98">概念理解题</a></li>
+<li><a href="#%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86%E9%A2%98">协议原理题</a></li>
+<li><a href="#%E7%BB%84%E5%B8%A7%E7%B1%BB%E5%9E%8B%E9%A2%98">组帧类型题</a></li>
+<li><a href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E9%A2%98">差错检测题</a></li>
+<li><a href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E9%A2%98">流量控制题</a></li>
+<li><a href="#%E5%AA%92%E4%BB%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6">媒介访问控制</a></li>
+<li><a href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E9%A2%98%E7%9B%AE">局域网题目</a></li>
+<li><a href="#%E7%89%A9%E7%90%86%E8%AE%BE%E5%A4%87%E9%A2%98">物理设备题</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="一些必须要懂的常见问题与解答整理"><a href="#一些必须要懂的常见问题与解答整理" class="headerlink" title="一些必须要懂的常见问题与解答整理"></a>一些必须要懂的常见问题与解答整理</h1><blockquote>
+<p><strong>问题一</strong>：旧版的《计算机网络》认为数据链路层的任务是<strong>在两个相邻结点间的线路上无差错地传送以帧(frame)为单位的数据</strong>。数据链路层可以把一条有可能出差错的实际链路转变成为<strong>让网络层向下看起来好像是一条不出差错的链路</strong>。但最近新版的《计算机网络》中对数据链路层的提法就改变了。数据链路层的传输不能让网络层向下看起来好像是一条不出差错的链路。到底哪一种说法是正确的？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673233903417.png"></p>
+<p><strong>我的理解</strong>：二者并没有谁对谁错，只是针对的对象不同。不过我们当然要与时俱进，最好是两者都知道，并可以解释其中差别。</p>
+<blockquote>
+<p><strong>问题二</strong>：当数据链路层是用<strong>PPP协议或CSMA&#x2F;CD协议</strong>时，既然不保证可靠传输，那么<strong>为什么对所传输的帧进行差错检测呢</strong>？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234122096.png"></p>
+<p><strong>我的理解</strong>：PPP协议或者CSMA&#x2F;CD只是<strong>不实现重发机制</strong>，基础的差错检测功能还是有的。</p>
+<blockquote>
+<p><strong>问题三</strong>：为什么旧版本的教材在数据链路层一章中讲授可靠传输，但现在<strong>新版本教材则取消了可靠传输？</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234290730.png"></p>
+<p><strong>我的理解</strong>：只是为了适应现实，将其放到真实使用的层次。</p>
+<blockquote>
+<p><strong>问题四</strong>：除了差错检测外，面向字符的数据链路层协议还必须解决哪些特殊的问题？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234430056.png"><br><strong>我的理解</strong>：差错检测是判断数据帧是否出错。而数据链路层协议还具备解决<strong>帧界定和透明传输</strong>的功能，其中帧界定有很多方法要记住，而透明传输是在帧界定的基础上提出的要求。</p>
+<blockquote>
+<p><strong>问题五</strong>：为什么计算机进行通信时<strong>发送缓存和接收缓存</strong>总是需要的？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234490219.png"></p>
+<p><strong>我的理解</strong>：缓冲区的目的就是为了实现发送和接收的同步，协调二者的时间，提高信道利用率。</p>
+<blockquote>
+<p><strong>问题六</strong>：在以太网中发生了碰撞是否说明这时出现了某种故障？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234633178.png"></p>
+<p><strong>我的理解</strong>：碰撞是一个很常见的现象，不可以作为故障的决定标准。</p>
+<blockquote>
+<p><strong>问题七</strong>：是什么原因使以太网有一个<strong>最小帧长和最大帧长</strong>？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234732661.png"></p>
+<p><strong>我的理解</strong>：在前面学习数据链路层的相关知识时有过MTU的扩展，那里从<strong>差错检测的角度</strong>给出了最小帧长和最大帧长的原因；这里则是从<strong>介质访问控制的角度</strong>给出，即<strong>过短会导致无法进行冲突检测，同时可以借此去除无效帧，过长则是为了保证接入的公平性，防止长时间等待</strong>。</p>
+<blockquote>
+<p><strong>问题八</strong>：以太网的覆盖范围受限的一个原因是：如果站点之间的距离太大，那么由于<strong>信号传输时会衰减得很多</strong>因而无法对信号进行可靠的接收。试问：如果我们设法提高发送信号的功率，那么是否就可以增大以太网的通信距离？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235024434.png"></p>
+<p><strong>我的理解</strong>：<strong>决定因素是信噪比</strong>，功率提升噪声也会提升，信噪比不会显著增大。</p>
+<blockquote>
+<p><strong>问题九</strong>：一个大学能否就使用一个很大的局域网，而不使用许多相互连接的较小的局域网？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235136843.png"></p>
+<blockquote>
+<p><strong>问题十</strong>：一个10Mbit&#x2F;s以太网若工作在<strong>全双工状态</strong>，那么其数据率是发送和接收各为5Mbit&#x2F;s还是发送和接收各为10Mbit&#x2F;s。</p>
+</blockquote>
+<p><strong>答案</strong>：二者都是10Mbps</p>
+<blockquote>
+<p><strong>问题十一</strong>：在以太网中，有没有可能在发送了512bit(64B)以后才发生碰撞？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235251420.png"></p>
+<blockquote>
+<p><strong>问题十二</strong>：当局域网刚刚问世时，<strong>总线型的以太网被认为可靠性比星型结构的网络好</strong>。但现在以太网又回到了星型结构，使用集线器作为交换结点。那么以前的看法是否有些不正确？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235387231.png"></p>
+<p><strong>扩展：星形结构</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235491017.png"></p>
+<p><a target="_blank" rel="noopener" href="https://product.pconline.com.cn/itbk/life/electronic/1802/10848376.html">星型网络结构有哪些特点 星型网络结构优缺点介绍</a></p>
+<h1 id="一些必须要懂的重难点课后习题整理"><a href="#一些必须要懂的重难点课后习题整理" class="headerlink" title="一些必须要懂的重难点课后习题整理"></a>一些必须要懂的重难点课后习题整理</h1><h2 id="概念理解题"><a href="#概念理解题" class="headerlink" title="概念理解题"></a>概念理解题</h2><blockquote>
+<p><strong>数据链路</strong>（即逻辑链路）与<strong>链路</strong>（即物理链路）有何区别？“<strong>电路接通了</strong>”与“<strong>数据链路接通了</strong>”的区别何在？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235683338.png"><br><strong>我的理解</strong>：物理链路是实际的，是一段传输介质；数据链路是虚拟的，是协议的集合。</p>
+<blockquote>
+<p>数据链路层中的<strong>链路控制包括哪些功能</strong>？试讨论<strong>把数据链路层做成可靠的链路层有哪些优点和缺点？</strong></p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235956949.png"></p>
+<p><strong>我的理解</strong>：上题的答案更加趋向于<strong>MAC子层的功能</strong>。而数据链路层还包含<strong>介质访问控制、流量控制</strong>的功能。同时上文已经说过，现在的数据链路层是不提供可靠性服务的（PPP协议和CSMA&#x2F;CD协议）</p>
+<blockquote>
+<p>数据链路层的<strong>三个基本问题</strong>（封装成帧、透明传输和差错检测）为什么都必须加以解决？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236323837.png"></p>
+<h2 id="协议原理题"><a href="#协议原理题" class="headerlink" title="协议原理题"></a>协议原理题</h2><blockquote>
+<p>PPP协议的主要特点是什么？为什么PPP不使用帧的编号？PPP适用于什么情况？为什么PPP协议不能使数据链路层实现可靠传输？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236408703.png"></p>
+<blockquote>
+<p><strong>PPP协议</strong>的工作状态有哪几种？当用户要使用PPP协议和ISP建立连接进行通信时，需要建立哪几种连接？每一种连接解决什么问题？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237657349.png"></p>
+<h2 id="组帧类型题"><a href="#组帧类型题" class="headerlink" title="组帧类型题"></a>组帧类型题</h2><blockquote>
+<p>一个PPP帧的数据部分（用十六进制写出）是 7D 5E FE 27 7D 5D 7D 5D 65 7D 5E。试问真正的数据是什么（用十六进制写出）？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237444155.png"><br><strong>注意</strong>：这个应该是的字节填充法，要换掉转义字符。</p>
+<blockquote>
+<p>PPP协议使用同步传输技术传送比特串0110111111111100。试问经过零比特填充后变成怎样的比特串？若接收端收到的PPP帧的数据部分是0001110111110111110110，问删除发送端加入的零比特后变成怎样的比特串？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237567724.png"><br><strong>注意</strong>：这个是<strong>零比特填充法</strong></p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251861163.png"></p>
+<h2 id="差错检测题"><a href="#差错检测题" class="headerlink" title="差错检测题"></a>差错检测题</h2><p>这一类题多为对差错检测方法的考察，其中CRC校验比较重点。</p>
+<blockquote>
+<p>要发送的数据为1101011011.采用CRC的生成多项式P(X) &#x3D; X^4 + X + 1。试求应添加在数据后面的余数。</p>
+<blockquote>
+<p>数据在传输过程中最后一个1变成了0，问接收端能否发现？<br>若数据在传输过程中最后两个1都变成了0，问接收端能否发现？<br>采用CRC检验后，数据链路层的传输是否就变成了可靠的传输</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237018089.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237070875.png" alt="enter description here"></p>
+<p><strong>注意</strong>：二项式除法要会，同时记得先添0在用余数代替。</p>
+<blockquote>
+<p>要发送的数据为101110。采用CRC的生成多项式是P(X) &#x3D; X^3 + 1。试求应添加在数据后面的余数。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237367332.png"></p>
+<h2 id="流量控制题"><a href="#流量控制题" class="headerlink" title="流量控制题"></a>流量控制题</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251986562.png"></p>
+<p><strong>注</strong>：如果没有说明确认帧大小则不要去计算时间。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251943408.png"></p>
+<p><strong>提醒</strong>：一定要注意单位的换算。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251956969.png"><br><strong>注</strong>：对于回退N帧协议其窗口大小为2^n-1，选择重传协议窗口大小为2^(n-1)。</p>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251970406.png"></p>
+<h2 id="媒介访问控制"><a href="#媒介访问控制" class="headerlink" title="媒介访问控制"></a>媒介访问控制</h2><blockquote>
+<p>以太网使用的<strong>CSMA&#x2F;CD协议</strong>是以争用方式接入到共享信道的。这与传统的时分复用TDM相比优缺点如何？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250206034.png"><br><strong>我的理解</strong>：网络协议没有好坏之分，只有适用范围之分。</p>
+<blockquote>
+<p>什么叫比特时间？使用这种时间单位有什么好处？100比特时间是多少微秒？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250457127.png"></p>
+<p><strong>注意</strong>：引入了<code>比特时间</code>的概念，后面题目会用到。</p>
+<blockquote>
+<p>假定1km长的CSMA&#x2F;CD网络的数据率为1Gbit&#x2F;s。设信号在网络上的传播速率为200000km&#x2F;s。求能够使用此协议的最短帧长。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250318917.png"></p>
+<p><strong>注意</strong>：计算时需要使用2倍的传播时延。</p>
+<blockquote>
+<p>假定在使用<strong>CSDA&#x2F;CD协议</strong>的10Mbit&#x2F;s以太网中，某个站在发送数据时检测到碰撞，执行退避算法时选择了<strong>随机数r&#x3D;100</strong>。试问这个站需要等待多长时间后才能再次发送数据？如果是100Mbit&#x2F;s的以太网呢？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250427747.png"><br><strong>注意</strong>：退避时间 &#x3D; 争用时间*r；同时比特时间与实际时间的换算要会，就是加一个单位。</p>
+<blockquote>
+<p>假定<strong>站点A和B</strong>在同一个<strong>10Mbit&#x2F;s</strong>以太网网段上。这两个站点之间的<strong>传播时延为225比特时间</strong>。现假定A开始发送一帧，并且在A发送结束之前B也发送一帧。如果A发送的是以太网所容许的最短的帧，那么A在检测到和B发生碰撞之前能否把自己的数据发送完毕？换言之，如果A在发送完毕之前并没有检测到碰撞，那么能否肯定A所发送的帧不会和B发送的帧发生碰撞？（提示：在计算时应当考虑到每一个以太网帧在发送信道上时，在MAC帧前面还要增加若干字节的前同步码和帧定界符。）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251056773.png"></p>
+<blockquote>
+<p>在上题中的站点A和B在<strong>t&#x3D;0时同时发送了数据帧</strong>。当t&#x3D;225比特时间，A和B同时检测到发生了碰撞，并且在t &#x3D; 225 + 48 &#x3D; 273 比特时间完成了干扰信号的传输。A 和 B在CSMA&#x2F;CD算法中<strong>选择不同的r值退避</strong>。假定A和B选择的随机数分别是 rA &#x3D; 0 和 rB&#x3D;1。试问A和B各在什么时间开始重传其数据帧？A重传的数据帧在什么时间到达B？A重传的数据会不会和B重传的数据再次发生碰撞？B会不会在预定的重传时间停止发送数据？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251260098.png"></p>
+<p><strong>注意</strong>：关于碰撞问题需要学会画图分析过程。</p>
+<h2 id="局域网题目"><a href="#局域网题目" class="headerlink" title="局域网题目"></a>局域网题目</h2><blockquote>
+<p><strong>局域网</strong>的主要特点是什么？为什么局域网采用广播通信方式而广域网不采用呢？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673241624781.png"></p>
+<blockquote>
+<p>常用的局域网的<strong>网络拓扑</strong>有哪些种类？现在<strong>最流行的</strong>是哪种结构？为什么早期的以太网选择总线拓扑结构而不使用星型拓扑结构，但现在却改为使用星型拓扑结构？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249303302.png"></p>
+<blockquote>
+<p>什么叫做传统以太网？以太网有哪两个主要标准？</p>
+</blockquote>
+<p><strong>答</strong>：传统以太网就是最早流行的<strong>10Mbit&#x2F;s速率</strong>的以太网。</p>
+<p>以太网有两个标准，即<code>DIX Ethernet V2</code>标准 和 <code>IEEE 802.3</code> 标准</p>
+<blockquote>
+<p>数据率为 10Mbit&#x2F;s 的以太网在物理媒体上的<strong>码元传输速率</strong>是多少码元&#x2F;秒？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249373111.png"></p>
+<blockquote>
+<p>为什么LLC子层的标准已制定出来了但现在却很少使用？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250089281.png"></p>
+<blockquote>
+<p>有10个站连接到以太网上。试计算以下三种情况下每一个站所能得到的带宽。</p>
+<blockquote>
+<p>1）10个站都连接到一个10Mbit&#x2F;s以太网集线器。<br>2）10个站都连接到一个100Mbit&#x2F;s以太网集线器。<br>3）10个站都连接到一个10Mbit&#x2F;s以太网交换机。</p>
+</blockquote>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250842288.png"></p>
+<p><strong>注意</strong>：判断问的是每一个站所能得到的带宽 还是 总带宽</p>
+<blockquote>
+<p>以太网交换机有何特点？用它怎样组成虚拟局域网？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250900007.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250915692.png"></p>
+<p><strong>注意</strong>：以太网交换机和集线器的区别要搞懂，特别是在带宽计算上。</p>
+<h2 id="物理设备题"><a href="#物理设备题" class="headerlink" title="物理设备题"></a>物理设备题</h2><blockquote>
+<p><strong>网络适配器</strong>的作用是什么？网络适配器工作在哪一层？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236179572.png"><br><strong>我的理解</strong>：适配器就是网卡，其作用的发送时进行帧的封装、接收时进行差错检测与帧的交付。</p>
+<blockquote>
+<p>在图T-3-33中，以太网交换机有6个接口，分别接到5台主机和一个路由器。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251394312.png"></p>
+<p><strong>注意</strong>：填补交换表时，只需要看写入的即可。</p>
+<blockquote>
+<p>图T-3-36表示有五个站分别连接在三个局域网上，并且用网桥B1和B2连接起来。每一个网桥都有两个接口（1和2）。在一开始，两个网桥中的转发表都是空的。以后有以下各站向其他的站按先后顺序发送了数据帧：A发送给E，C发送给B，D发送给C，B发送给A。试把有关数据填写在表T-3-36-a中。</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251746973.png"></p>
+<blockquote>
+<p>假定一个以太网上的通信量中的80%是在本局域网上进行的，而其余的20%的通信量是在本局域网和互联网之间进行的。另一个以太网的情况则反过来。这两个以太网<strong>一个使用以太网集线器</strong>，而<strong>另一个使用以太网交换机</strong>。你认为以太网交换机应当用在哪一个网络上？（本题的目的是要学生能够清楚地知道以太网集线器和以太网交换机的区别。本题并没有一个标准答案。）</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251501185.png"></p>
+<blockquote>
+<p><strong>网桥的工作原理和特点是什么</strong>？<strong>网桥与转发器以及以太网交换机有何异同</strong>？</p>
+</blockquote>
+<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251640376.png"><br><strong>注意</strong>：区分网桥和集线器、交换机，各自应用层次。</p>
+<hr>
+<blockquote>
+<p><strong>写在最后</strong>：本层的知识点比较多，所以涉及的题目类型也很多，要分门别类去练习，同时与理论知识结合。</p>
+</blockquote>
 
       
     </div>
@@ -1082,319 +1654,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="danggeOvO">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dangge の 小小世界">
-      <meta itemprop="description" content="记录生活与学习!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dangge の 小小世界">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/10/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">从零开始的计网学习-链路层习题整理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-01-10 13:48:32" itemprop="dateCreated datePublished" datetime="2023-01-10T13:48:32+08:00">2023-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 17:56:10" itemprop="dateModified" datetime="2023-11-08T17:56:10+08:00">2023-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p><strong>写在最前面</strong>：本篇文章是计算机网络中数据链路层的习题汇总，会给出问题和答案，但是在看答案之前建议先自己思考一下你的回答，再与答案对比。<br><strong>习题参考</strong>：<a target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1413289786211373056?utm_source=qq&utm_medium=social&utm_oi=1268627816133816320">https://www.zhihu.com/column/c_1413289786211373056?utm_source=qq&amp;utm_medium=social&amp;utm_oi=1268627816133816320</a><br><strong>说明</strong>：会在原习题的基础上加上自己的理解，同时会将原本的题目进行分类，便于学习理解。</p>
-</blockquote>
-<ul>
-<li><a href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E7%AD%94%E6%95%B4%E7%90%86">一些必须要懂的常见问题与解答整理</a></li>
-<li><a href="#%E4%B8%80%E4%BA%9B%E5%BF%85%E9%A1%BB%E8%A6%81%E6%87%82%E7%9A%84%E9%87%8D%E9%9A%BE%E7%82%B9%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98%E6%95%B4%E7%90%86">一些必须要懂的重难点课后习题整理</a><ul>
-<li><a href="#%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3%E9%A2%98">概念理解题</a></li>
-<li><a href="#%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86%E9%A2%98">协议原理题</a></li>
-<li><a href="#%E7%BB%84%E5%B8%A7%E7%B1%BB%E5%9E%8B%E9%A2%98">组帧类型题</a></li>
-<li><a href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E9%A2%98">差错检测题</a></li>
-<li><a href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E9%A2%98">流量控制题</a></li>
-<li><a href="#%E5%AA%92%E4%BB%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6">媒介访问控制</a></li>
-<li><a href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E9%A2%98%E7%9B%AE">局域网题目</a></li>
-<li><a href="#%E7%89%A9%E7%90%86%E8%AE%BE%E5%A4%87%E9%A2%98">物理设备题</a></li>
-</ul>
-</li>
-</ul>
-<h1 id="一些必须要懂的常见问题与解答整理"><a href="#一些必须要懂的常见问题与解答整理" class="headerlink" title="一些必须要懂的常见问题与解答整理"></a>一些必须要懂的常见问题与解答整理</h1><blockquote>
-<p><strong>问题一</strong>：旧版的《计算机网络》认为数据链路层的任务是<strong>在两个相邻结点间的线路上无差错地传送以帧(frame)为单位的数据</strong>。数据链路层可以把一条有可能出差错的实际链路转变成为<strong>让网络层向下看起来好像是一条不出差错的链路</strong>。但最近新版的《计算机网络》中对数据链路层的提法就改变了。数据链路层的传输不能让网络层向下看起来好像是一条不出差错的链路。到底哪一种说法是正确的？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673233903417.png"></p>
-<p><strong>我的理解</strong>：二者并没有谁对谁错，只是针对的对象不同。不过我们当然要与时俱进，最好是两者都知道，并可以解释其中差别。</p>
-<blockquote>
-<p><strong>问题二</strong>：当数据链路层是用<strong>PPP协议或CSMA&#x2F;CD协议</strong>时，既然不保证可靠传输，那么<strong>为什么对所传输的帧进行差错检测呢</strong>？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234122096.png"></p>
-<p><strong>我的理解</strong>：PPP协议或者CSMA&#x2F;CD只是<strong>不实现重发机制</strong>，基础的差错检测功能还是有的。</p>
-<blockquote>
-<p><strong>问题三</strong>：为什么旧版本的教材在数据链路层一章中讲授可靠传输，但现在<strong>新版本教材则取消了可靠传输？</strong></p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234290730.png"></p>
-<p><strong>我的理解</strong>：只是为了适应现实，将其放到真实使用的层次。</p>
-<blockquote>
-<p><strong>问题四</strong>：除了差错检测外，面向字符的数据链路层协议还必须解决哪些特殊的问题？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234430056.png"><br><strong>我的理解</strong>：差错检测是判断数据帧是否出错。而数据链路层协议还具备解决<strong>帧界定和透明传输</strong>的功能，其中帧界定有很多方法要记住，而透明传输是在帧界定的基础上提出的要求。</p>
-<blockquote>
-<p><strong>问题五</strong>：为什么计算机进行通信时<strong>发送缓存和接收缓存</strong>总是需要的？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234490219.png"></p>
-<p><strong>我的理解</strong>：缓冲区的目的就是为了实现发送和接收的同步，协调二者的时间，提高信道利用率。</p>
-<blockquote>
-<p><strong>问题六</strong>：在以太网中发生了碰撞是否说明这时出现了某种故障？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234633178.png"></p>
-<p><strong>我的理解</strong>：碰撞是一个很常见的现象，不可以作为故障的决定标准。</p>
-<blockquote>
-<p><strong>问题七</strong>：是什么原因使以太网有一个<strong>最小帧长和最大帧长</strong>？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673234732661.png"></p>
-<p><strong>我的理解</strong>：在前面学习数据链路层的相关知识时有过MTU的扩展，那里从<strong>差错检测的角度</strong>给出了最小帧长和最大帧长的原因；这里则是从<strong>介质访问控制的角度</strong>给出，即<strong>过短会导致无法进行冲突检测，同时可以借此去除无效帧，过长则是为了保证接入的公平性，防止长时间等待</strong>。</p>
-<blockquote>
-<p><strong>问题八</strong>：以太网的覆盖范围受限的一个原因是：如果站点之间的距离太大，那么由于<strong>信号传输时会衰减得很多</strong>因而无法对信号进行可靠的接收。试问：如果我们设法提高发送信号的功率，那么是否就可以增大以太网的通信距离？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235024434.png"></p>
-<p><strong>我的理解</strong>：<strong>决定因素是信噪比</strong>，功率提升噪声也会提升，信噪比不会显著增大。</p>
-<blockquote>
-<p><strong>问题九</strong>：一个大学能否就使用一个很大的局域网，而不使用许多相互连接的较小的局域网？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235136843.png"></p>
-<blockquote>
-<p><strong>问题十</strong>：一个10Mbit&#x2F;s以太网若工作在<strong>全双工状态</strong>，那么其数据率是发送和接收各为5Mbit&#x2F;s还是发送和接收各为10Mbit&#x2F;s。</p>
-</blockquote>
-<p><strong>答案</strong>：二者都是10Mbps</p>
-<blockquote>
-<p><strong>问题十一</strong>：在以太网中，有没有可能在发送了512bit(64B)以后才发生碰撞？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235251420.png"></p>
-<blockquote>
-<p><strong>问题十二</strong>：当局域网刚刚问世时，<strong>总线型的以太网被认为可靠性比星型结构的网络好</strong>。但现在以太网又回到了星型结构，使用集线器作为交换结点。那么以前的看法是否有些不正确？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235387231.png"></p>
-<p><strong>扩展：星形结构</strong></p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235491017.png"></p>
-<p><a target="_blank" rel="noopener" href="https://product.pconline.com.cn/itbk/life/electronic/1802/10848376.html">星型网络结构有哪些特点 星型网络结构优缺点介绍</a></p>
-<h1 id="一些必须要懂的重难点课后习题整理"><a href="#一些必须要懂的重难点课后习题整理" class="headerlink" title="一些必须要懂的重难点课后习题整理"></a>一些必须要懂的重难点课后习题整理</h1><h2 id="概念理解题"><a href="#概念理解题" class="headerlink" title="概念理解题"></a>概念理解题</h2><blockquote>
-<p><strong>数据链路</strong>（即逻辑链路）与<strong>链路</strong>（即物理链路）有何区别？“<strong>电路接通了</strong>”与“<strong>数据链路接通了</strong>”的区别何在？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235683338.png"><br><strong>我的理解</strong>：物理链路是实际的，是一段传输介质；数据链路是虚拟的，是协议的集合。</p>
-<blockquote>
-<p>数据链路层中的<strong>链路控制包括哪些功能</strong>？试讨论<strong>把数据链路层做成可靠的链路层有哪些优点和缺点？</strong></p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673235956949.png"></p>
-<p><strong>我的理解</strong>：上题的答案更加趋向于<strong>MAC子层的功能</strong>。而数据链路层还包含<strong>介质访问控制、流量控制</strong>的功能。同时上文已经说过，现在的数据链路层是不提供可靠性服务的（PPP协议和CSMA&#x2F;CD协议）</p>
-<blockquote>
-<p>数据链路层的<strong>三个基本问题</strong>（封装成帧、透明传输和差错检测）为什么都必须加以解决？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236323837.png"></p>
-<h2 id="协议原理题"><a href="#协议原理题" class="headerlink" title="协议原理题"></a>协议原理题</h2><blockquote>
-<p>PPP协议的主要特点是什么？为什么PPP不使用帧的编号？PPP适用于什么情况？为什么PPP协议不能使数据链路层实现可靠传输？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236408703.png"></p>
-<blockquote>
-<p><strong>PPP协议</strong>的工作状态有哪几种？当用户要使用PPP协议和ISP建立连接进行通信时，需要建立哪几种连接？每一种连接解决什么问题？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237657349.png"></p>
-<h2 id="组帧类型题"><a href="#组帧类型题" class="headerlink" title="组帧类型题"></a>组帧类型题</h2><blockquote>
-<p>一个PPP帧的数据部分（用十六进制写出）是 7D 5E FE 27 7D 5D 7D 5D 65 7D 5E。试问真正的数据是什么（用十六进制写出）？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237444155.png"><br><strong>注意</strong>：这个应该是的字节填充法，要换掉转义字符。</p>
-<blockquote>
-<p>PPP协议使用同步传输技术传送比特串0110111111111100。试问经过零比特填充后变成怎样的比特串？若接收端收到的PPP帧的数据部分是0001110111110111110110，问删除发送端加入的零比特后变成怎样的比特串？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237567724.png"><br><strong>注意</strong>：这个是<strong>零比特填充法</strong></p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251861163.png"></p>
-<h2 id="差错检测题"><a href="#差错检测题" class="headerlink" title="差错检测题"></a>差错检测题</h2><p>这一类题多为对差错检测方法的考察，其中CRC校验比较重点。</p>
-<blockquote>
-<p>要发送的数据为1101011011.采用CRC的生成多项式P(X) &#x3D; X^4 + X + 1。试求应添加在数据后面的余数。</p>
-<blockquote>
-<p>数据在传输过程中最后一个1变成了0，问接收端能否发现？<br>若数据在传输过程中最后两个1都变成了0，问接收端能否发现？<br>采用CRC检验后，数据链路层的传输是否就变成了可靠的传输</p>
-</blockquote>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237018089.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237070875.png" alt="enter description here"></p>
-<p><strong>注意</strong>：二项式除法要会，同时记得先添0在用余数代替。</p>
-<blockquote>
-<p>要发送的数据为101110。采用CRC的生成多项式是P(X) &#x3D; X^3 + 1。试求应添加在数据后面的余数。</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673237367332.png"></p>
-<h2 id="流量控制题"><a href="#流量控制题" class="headerlink" title="流量控制题"></a>流量控制题</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251986562.png"></p>
-<p><strong>注</strong>：如果没有说明确认帧大小则不要去计算时间。</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251943408.png"></p>
-<p><strong>提醒</strong>：一定要注意单位的换算。</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251956969.png"><br><strong>注</strong>：对于回退N帧协议其窗口大小为2^n-1，选择重传协议窗口大小为2^(n-1)。</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251970406.png"></p>
-<h2 id="媒介访问控制"><a href="#媒介访问控制" class="headerlink" title="媒介访问控制"></a>媒介访问控制</h2><blockquote>
-<p>以太网使用的<strong>CSMA&#x2F;CD协议</strong>是以争用方式接入到共享信道的。这与传统的时分复用TDM相比优缺点如何？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250206034.png"><br><strong>我的理解</strong>：网络协议没有好坏之分，只有适用范围之分。</p>
-<blockquote>
-<p>什么叫比特时间？使用这种时间单位有什么好处？100比特时间是多少微秒？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250457127.png"></p>
-<p><strong>注意</strong>：引入了<code>比特时间</code>的概念，后面题目会用到。</p>
-<blockquote>
-<p>假定1km长的CSMA&#x2F;CD网络的数据率为1Gbit&#x2F;s。设信号在网络上的传播速率为200000km&#x2F;s。求能够使用此协议的最短帧长。</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250318917.png"></p>
-<p><strong>注意</strong>：计算时需要使用2倍的传播时延。</p>
-<blockquote>
-<p>假定在使用<strong>CSDA&#x2F;CD协议</strong>的10Mbit&#x2F;s以太网中，某个站在发送数据时检测到碰撞，执行退避算法时选择了<strong>随机数r&#x3D;100</strong>。试问这个站需要等待多长时间后才能再次发送数据？如果是100Mbit&#x2F;s的以太网呢？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250427747.png"><br><strong>注意</strong>：退避时间 &#x3D; 争用时间*r；同时比特时间与实际时间的换算要会，就是加一个单位。</p>
-<blockquote>
-<p>假定<strong>站点A和B</strong>在同一个<strong>10Mbit&#x2F;s</strong>以太网网段上。这两个站点之间的<strong>传播时延为225比特时间</strong>。现假定A开始发送一帧，并且在A发送结束之前B也发送一帧。如果A发送的是以太网所容许的最短的帧，那么A在检测到和B发生碰撞之前能否把自己的数据发送完毕？换言之，如果A在发送完毕之前并没有检测到碰撞，那么能否肯定A所发送的帧不会和B发送的帧发生碰撞？（提示：在计算时应当考虑到每一个以太网帧在发送信道上时，在MAC帧前面还要增加若干字节的前同步码和帧定界符。）</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251056773.png"></p>
-<blockquote>
-<p>在上题中的站点A和B在<strong>t&#x3D;0时同时发送了数据帧</strong>。当t&#x3D;225比特时间，A和B同时检测到发生了碰撞，并且在t &#x3D; 225 + 48 &#x3D; 273 比特时间完成了干扰信号的传输。A 和 B在CSMA&#x2F;CD算法中<strong>选择不同的r值退避</strong>。假定A和B选择的随机数分别是 rA &#x3D; 0 和 rB&#x3D;1。试问A和B各在什么时间开始重传其数据帧？A重传的数据帧在什么时间到达B？A重传的数据会不会和B重传的数据再次发生碰撞？B会不会在预定的重传时间停止发送数据？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251260098.png"></p>
-<p><strong>注意</strong>：关于碰撞问题需要学会画图分析过程。</p>
-<h2 id="局域网题目"><a href="#局域网题目" class="headerlink" title="局域网题目"></a>局域网题目</h2><blockquote>
-<p><strong>局域网</strong>的主要特点是什么？为什么局域网采用广播通信方式而广域网不采用呢？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673241624781.png"></p>
-<blockquote>
-<p>常用的局域网的<strong>网络拓扑</strong>有哪些种类？现在<strong>最流行的</strong>是哪种结构？为什么早期的以太网选择总线拓扑结构而不使用星型拓扑结构，但现在却改为使用星型拓扑结构？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249303302.png"></p>
-<blockquote>
-<p>什么叫做传统以太网？以太网有哪两个主要标准？</p>
-</blockquote>
-<p><strong>答</strong>：传统以太网就是最早流行的<strong>10Mbit&#x2F;s速率</strong>的以太网。</p>
-<p>以太网有两个标准，即<code>DIX Ethernet V2</code>标准 和 <code>IEEE 802.3</code> 标准</p>
-<blockquote>
-<p>数据率为 10Mbit&#x2F;s 的以太网在物理媒体上的<strong>码元传输速率</strong>是多少码元&#x2F;秒？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673249373111.png"></p>
-<blockquote>
-<p>为什么LLC子层的标准已制定出来了但现在却很少使用？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250089281.png"></p>
-<blockquote>
-<p>有10个站连接到以太网上。试计算以下三种情况下每一个站所能得到的带宽。</p>
-<blockquote>
-<p>1）10个站都连接到一个10Mbit&#x2F;s以太网集线器。<br>2）10个站都连接到一个100Mbit&#x2F;s以太网集线器。<br>3）10个站都连接到一个10Mbit&#x2F;s以太网交换机。</p>
-</blockquote>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250842288.png"></p>
-<p><strong>注意</strong>：判断问的是每一个站所能得到的带宽 还是 总带宽</p>
-<blockquote>
-<p>以太网交换机有何特点？用它怎样组成虚拟局域网？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250900007.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673250915692.png"></p>
-<p><strong>注意</strong>：以太网交换机和集线器的区别要搞懂，特别是在带宽计算上。</p>
-<h2 id="物理设备题"><a href="#物理设备题" class="headerlink" title="物理设备题"></a>物理设备题</h2><blockquote>
-<p><strong>网络适配器</strong>的作用是什么？网络适配器工作在哪一层？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673236179572.png"><br><strong>我的理解</strong>：适配器就是网卡，其作用的发送时进行帧的封装、接收时进行差错检测与帧的交付。</p>
-<blockquote>
-<p>在图T-3-33中，以太网交换机有6个接口，分别接到5台主机和一个路由器。</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251394312.png"></p>
-<p><strong>注意</strong>：填补交换表时，只需要看写入的即可。</p>
-<blockquote>
-<p>图T-3-36表示有五个站分别连接在三个局域网上，并且用网桥B1和B2连接起来。每一个网桥都有两个接口（1和2）。在一开始，两个网桥中的转发表都是空的。以后有以下各站向其他的站按先后顺序发送了数据帧：A发送给E，C发送给B，D发送给C，B发送给A。试把有关数据填写在表T-3-36-a中。</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251746973.png"></p>
-<blockquote>
-<p>假定一个以太网上的通信量中的80%是在本局域网上进行的，而其余的20%的通信量是在本局域网和互联网之间进行的。另一个以太网的情况则反过来。这两个以太网<strong>一个使用以太网集线器</strong>，而<strong>另一个使用以太网交换机</strong>。你认为以太网交换机应当用在哪一个网络上？（本题的目的是要学生能够清楚地知道以太网集线器和以太网交换机的区别。本题并没有一个标准答案。）</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251501185.png"></p>
-<blockquote>
-<p><strong>网桥的工作原理和特点是什么</strong>？<strong>网桥与转发器以及以太网交换机有何异同</strong>？</p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1673251640376.png"><br><strong>注意</strong>：区分网桥和集线器、交换机，各自应用层次。</p>
-<hr>
-<blockquote>
-<p><strong>写在最后</strong>：本层的知识点比较多，所以涉及的题目类型也很多，要分门别类去练习，同时与理论知识结合。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2023/01/06/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E8%AE%A1%E7%BD%91%E5%AD%A6%E4%B9%A0-%E7%89%A9%E7%90%86%E5%B1%82/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1711,7 +1970,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 17:58:58" itemprop="dateModified" datetime="2023-11-08T17:58:58+08:00">2023-11-08</time>
+      <time title="修改时间：2025-03-17 17:02:38" itemprop="dateModified" datetime="2025-03-17T17:02:38+08:00">2025-03-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -3466,261 +3725,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://danggeovo.github.io/2022/08/21/%EF%BC%88%E7%AC%AC%E4%B8%83%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="danggeOvO">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dangge の 小小世界">
-      <meta itemprop="description" content="记录生活与学习!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dangge の 小小世界">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/08/21/%EF%BC%88%E7%AC%AC%E4%B8%83%E8%8A%82%EF%BC%89%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F--%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" class="post-title-link" itemprop="url">（第七节）操作系统--设备驱动</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-08-21 13:48:32" itemprop="dateCreated datePublished" datetime="2022-08-21T13:48:32+08:00">2022-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-08 17:58:12" itemprop="dateModified" datetime="2023-11-08T17:58:12+08:00">2023-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">【-基础知识-】408专题</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E3%80%90-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-%E3%80%91408%E4%B8%93%E9%A2%98/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p><strong>写在最前面</strong></p>
-<blockquote>
-<p>前面我们介绍了<strong>CPU管理</strong>和<strong>内存管理</strong>部分，通过其完成了操作系统中的<strong>多进程视图</strong>的构建。<br>后续我们将要进行<strong>IO设备驱动</strong>的相关知识的学习。涉及到的IO设备主要有<strong>键盘、显示器、磁盘</strong>这三个，其中这一节介绍<strong>键盘和显示器</strong>驱动管理，会通过<strong>具体的示例</strong>来介绍操作系统是如果管理这两个设备的；而<strong>磁盘</strong>这一设备又涉及到文件系统，所以<strong>后面单独开一节内容</strong>进行介绍。</p>
-</blockquote>
-</blockquote>
-<h1 id="设备驱动的基本原理"><a href="#设备驱动的基本原理" class="headerlink" title="设备驱动的基本原理"></a>设备驱动的基本原理</h1><p>不论是<code>磁盘</code>还<code>是键盘、显示器</code>，都是属于外部设备，而操作系统通过<strong>驱动</strong>管理这些硬件。所以在具体介绍这些设备的管理与实现流程前，先来介绍一些<strong>设备驱动的基本原理</strong>。</p>
-<h2 id="外设的工作原理"><a href="#外设的工作原理" class="headerlink" title="外设的工作原理"></a>外设的工作原理</h2><p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661049214883.png"></p>
-<p>如图所示，即为<strong>外设</strong>的<strong>工作原理</strong>：</p>
-<ol>
-<li><strong>CPU发送命令</strong>给外设，最终归结到执行指令“<code>out ax,端口号</code>”</li>
-<li>命令<strong>执行完毕后</strong>控制器执行<strong>中断处理</strong></li>
-</ol>
-<h2 id="文件视图"><a href="#文件视图" class="headerlink" title="文件视图"></a>文件视图</h2><blockquote>
-<p>为了让外设的使用更加方便，要提供一种<strong>统一的视图</strong>，这个视图就是<code>文件视图</code>。</p>
-</blockquote>
-<blockquote>
-<p><strong>问</strong>：为什么要提供统一的视图？</p>
-<blockquote>
-<p><strong>答</strong>：操作系统控制硬件执行就是向这些<strong>设备控制器的寄存器中写入指令</strong>，但是不同的外部设备往往其<strong>控制器也不同</strong>，写入前需要<strong>查寄存器地址</strong>、<strong>内容格式和语义</strong>等，这对于用户来说<strong>太复杂</strong>了。所以要<strong>引入文件视图</strong>将这个过程<strong>简单化、标椎化</strong>。</p>
-</blockquote>
-</blockquote>
-<blockquote>
-<p>所以前面介绍的<strong>外设的工作原理</strong>还要<code>加上一条</code>：<strong>建立文件视图</strong></p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661049347270.png"></p>
-<p>如上图所示，其中的代码就是<strong>操纵外设的程序</strong>：通过<code>open()</code>打开对应的<strong>设备文件</strong>。其具体的视图如下：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661049374062.png"></p>
-<p>在使用<strong>了统一的文件视图</strong>后，用户对于<strong>外设的操作</strong>和对<strong>文件的操作</strong>是完全一样的，换句话说，用户可以<strong>忽略诸如端口号、指令格式等细节</strong>，因为<strong>操作系统</strong>会负责<strong>将这些设备文件展开成对设备的具体操作</strong>，形成一系列<strong>out语句</strong>。而<code>完成这个展开工作就是外设管理的核心任务，也是我们下面要具体介绍的</code>。</p>
-<h1 id="显示器的驱动"><a href="#显示器的驱动" class="headerlink" title="显示器的驱动"></a>显示器的驱动</h1><blockquote>
-<p>下面我们会从<code>printf</code>出发，以<strong>具体的代码</strong>来分析<strong>显示器驱动执行</strong>的流程。</p>
-</blockquote>
-<h2 id="从printf开始"><a href="#从printf开始" class="headerlink" title="从printf开始"></a>从printf开始</h2><p><code>printf</code>在执行时会先<strong>创建缓存buf</strong>并将格式化输出写到这个缓存，之后调用<code>write(1,buf,...)</code></p>
-<p>而根据第二节<strong>系统调用</strong>的学习，<code>write</code>最终会落到<code>sys_write()</code>上，前面我们介绍printf时到这里就停止了，因为后续内容就涉及到了<strong>硬件驱动</strong>所以就没有继续讲下去。下面我们就要由<strong>sys_write()<strong>继续探索</strong>printf的实现流程</strong>.</p>
-<blockquote>
-<p><code>sys_write</code>的代码1：<strong>寻找设备文件的FCB</strong></p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661051975352.png"></p>
-<p><code>sys_write</code>的<strong>第一部分代码</strong>就是要<strong>找到设备信息并将其保存起来</strong>，是通过上图所示的<strong>3条代码</strong>实现的。<br>这三句代码很简单，首先<strong>定义一个变量file</strong>，而后将其赋值为<strong>一个数组中元素的值</strong>，再之后取<strong>这个元素的某个值</strong>赋给<strong>inode变量</strong>。不过要想真正了解其含义，还需要很多相关知识，下面我们具体介绍.</p>
-<ol>
-<li><code>current—&gt;filp[fd]</code>中，<code>filp</code>中存放了<strong>当前进程打开的文件</strong>，而后可以<strong>通过文件句柄也就是fd</strong>获取这些文件。</li>
-<li><code>file-&gt;f_inode</code>中，通过前面获取到的文件即可得到<strong>文件FCB</strong>，FCB中<strong>存储着设备信息</strong>。</li>
-</ol>
-<p>上两行代码实现了<strong>文件PCB的获取</strong>(<code>到这里就完成了代码的介绍，下面内容为扩展知识</code>），但是要想知道<strong>filp和inode</strong>的结构与值要从<strong>进程建立</strong>讲起.</p>
-<blockquote>
-<p><strong>扩展1：filp的结构</strong></p>
-<blockquote>
-<p>前面我们说过，filp存储着当前进程打开的文件，其中fd为1对应的文件是标准输出，这是所有进程都要打开的文件。而根据fork()建立进程的流程来看，子进程是通过复制父进程来建立的，所以最开始打开这个文件的就是1号进程，具体来说，是在init()程序中打开的这个文件。<br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661053223948.png"><br>如图所示，1号进程会打开tty0,之后两次dup(0)使fd为1、2的也指向tty0(dup指令用于将上一个fd的内容复制到下一个fd)。所以filp[1]就是获取到tty0这个设备文件也就是显示器（tty是终端设备）。</p>
-</blockquote>
-</blockquote>
-<blockquote>
-<p>扩展2：inode的值</p>
-<blockquote>
-<p>通过file-&gt;f_inode获取的值就是文件“&#x2F;dev&#x2F;tty0”的属性信息。</p>
-</blockquote>
-</blockquote>
-<h2 id="文件视图的大量分支"><a href="#文件视图的大量分支" class="headerlink" title="文件视图的大量分支"></a>文件视图的大量分支</h2><blockquote>
-<p><code>sys_write</code>代码2：<strong>根据文件属性进行分支</strong></p>
-</blockquote>
-<p>当获取到<strong>文件属性</strong>后，就要根据此数据判断<strong>需要跳到的地方</strong>。</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661053692214.png"></p>
-<p><code>sys_write</code>函数接着<strong>向下执行</strong>，这一句为一个<strong>if判断语句</strong>。其作用是<strong>判断该文件是否为一个字符设备</strong>，如果是就跳转到<code>rw_char函数</code>执行。</p>
-<p>显然，<strong>显示器</strong>也就是tyy0是一个<strong>字符设备</strong>，所以会跳转到<code>rw_char()</code>。我们需要关注的是此函数的<strong>前两个参数</strong>：</p>
-<ul>
-<li><code>WRITE</code>用于标明<strong>write</strong>，便于后续调用</li>
-<li><code>inode-&gt;i_zone[0]</code>中存储着该设备的<strong>主设备号和次设备号</strong></li>
-</ul>
-<blockquote>
-<p><code>rw_char()</code>函数与<code>rw_ttyx()</code>函数介绍</p>
-</blockquote>
-<p>此函数是<strong>判断设备为字符设备</strong>时要跳转的函数，其<strong>具体代码</strong>如下：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661064230158.png"></p>
-<p>上图中的两个函数是<strong>嵌套执行</strong>的，即：首先在<code>rw_char()</code>函数中通过使用主设备号查询<code>crw_table</code>获取到某函数地址（也就是<code>rw_ttyx</code>函数）</p>
-<p>之后跳转到<code>rw_ttyx</code>函数执行，此函数会<strong>判断tty的类型</strong>：<code>READ</code>还是<code>WRITE</code>，进而跳转到<code>tty_read</code>或者<code>tty_write</code>。其中t<strong>ty_write就是操作显示器的真正函数</strong>。</p>
-<hr>
-<blockquote>
-<p><strong>承上启下</strong></p>
-<blockquote>
-<p>前面我介绍了<code>printf</code>实现的部分流程：先使用<code>write</code>这一系统调用<strong>进入内核</strong>，而后通过<strong>中断、查表、跳转</strong>等操作执行<code>sys_write</code>函数。此函数会根据<code>fd</code>值获取<strong>设备文件与文件属性</strong>；而后通过此属性进行<strong>多次分支</strong>，最终到达<code>tty_write</code>。<br>但是到达<code>tty_write</code>还不是最后的代码，只是此函数<strong>真正涉及到显示器的操作</strong>，其中还保护很多其他函数，我们来<strong>一一介绍</strong>、</p>
-</blockquote>
-</blockquote>
-<h2 id="到达-mov-ax-pos"><a href="#到达-mov-ax-pos" class="headerlink" title="到达 mov ax,[pos]"></a>到达 mov ax,[pos]</h2><blockquote>
-<p>tty_write函数介绍：将字符串放到缓存队列</p>
-</blockquote>
-<p><code>tty_write</code>函数的<strong>核心代码</strong>如下：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661065283409.png"></p>
-<p>此函数主要完成<strong>以下三个功能</strong>：</p>
-<ol>
-<li>框1代码主要用于<strong>获取缓存队列</strong>并判断是否<strong>满队列</strong>（缓存队列为<code>tty-&gt;write_q</code>)</li>
-<li>框2代码主要用于<strong>将内存中的字符串放到这个缓存队列</strong>里</li>
-<li>框3代码主要用于调用新的函数。其实<code>tty-&gt;write(tty)</code>调用的函数是<code>con_write</code>函数、</li>
-</ol>
-<p>当printf的输出内容<strong>输出完毕</strong>或者<strong>对列已满</strong>时，调用<code>con_write()</code>。</p>
-<blockquote>
-<p>con_write函数介绍：<strong>将字符串真正打印到屏幕上</strong></p>
-</blockquote>
-<p><code>con_write</code>函数的<strong>核心代码</strong>如下：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661065786887.png"></p>
-<p>此函数用到了一段<strong>嵌入式汇编代码</strong>，如上图所示。其中<code>c</code>为要输出的字符串，是在缓存队列中取得的；<code>attr</code>为显示属性；最后<strong>将ax放到pos处</strong>完成打印。</p>
-<p>其中<strong>pos为显存的当前光标位置</strong>，所以<code>con_write</code>函数的本质就是：<code>mov ax,[pox]</code></p>
-<hr>
-<blockquote>
-<p><strong>printf使用总结</strong></p>
-<blockquote>
-<p>一个完整的<strong>文件视图路线</strong>：<code>printf</code>-&gt;<code>write</code>-&gt;<code>sys_write</code>-&gt;<code>rw_char</code>-&gt;<code>rw_ttyx</code>-&gt;<code>tty_write</code>-&gt;<code>write_q-</code>&gt;<code>con_write</code>-&gt;<code>mov ax,[pos]</code></p>
-</blockquote>
-</blockquote>
-<h1 id="键盘的驱动"><a href="#键盘的驱动" class="headerlink" title="键盘的驱动"></a>键盘的驱动</h1><blockquote>
-<p>前面我们介绍了显示器的打印在，是从<strong>上层到下层</strong>，由文件到驱动。而这里要介绍的键盘操作，是从<strong>下层到上层</strong>，从驱动到文件。</p>
-</blockquote>
-<h2 id="从键盘中断开始"><a href="#从键盘中断开始" class="headerlink" title="从键盘中断开始"></a>从键盘中断开始</h2><blockquote>
-<p>键盘的故事应从<strong>键盘中断</strong>开始，<code>0x21号中断</code>就是键盘中断。</p>
-</blockquote>
-<blockquote>
-<p>代码1：<strong>键盘中断初始化</strong></p>
-</blockquote>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661067052003.png"></p>
-<p>对于上图代码，我们只需要知道框中的两行即可：</p>
-<ul>
-<li><code>inb $0x60,%al</code>：与<code>out</code>指令对应，<code>inb</code>指令用于从设备取出内容，这里是将键盘的0x60端口获取按键扫描码</li>
-<li><code>call key_table(,%eax,4)</code>：根据按键扫描码调用不同的按时来处理各个按键。</li>
-</ul>
-<p><strong>注</strong>：<code>key_table</code>通过扫描码决定处理函数，绝大多数按键都是<code>do_self()</code>函数来进行处理。</p>
-<blockquote>
-<p>代码2：<code>do_self函数</code>来处理按键</p>
-</blockquote>
-<p>do_self函数主要完成以下三个工作：</p>
-<ol>
-<li>根据<strong>按键扫描码</strong>获取其ASCII码</li>
-<li>找到<code>tty_table[0].read_q</code>作为缓存队列</li>
-<li>将ASCII码放到<code>read_q</code>中</li>
-</ol>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661067479604.png"></p>
-<h2 id="缓冲队列到scanf"><a href="#缓冲队列到scanf" class="headerlink" title="缓冲队列到scanf"></a>缓冲队列到scanf</h2><blockquote>
-<p>将ASCII码放到缓冲队列后，就要<strong>返回文件视图</strong></p>
-</blockquote>
-<p>键盘中断初始代码在使用do_self处理完字符串后就要调用do_tty_interrupt返回文件视图；而后此函数返回需要调用copy_to_cooked()函数来处理缓存队列。这两个函数的代码如下：</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661070064607.png"><br><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661070082983.png"></p>
-<p>其中copy_to_cooked函数的核心代码有三行：第一行从缓存队列取ASCII码；第二行将ASCII码放到tty-&gt;secondary队列；第三行代码会唤醒此队列上的进程。</p>
-<p>而唤醒的这个进程就是用户发起的<code>scanf程序</code>，此程序会执行顺序<code>read</code>-&gt;<code>sys_read</code>-&gt;<code>rw_char</code>-&gt;<code>rw_tyyx</code>-&gt;<code>tyy_read</code>,而最后的tyy_read会使得此进程阻塞（<strong>如果secondary为空的话</strong>）</p>
-<p><img src="https://images-blogs-1310566801.cos.ap-guangzhou.myqcloud.com/%E5%B0%8F%E4%B9%A6%E5%8C%A0/1661070823230.png"></p>
-<blockquote>
-<p>所以：<strong>键盘中断</strong>与<strong>scanf程序</strong>属于<strong>双向奔赴</strong>了，前者通过中断程序将<strong>键盘输入放到缓存队列</strong>并转移到secondary,后者则是从<strong>用户程序</strong>出发进入<strong>系统调用</strong>最后<strong>睡眠等待唤醒</strong>。</p>
-</blockquote>
-<hr>
-<hr>
-<blockquote>
-<p><strong>写在最后</strong>：总结</p>
-<blockquote>
-<p>本篇文章记录了<strong>IO设备驱动的管理</strong>，从<strong>文件视图</strong>出发，借助<code>printf</code>和<code>scanf</code>实现显示器和键盘的操作。<br>后面将会介绍<strong>磁盘</strong>的相关知识，包括<strong>文件系统</strong>部分内容 。</p>
-</blockquote>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/sy/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/sy/">1</a><span class="space">&hellip;</span><a class="page-number" href="/sy/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/sy/page/6/">6</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/sy/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -3733,7 +3737,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2023</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -3744,13 +3748,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">337k</span>
+    <span title="站点总字数">341k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:13</span>
+    <span title="站点阅读时长">10:20</span>
   </span>
 </div>
 
